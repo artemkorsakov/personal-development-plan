@@ -1,8 +1,3 @@
----
-title: "Personal Development Plan"
-layout: default
----
-
 # Personal Development Plan
 
 **"Personal Development Plan"** — это плагин для Obsidian,
@@ -695,10 +690,25 @@ flowchart LR
 	- Кникните **Browse** и найдите "Personal Development Plan".
 	- Установите и включите плагин.
 
-2. **Настройте ваш Personal Development Plan**.
+2. [**Настройте ваш Personal Development Plan**](settings.md).
+
+---
+
+# Детальная информация
+
+- [Настройки](settings.md)
+- [Примеры планов](examples.md)
 
 ---
 
 # Заключение
 
 Плагин **Personal Development Plan** помогает систематизировать обучение, избегать перегрузки и отслеживать прогресс.
+
+---
+
+# Поддержка
+
+Создайте задачи на [GitHub repository][github].
+
+[github]: https://github.com/artemkorsakov/personal-development-plan/issues
