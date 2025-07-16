@@ -1,8 +1,11 @@
-/*
+/* Стиль для каждой задачи */
+.periodic-task-setting {
+    margin-left: 10px; /* Отступ для визуальной вложенности */
+}
 
-This CSS file will be included with your plugin, and
-available in the app when your plugin is enabled.
-
-If your plugin does not need CSS, delete this file.
-
-*/
+/* Кнопка удаления */
+.delete-task-button {
+    min-width: unset !important;
+    width: 24px;
+    margin-left: 8px;
+}
