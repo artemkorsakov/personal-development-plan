@@ -1,0 +1,24 @@
+<nav class="sidebar">
+	<ul>
+		{% for item in site.nav %}
+		<li>
+			<a href="{{ item.url | relative_url }}"
+			   {% if page.url == item.url %}class="active"{% endif %}>
+				{{ item.title }}
+			</a>
+		</li>
+		{% endfor %}
+	</ul>
+</nav>
+
+<style>
+	.sidebar {
+	  position: fixed;
+	  width: 250px;
+	  padding: 20px;
+	}
+	.sidebar a.active {
+	  font-weight: bold;
+	  color: #0366d6;
+	}
+</style>

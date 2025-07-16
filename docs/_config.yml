@@ -2,3 +2,18 @@ remote_theme: pages-themes/architect@v0.2.0
 plugins:
     - jekyll-remote-theme
 
+# Настройка навигации
+nav:
+    - title: "Главная"
+      url: "/"
+    - title: "Раздел 1"
+      url: "/sections/settings"
+    - title: "Раздел 2"
+      url: "/sections/examples"
+    - title: "Раздел 3"
+      url: "/sections/support"
+
+# Подключение кастомного меню
+include:
+    - _includes/sidebar.html
+
