@@ -1,5 +1,6 @@
-import { App, Plugin, Setting, PluginSettingTab,  getLanguage } from 'obsidian';
-import { PersonalDevelopmentPlanSettings, DEFAULT_SETTINGS, MaterialType, Section, getLocalizedStrings } from './settings';
+import { App, Plugin, Setting, PluginSettingTab } from 'obsidian';
+import { PersonalDevelopmentPlanSettings, DEFAULT_SETTINGS, MaterialType, Section } from './settings';
+import { getLocalizedSettings } from './../main/localization';
 
 export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
     plugin: Plugin;
@@ -13,21 +14,20 @@ export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
 
     display(): void {
         const { containerEl } = this;
-        const isRussian = getLanguage() === 'ru';
-        const t = getLocalizedStrings(isRussian);
+        const t = getLocalizedSettings();
 
         containerEl.empty();
         containerEl.createEl('h1', { text: t.settingsTitle });
 
-        this.addGeneralSettings(isRussian);
-        this.addMaterialTypesSettings(isRussian);
-        this.addSectionsSettings(isRussian);
-        this.addPeriodicTasksSettings(isRussian);
+        this.addGeneralSettings();
+        this.addMaterialTypesSettings();
+        this.addSectionsSettings();
+        this.addPeriodicTasksSettings();
     }
 
-    addGeneralSettings(isRussian: boolean): void {
+    addGeneralSettings(): void {
         const { containerEl } = this;
-        const t = getLocalizedStrings(isRussian);
+        const t = getLocalizedSettings();
 
         containerEl.createEl('h2', { text: t.generalSettings });
 
@@ -57,9 +57,9 @@ export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
                 }));
     }
 
-    addMaterialTypesSettings(isRussian: boolean): void {
+    addMaterialTypesSettings(): void {
         const { containerEl } = this;
-        const t = getLocalizedStrings(isRussian);
+        const t = getLocalizedSettings();
 
         containerEl.createEl('h2', { text: t.materialTypes });
 
@@ -139,11 +139,11 @@ export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
         // Добавление нового типа материала (оставляем без изменений)
         new Setting(containerEl)
             .addButton(button => button
-                .setButtonText(t.newType)
+                .setButtonText(t.addNewType)
                 .onClick(async () => {
                     const newType: MaterialType = {
                         id: `custom-${Date.now()}`,
-                        name: isRussian ? 'Новый тип' : 'New Type',
+                        name: t.newType,
                         enabled: true,
                         order: this.settings.materialTypes.length,
                         checklistItems: []
@@ -154,9 +154,9 @@ export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
                 }));
     }
 
-    addSectionsSettings(isRussian: boolean): void {
+    addSectionsSettings(): void {
         const { containerEl } = this;
-        const t = getLocalizedStrings(isRussian);
+        const t = getLocalizedSettings();
 
         containerEl.createEl('h2', { text: t.sectionsCategories });
 
@@ -197,11 +197,11 @@ export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
         // Add new section
         new Setting(containerEl)
             .addButton(button => button
-                .setButtonText(t.newSection)
+                .setButtonText(t.addNewSection)
                 .onClick(async () => {
                     const newSection: Section = {
                         id: `section-${Date.now()}`,
-                        name: isRussian ? 'Новый раздел' : 'New Section',
+                        name: t.newSection,
                         order: this.settings.sections.length
                     };
                     this.settings.sections.push(newSection);
@@ -210,9 +210,9 @@ export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
                 }));
     }
 
-    addPeriodicTasksSettings(isRussian: boolean): void {
+    addPeriodicTasksSettings(): void {
         const { containerEl } = this;
-        const t = getLocalizedStrings(isRussian);
+        const t = getLocalizedSettings();
 
         containerEl.createEl('h2', { text: t.periodicTasks });
 
