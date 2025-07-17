@@ -7,6 +7,9 @@ interface TranslationKeys {
     planned: string;
     knowledgeBase: string;
     sources: string;
+    statistics: string;
+    history: string;
+    examples: string;
     // Settings
     settingsTitle: string;
     generalSettings: string;
@@ -71,7 +74,10 @@ const translations: Record<string, TranslationKeys> = {
         inProgress: 'В работе',
         planned: 'Запланировано',
         knowledgeBase: 'База знаний',
-        sources: 'База знаний',
+        sources: 'Источник',
+        statistics: 'Статистика',
+        history: 'История',
+        examples: 'Примеры',
         settingsTitle: 'Настройки системы',
         generalSettings: 'Общие настройки',
         materialTypes: 'Типы материалов',
@@ -133,6 +139,9 @@ const translations: Record<string, TranslationKeys> = {
         planned: 'Planned',
         knowledgeBase: 'Knowledge Base',
         sources: 'Sources',
+        statistics: 'Statistics',
+        history: 'History',
+        examples: 'Examples',
         settingsTitle: 'System Settings',
         generalSettings: 'General Settings',
         materialTypes: 'Material Types',

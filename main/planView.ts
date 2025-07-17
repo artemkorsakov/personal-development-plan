@@ -41,7 +41,10 @@ export class PlanView extends ItemView {
             { id: 'in-progress', name: t('inProgress'), icon: 'play' },
             { id: 'planned', name:  t('planned'), icon: 'calendar' },
             { id: 'knowledge-base', name:  t('knowledgeBase'), icon: 'book' },
-            { id: 'sources', name:  t('sources'), icon: 'link' }
+            { id: 'sources', name:  t('sources'), icon: 'link' },
+            { id: 'statistics', name:  t('statistics'), icon: 'statistics' },
+            { id: 'history', name:  t('history'), icon: 'history' },
+            { id: 'examples', name:  t('examples'), icon: 'examples' },
         ];
 
         tabs.forEach((tab, index) => {
