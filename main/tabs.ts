@@ -12,42 +12,42 @@ export const TAB_DEFINITIONS: TabDefinition[] = [
         id: 'in-progress',
         name: t('inProgress'),
         icon: 'play',
-        tooltip: 'Текущие активные задачи и проекты'
+        tooltip: t('inProgressTooltip')
     },
     {
         id: 'planned',
         name: t('planned'),
         icon: 'calendar',
-        tooltip: 'Запланированные на будущее задачи'
+        tooltip: t('plannedTooltip')
     },
     {
         id: 'knowledge-base',
         name: t('knowledgeBase'),
         icon: 'book',
-        tooltip: 'База знаний и полезной информации'
+        tooltip: t('knowledgeBaseTooltip')
     },
     {
         id: 'sources',
         name: t('sources'),
         icon: 'link',
-        tooltip: 'Источники и ссылки на дополнительные материалы'
+        tooltip: t('sourcesTooltip')
     },
     {
         id: 'statistics',
         name: t('statistics'),
         icon: 'statistics',
-        tooltip: 'Статистика и аналитика по вашей деятельности'
+        tooltip: t('statisticsTooltip')
     },
     {
         id: 'history',
         name: t('history'),
         icon: 'history',
-        tooltip: 'История изменений и выполненных задач'
+        tooltip: t('historyTooltip')
     },
     {
         id: 'examples',
         name: t('examples'),
         icon: 'examples',
-        tooltip: 'Примеры использования и шаблоны'
+        tooltip: t('examplesTooltip')
     },
 ];

@@ -4,12 +4,19 @@ interface TranslationKeys {
     plan: string;
     openPlan: string;
     inProgress: string;
+    inProgressTooltip: string;
     planned: string;
+    plannedTooltip: string;
     knowledgeBase: string;
+    knowledgeBaseTooltip: string;
     sources: string;
+    sourcesTooltip: string;
     statistics: string;
+    statisticsTooltip: string;
     history: string;
+    historyTooltip: string;
     examples: string;
+    examplesTooltip: string;
     // Settings
     settingsTitle: string;
     generalSettings: string;
@@ -72,12 +79,19 @@ const translations: Record<string, TranslationKeys> = {
         plan: 'План развития',
         openPlan: 'Открыть план развития',
         inProgress: '🛠️ В работе',
+        inProgressTooltip: 'Текущие задачи в работе',
         planned: '⏳ Запланировано',
+        plannedTooltip: 'Запланированные, но ещё не начатые задачи',
         knowledgeBase: '📚 База знаний',
+        knowledgeBaseTooltip: 'Материалы для изучения, по которым пока не сформирован детализированный план',
         sources: '🔍 Источник',
+        sourcesTooltip: 'Ресурсы для пополнения Базы знаний',
         statistics: '📊 Статистика',
+        statisticsTooltip: 'Анализ прогресса по всем разделам',
         history: '🕰️ История',
+        historyTooltip: 'Архив выполненных задач',
         examples: '📂 Примеры',
+        examplesTooltip: 'Шаблоны планов от сообщества',
         settingsTitle: 'Настройки системы',
         generalSettings: 'Общие настройки',
         materialTypes: 'Типы материалов',
@@ -136,12 +150,19 @@ const translations: Record<string, TranslationKeys> = {
         plan: 'Development Plan',
         openPlan: 'Open Development Plan',
         inProgress: '🛠️ In Progress',
+        inProgressTooltip: 'Current tasks in progress',
         planned: '⏳ Planned',
+        plannedTooltip: 'Planned, but not yet started tasks',
         knowledgeBase: '📚 Knowledge Base',
+        knowledgeBaseTooltip: 'Materials for learning, which are not yet detailed',
         sources: '🔍 Sources',
+        sourcesTooltip: 'Resources for filling the Knowledge Base',
         statistics: '📊 Statistics',
+        statisticsTooltip: 'Progress analysis by sections',
         history: '🕰️ History',
+        historyTooltip: 'Archive of completed tasks',
         examples: '📂 Examples',
+        examplesTooltip: 'Development plans from the community',
         settingsTitle: 'System Settings',
         generalSettings: 'General Settings',
         materialTypes: 'Material Types',

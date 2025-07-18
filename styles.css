@@ -60,23 +60,35 @@
     display: block;
 }
 
-.plan-tab .icon-help {
-    margin-left: 4px;
-    opacity: 0.7;
-    cursor: help;
-    position: relative;
+/* Стили для заголовка с иконкой */
+.tab-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Стили для иконки вопроса */
+.tab-help-icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: var(--background-modifier-hover);
+    color: var(--text-muted);
+    font-size: 12px;
+    cursor: help;
+    position: relative;
 }
 
-.plan-tab .icon-help:hover {
-    opacity: 1;
+.tab-help-icon:hover {
+    background-color: var(--background-modifier-active-hover);
+    color: var(--text-normal);
 }
 
-.plan-tab .icon-help[data-tooltip]::after {
+/* Стили для подсказки */
+.tab-help-icon[data-tooltip]::after {
     content: attr(data-tooltip);
     position: absolute;
     bottom: 100%;
@@ -94,9 +106,12 @@
     z-index: 1000;
     box-shadow: 0 2px 10px rgba(0,0,0,0.2);
     pointer-events: none;
+    min-width: 150px;
+    max-width: 250px;
+    text-align: center;
 }
 
-.plan-tab .icon-help:hover[data-tooltip]::after {
+.tab-help-icon:hover[data-tooltip]::after {
     visibility: visible;
     opacity: 1;
 }
