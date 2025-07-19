@@ -1,9 +1,37 @@
-/* Стиль для каждой задачи */
-.periodic-task-setting {
-    margin-left: 10px; /* Отступ для визуальной вложенности */
+/* Заголовок вкладки плагина */
+.view-header-title {
+  font-size: 1.1em;
+  font-weight: 600;
+  color: var(--text-normal);
+  padding: 8px 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* Кнопка удаления */
+/* Иконка в заголовке */
+.view-header-title .icon {
+  color: var(--interactive-accent);
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+/* Адаптация для узких областей */
+.view-header-title-container {
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* Настройки */
+.periodic-task-setting {
+    margin-left: 10px;
+}
+
 .delete-task-button {
     min-width: unset !important;
     width: 24px;
@@ -11,196 +39,246 @@
 }
 
 /* Основные стили для view */
-/* Основные стили для view */
 .plan-development-view {
-    height: 100%;
-    padding: 0;
-    overflow: hidden;
+  height: 100%;
+  overflow: hidden;
+  background: var(--background-primary);
 }
 
+/* Главный контейнер вкладок */
 .plan-main-container {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
+/* Заголовок вкладок */
 .plan-tabs-header {
-    display: flex;
-    border-bottom: 1px solid var(--background-modifier-border);
-    padding: 0 10px;
-    flex-shrink: 0;
+  display: flex;
+  border-bottom: 1px solid var(--background-modifier-border);
+  padding: 0;
+  flex-shrink: 0;
+  gap: 4px;
+  background: var(--background-primary);
 }
 
+/* Отдельная вкладка */
 .plan-tab {
-    background: none;
-    border: none;
-    padding: 10px 15px;
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    margin-bottom: -1px;
+  background: none;
+  border: none;
+  padding: 12px 16px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin: 0;
+  font-size: 0.95em;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  position: relative;
 }
 
+/* Иконка вкладки */
+.plan-tab .icon {
+  font-size: 1.1em;
+  opacity: 0.8;
+}
+
+/* Текст вкладки */
+.plan-tab .tab-text {
+  font-weight: 500;
+}
+
+/* Активная вкладка */
 .plan-tab.active {
-    border-bottom: 2px solid var(--interactive-accent);
-    color: var(--interactive-accent);
+  border-bottom: 2px solid var(--interactive-accent);
+  color: var(--text-normal);
+  background: var(--background-secondary);
 }
 
+.plan-tab.active .icon {
+  opacity: 1;
+  color: var(--interactive-accent);
+}
+
+/* Контейнер содержимого */
 .plan-tabs-content {
-    flex-grow: 1;
-    overflow-y: auto;
-    padding: 15px;
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 16px;
+  background: var(--background-primary);
 }
 
+/* Содержимое вкладки */
 .plan-tab-content {
-    display: none;
-    height: 100%;
+  display: none;
+  height: 100%;
+  animation: fadeIn 0.3s ease;
 }
 
 .plan-tab-content.active {
-    display: block;
+  display: block;
 }
 
-/* Стили для заголовка с иконкой */
+/* Анимация появления */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Стили для заголовка с иконкой и иконки вопроса */
+/* Заголовок вкладки */
 .tab-title {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 16px 0;
+  font-size: 1.2em;
+  font-weight: 500;
+  color: var(--text-normal);
+  position: relative;
 }
 
-/* Стили для иконки вопроса */
+/* Иконка помощи */
 .tab-help-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background-color: var(--background-modifier-hover);
-    color: var(--text-muted);
-    font-size: 12px;
-    cursor: help;
-    position: relative;
-    marginLeft: 4px;
-    opacity: 0.7;
-    cursor: help;
+  display: inline-flex;
+  width: 16px;
+  height: 16px;
+  cursor: help;
+  color: var(--text-muted);
+  opacity: 0.7;
+  transition: opacity 0.15s ease;
+  position: relative; /* Добавляем для позиционирования tooltip */
 }
 
 .tab-help-icon:hover {
-    background-color: var(--background-modifier-active-hover);
-    color: var(--text-normal);
+  opacity: 1;
+  color: var(--text-accent);
 }
 
-/* Стили для подсказки */
+/* SVG иконки */
+.tab-help-icon svg {
+  width: 100%;
+  height: 100%;
+  stroke-width: 2px;
+}
+
+/* Всплывающая подсказка (теперь ниже знака вопроса) */
 .tab-help-icon[data-tooltip]::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--background-modifier-cover);
-    color: var(--text-normal);
-    padding: 6px 12px;
-    border-radius: 4px;
-    font-size: 13px;
-    white-space: nowrap;
-    visibility: hidden;
-    opacity: 0;
-    transition: opacity 0.2s;
-    z-index: 1000;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-    pointer-events: none;
-    min-width: 150px;
-    max-width: 250px;
-    text-align: center;
+  content: attr(data-tooltip);
+  position: absolute;
+  top: 100%; /* Позиционируем ниже иконки */
+  left: 50%;
+  transform: translateX(-50%) translateY(6px); /* Смещаем вниз */
+  background: var(--background-primary);
+  color: var(--text-normal);
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 0.85em;
+  font-weight: normal;
+  white-space: pre-wrap;
+  visibility: hidden;
+  opacity: 0;
+  transition: all 0.2s ease;
+  z-index: 1000;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  border: 1px solid var(--background-modifier-border);
+  width: 220px;
+  max-width: 80vw;
+  text-align: left;
+  line-height: 1.4;
+  pointer-events: none;
 }
 
 .tab-help-icon:hover[data-tooltip]::after {
-    visibility: visible;
-    opacity: 1;
+  visibility: visible;
+  opacity: 1;
+  transform: translateX(-50%) translateY(10px); /* Финальное положение при hover */
 }
 
 /* Стили для карточки задачи */
+.task-warning {
+  padding: 12px 16px;
+  background-color: var(--background-modifier-error);
+  color: var(--text-on-accent);
+  border-radius: 6px;
+  margin: 12px 0;
+  font-size: 0.9em;
+  border-left: 3px solid var(--interactive-accent);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.task-warning::before {
+  content: "⚠️";
+  font-size: 1.1em;
+}
+
+.tasks-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 10px;
+}
+
 .task-card {
-    position: relative;
-    padding: 12px;
-    margin-bottom: 12px;
-    border-radius: 8px;
-    background-color: var(--background-secondary);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    cursor: pointer;
-    transition: all 0.2s ease;
+  position: relative;
+  padding: 16px;
+  border-radius: 8px;
+  background: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .task-card:hover {
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  background: var(--background-secondary);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 .task-order-badge {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    font-size: 0.8em;
-    color: var(--text-muted);
-    background-color: var(--background-primary);
-    padding: 2px 8px;
-    border-radius: 12px;
-    font-weight: 500;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 0.8em;
+  color: var(--text-muted);
+  opacity: 0.7;
 }
 
 .task-first-line {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
-    padding-right: 40px; /* Чтобы не перекрывалось order-badge */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
 }
 
 .task-type-icon {
-    font-size: 1.2em;
+  font-size: 1.1em;
 }
 
 .task-name {
-    font-weight: 500;
-    color: var(--text-normal);
+  font-weight: 500;
+  color: var(--text-normal);
 }
 
 .task-section {
-    font-size: 0.85em;
-    color: var(--text-faint);
-    margin-left: auto; /* Прижимаем секцию к правому краю */
+  font-size: 0.85em;
+  color: var(--text-faint);
+  margin-left: auto;
 }
 
 .task-dates {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    font-size: 0.85em;
-    color: var(--text-muted);
-    margin-bottom: 8px;
-}
-
-.task-dates > span {
-    margin-right: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.85em;
+  color: var(--text-muted);
+  margin-bottom: 12px;
 }
 
 .task-progress-line {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 8px;
-}
-
-.task-progress-bar {
-    flex-grow: 1;
-    font-size: 0.9em;
-    color: var(--text-muted);
-}
-
-.task-warning {
-    padding: 10px;
-    background-color: var(--background-modifier-error);
-    color: orange;
-    fontWeight: bold;
-    border-radius: 5px;
-    margin: 10px 0;
+  font-size: 0.9em;
+  color: var(--text-muted);
 }
