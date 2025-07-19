@@ -1,5 +1,6 @@
 import { t } from './localization';
 import { openTaskFile } from './common';
+import { PersonalDevelopmentPlanSettings } from './../settings/settings';
 
 interface TaskInProgress {
     name: string;
@@ -12,7 +13,7 @@ interface TaskInProgress {
     filePath: string;
 }
 
-export function getTasksInProgressElement(): HTMLElement {
+export function getTasksInProgressElement(settings: PersonalDevelopmentPlanSettings): HTMLElement {
     // Создаем контейнер для всех задач
     const container = document.createElement('div');
     container.className = 'tasks-container';
@@ -21,11 +22,11 @@ export function getTasksInProgressElement(): HTMLElement {
     const activeTasks = getActiveTasks();
 
     // Проверка на превышение лимита задач
-    const maxTasks = 0;
+    const maxTasks = settings.maxActiveTasks || 10;
     if (activeTasks.length > maxTasks) {
         const warningDiv = document.createElement('div');
         warningDiv.className = 'task-warning';
-        warningDiv.textContent = t('maxActiveTasksWarning');
+        warningDiv.textContent = `${t('maxActiveTasksWarning')} (${activeTasks.length} > ${maxTasks})`;
         container.appendChild(warningDiv);
     }
 
@@ -41,23 +42,35 @@ export function getTasksInProgressElement(): HTMLElement {
             openTaskFile(task.filePath);
         });
 
+        // Порядковый номер (в правом верхнем углу)
+        const orderBadge = document.createElement('div');
+        orderBadge.className = 'task-order-badge';
+        orderBadge.textContent = `#${task.order}`;
+        taskCard.appendChild(orderBadge);
+
+        // Первая строка (иконка типа, название и секция)
+        const firstLine = document.createElement('div');
+        firstLine.className = 'task-first-line';
+
         // Иконка типа задачи
         const typeIcon = document.createElement('span');
         typeIcon.className = 'task-type-icon';
         typeIcon.textContent = getTaskTypeIcon(task.type);
-        taskCard.appendChild(typeIcon);
+        firstLine.appendChild(typeIcon);
 
         // Название задачи
         const nameSpan = document.createElement('span');
         nameSpan.className = 'task-name';
         nameSpan.textContent = task.name;
-        taskCard.appendChild(nameSpan);
+        firstLine.appendChild(nameSpan);
 
         // Секция задачи
         const sectionSpan = document.createElement('span');
         sectionSpan.className = 'task-section';
         sectionSpan.textContent = `[${task.section}]`;
-        taskCard.appendChild(sectionSpan);
+        firstLine.appendChild(sectionSpan);
+
+        taskCard.appendChild(firstLine);
 
         // Контейнер дат
         const datesDiv = document.createElement('div');
@@ -65,35 +78,33 @@ export function getTasksInProgressElement(): HTMLElement {
 
         // Дата начала
         const startDateSpan = document.createElement('span');
-        startDateSpan.textContent = `Начало: ${formatDate(task.startDate)}`;
+        startDateSpan.textContent = `${t('inProgressStartDate')}: ${formatDate(task.startDate)}`;
         datesDiv.appendChild(startDateSpan);
 
         // Дата завершения
         const dueDateSpan = document.createElement('span');
-        dueDateSpan.textContent = `Завершить до: ${formatDate(task.dueDate)}`;
+        dueDateSpan.textContent = `${t('inProgressDueDate')}: ${formatDate(task.dueDate)}`;
 
         if (isTaskOverdue(task)) {
             dueDateSpan.style.color = 'red';
             dueDateSpan.style.fontWeight = 'bold';
-            dueDateSpan.textContent += ' (Просрочено!)';
+            dueDateSpan.textContent += t('inProgressOverdue');
         }
         datesDiv.appendChild(dueDateSpan);
 
         taskCard.appendChild(datesDiv);
 
+        // Прогресс (одна строка - бар и значение)
+        const progressContainer = document.createElement('div');
+        progressContainer.className = 'task-progress-line';
+
         // Прогресс-бар
-        const progressDiv = document.createElement('div');
-        progressDiv.className = 'task-progress';
+        const progressBar = document.createElement('span');
+        progressBar.className = 'task-progress-bar';
+        progressBar.textContent = `${generateProgressBar(task.progress)} ${task.progress}%`;
+        progressContainer.appendChild(progressBar);
 
-        const progressBar = document.createElement('div');
-        progressBar.textContent = generateProgressBar(task.progress);
-        progressDiv.appendChild(progressBar);
-
-        const progressText = document.createElement('span');
-        progressText.textContent = `${task.progress}%`;
-        progressDiv.appendChild(progressText);
-
-        taskCard.appendChild(progressDiv);
+        taskCard.appendChild(progressContainer);
 
         // Добавляем карточку в контейнер
         container.appendChild(taskCard);

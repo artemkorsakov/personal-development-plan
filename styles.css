@@ -121,19 +121,79 @@
 
 /* Стили для карточки задачи */
 .task-card {
-    transition: all 0.2s ease;
-    background-color: var(--background-primary);
-    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    padding: 10px;
-    margin: 10px 0;
+    position: relative;
+    padding: 12px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    background-color: var(--background-secondary);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     cursor: pointer;
+    transition: all 0.2s ease;
 }
 
 .task-card:hover {
-    background-color: var(--background-secondary);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.task-order-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 0.8em;
+    color: var(--text-muted);
+    background-color: var(--background-primary);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: 500;
+}
+
+.task-first-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    padding-right: 40px; /* Чтобы не перекрывалось order-badge */
+}
+
+.task-type-icon {
+    font-size: 1.2em;
+}
+
+.task-name {
+    font-weight: 500;
+    color: var(--text-normal);
+}
+
+.task-section {
+    font-size: 0.85em;
+    color: var(--text-faint);
+    margin-left: auto; /* Прижимаем секцию к правому краю */
+}
+
+.task-dates {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.85em;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+
+.task-dates > span {
+    margin-right: 15px;
+}
+
+.task-progress-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.task-progress-bar {
+    flex-grow: 1;
+    font-size: 0.9em;
+    color: var(--text-muted);
 }
 
 .task-warning {
@@ -143,42 +203,4 @@
     fontWeight: bold;
     border-radius: 5px;
     margin: 10px 0;
-}
-
-.task-type-icon {
-    font-size: 1.2em;
-    margin-right: 10px;
-}
-
-.task-name {
-    font-weight: bold;
-    margin-right: 10px;
-}
-
-.task-section {
-    color: #666;
-    margin-right: 10px;
-}
-
-.task-dates {
-    margin: 5px 0;
-    font-size: 0.9em;
-}
-
-.task-dates > span {
-    margin-right: 15px;
-}
-
-.task-progress {
-    margin: 5px 0;
-}
-
-.task-progress > div {
-    font-size: 1.2em;
-    margin-right: 10px;
-}
-
-.task-progress > span {
-    font-size: 0.9em;
-    color: #555;
 }

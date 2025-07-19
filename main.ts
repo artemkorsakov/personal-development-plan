@@ -14,7 +14,7 @@ export default class PersonalDevelopmentPlanPlugin extends Plugin {
 
 	    this.registerView(
             PLAN_VIEW_TYPE,
-            (leaf) => new PlanView(leaf)
+            (leaf) => new PlanView(leaf, this)
         );
 
         this.addCommand({
