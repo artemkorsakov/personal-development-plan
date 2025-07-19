@@ -1,6 +1,7 @@
 import { ItemView, WorkspaceLeaf, Notice } from 'obsidian';
 import { t } from './localization';
 import { TabDefinition, TAB_DEFINITIONS } from './tabs';
+import { getTasksInProgressElement } from './inProgress';
 
 export const PLAN_VIEW_TYPE = 'personal-development-plan-view';
 
@@ -86,23 +87,70 @@ export class PlanView extends ItemView {
                     cls: 'tab-help-icon',
                 });
 
-                helpIcon.innerHTML = `
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <circle cx="12" cy="12" r="10" stroke-width="1.5"/>
-                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" stroke-width="1.5" stroke-linecap="round"/>
-                        <circle cx="12" cy="16" r="1" fill="currentColor"/>
-                    </svg>
-                `;
-                helpIcon.style.marginLeft = '4px';
-                helpIcon.style.opacity = '0.7';
-                helpIcon.style.cursor = 'help';
+                // Создаем SVG элемент
+                const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                svg.setAttribute('width', '14');
+                svg.setAttribute('height', '14');
+                svg.setAttribute('viewBox', '0 0 24 24');
+                svg.setAttribute('fill', 'none');
+                svg.setAttribute('stroke', 'currentColor');
+
+                // Создаем круг
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('cx', '12');
+                circle.setAttribute('cy', '12');
+                circle.setAttribute('r', '10');
+                circle.setAttribute('stroke-width', '1.5');
+                svg.appendChild(circle);
+
+                // Создаем путь (знак вопроса)
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                path.setAttribute('d', 'M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3');
+                path.setAttribute('stroke-width', '1.5');
+                path.setAttribute('stroke-linecap', 'round');
+                svg.appendChild(path);
+
+                // Создаем точку внизу
+                const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                dot.setAttribute('cx', '12');
+                dot.setAttribute('cy', '16');
+                dot.setAttribute('r', '1');
+                dot.setAttribute('fill', 'currentColor');
+                svg.appendChild(dot);
+
+                // Добавляем SVG в иконку
+                helpIcon.appendChild(svg);
                 helpIcon.setAttribute('data-tooltip', tab.tooltip);
             }
 
-            // Контент вкладки
-            tabContent.createEl('p', {
-                text: `Здесь будет содержимое раздела "${tab.name}"`
-            });
+            if (tab.id === 'in-progress') {
+                const tasksElement = getTasksInProgressElement();
+                tabContent.appendChild(tasksElement);
+            } else if (tab.id === 'planned') {
+                tabContent.createEl('p', {
+                    text: `Здесь будет содержимое раздела "${tab.id}"`
+                });
+            } else if (tab.id === 'knowledge-base') {
+                tabContent.createEl('p', {
+                    text: `Здесь будет содержимое раздела "${tab.id}"`
+                });
+            } else if (tab.id === 'sources') {
+                tabContent.createEl('p', {
+                    text: `Здесь будет содержимое раздела "${tab.id}"`
+                });
+            } else if (tab.id === 'statistics') {
+                tabContent.createEl('p', {
+                    text: `Здесь будет содержимое раздела "${tab.id}"`
+                });
+            } else if (tab.id === 'history') {
+                tabContent.createEl('p', {
+                    text: `Здесь будет содержимое раздела "${tab.id}"`
+                });
+            } else if (tab.id === 'examples') {
+                tabContent.createEl('p', {
+                    text: `Здесь будет содержимое раздела "${tab.id}"`
+                });
+            }
         });
     }
 

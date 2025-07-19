@@ -5,6 +5,7 @@ interface TranslationKeys {
     openPlan: string;
     inProgress: string;
     inProgressTooltip: string;
+    maxActiveTasksWarning: string;
     planned: string;
     plannedTooltip: string;
     knowledgeBase: string;
@@ -80,6 +81,7 @@ const translations: Record<string, TranslationKeys> = {
         openPlan: 'Открыть план развития',
         inProgress: '🛠️ В работе',
         inProgressTooltip: 'Текущие задачи в работе',
+        maxActiveTasksWarning: '⚠️ Слишком много задач в работе, верните часть из них в Очередь',
         planned: '⏳ Запланировано',
         plannedTooltip: 'Запланированные, но ещё не начатые задачи',
         knowledgeBase: '📚 База знаний',
@@ -151,6 +153,7 @@ const translations: Record<string, TranslationKeys> = {
         openPlan: 'Open Development Plan',
         inProgress: '🛠️ In Progress',
         inProgressTooltip: 'Current tasks in progress',
+        maxActiveTasksWarning: '⚠️ Too many tasks in progress, return some to Planned',
         planned: '⏳ Planned',
         plannedTooltip: 'Planned, but not yet started tasks',
         knowledgeBase: '📚 Knowledge Base',
