@@ -11,6 +11,8 @@ interface TranslationKeys {
     inProgressOverdue: string;
     planned: string;
     plannedTooltip: string;
+    unknownSection: string;
+    noTasksForThisType: string;
     knowledgeBase: string;
     knowledgeBaseTooltip: string;
     sources: string;
@@ -92,6 +94,8 @@ const translations: Record<string, TranslationKeys> = {
         inProgressOverdue: ' (Просрочено!)',
         planned: '⏳ Запланировано',
         plannedTooltip: 'Запланированные, но ещё не начатые задачи',
+        unknownSection: 'Неизвестный раздел',
+        noTasksForThisType: 'Нет задач для этого типа',
         knowledgeBase: '📚 База знаний',
         knowledgeBaseTooltip: 'Материалы для изучения, по которым пока не сформирован детализированный план',
         sources: '🔍 Источник',
@@ -169,6 +173,8 @@ const translations: Record<string, TranslationKeys> = {
         inProgressOverdue: ' (Overdue!)',
         planned: '⏳ Planned',
         plannedTooltip: 'Planned, but not yet started tasks',
+        unknownSection: 'Unknown Section',
+        noTasksForThisType: 'No tasks for this type',
         knowledgeBase: '📚 Knowledge Base',
         knowledgeBaseTooltip: 'Materials for learning, which are not yet detailed',
         sources: '🔍 Sources',

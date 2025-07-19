@@ -2,6 +2,7 @@ import { ItemView, WorkspaceLeaf, Notice } from 'obsidian';
 import { t } from './localization';
 import { TabDefinition, TAB_DEFINITIONS } from './tabs';
 import { getTasksInProgressElement } from './inProgress';
+import { getPlannedTasksElement } from './planned';
 import PersonalDevelopmentPlanPlugin from "./../main";
 import { PersonalDevelopmentPlanSettings } from './../settings/settings';
 
@@ -137,9 +138,8 @@ export class PlanView extends ItemView {
                 const tasksElement = await getTasksInProgressElement(this.plugin.settings);
                 tabContent.appendChild(tasksElement);
             } else if (tab.id === 'planned') {
-                tabContent.createEl('p', {
-                    text: `Здесь будет содержимое раздела "${tab.id}"`
-                });
+                const tasksElement = await getPlannedTasksElement(this.plugin.settings);
+                tabContent.appendChild(tasksElement);
             } else if (tab.id === 'knowledge-base') {
                 tabContent.createEl('p', {
                     text: `Здесь будет содержимое раздела "${tab.id}"`

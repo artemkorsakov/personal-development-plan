@@ -1,4 +1,6 @@
 import { Notice, TFile, Vault } from 'obsidian';
+import { t } from './localization';
+import { MaterialType } from './../settings/settings';
 
 export async function openTaskFile(path: string, vault: Vault): Promise<void> {
     try {
@@ -36,4 +38,9 @@ export function getTaskTypeIcon(type: string): string {
         "podcast": "🎧"
     };
     return icons[type] || "✏️";
+}
+
+export function getMaterialNameById(materialTypes: MaterialType[], id: string): string {
+    const foundType = materialTypes.find((type: MaterialType) => type.id === id);
+    return foundType?.name || `${t('unknownSection')}: ${id}`;
 }

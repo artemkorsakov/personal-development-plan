@@ -116,7 +116,7 @@ export async function getTasksInProgressElement(settings: PersonalDevelopmentPla
 
 async function getActiveTasks(vault: Vault, settings: PersonalDevelopmentPlanSettings): Promise<TaskInProgress[]> {
     const activeTasks: TaskInProgress[] = [];
-    const folderPath = settings.folderPath || 'PersonalDevelopmentPlan';
+    const folderPath = settings.folderPath;
 
     // Получаем все файлы в указанной папке
     const files = vault.getFiles().filter(file =>
