@@ -25,6 +25,7 @@ export interface Section {
 export interface PersonalDevelopmentPlanSettings {
     maxActiveTasks: number;
     statsStartDate: string;
+    folderPath: string;
     materialTypes: MaterialType[];
     sections: Section[];
     periodicTasks: PeriodicTaskSettings;
@@ -35,6 +36,7 @@ function getDefaultSettings(): PersonalDevelopmentPlanSettings {
     return {
         maxActiveTasks: 5,
         statsStartDate: new Date().toISOString().split('T')[0],
+        folderPath: 'PersonalDevelopmentPlan',
         materialTypes: [
             {
                 id: "book",

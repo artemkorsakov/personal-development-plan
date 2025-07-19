@@ -1,6 +1,7 @@
 import { t } from './localization';
-import { openTaskFile } from './common';
+import { openTaskFile, getTaskTypeIcon } from './common';
 import { PersonalDevelopmentPlanSettings } from './../settings/settings';
+import { App, TFile, Vault } from 'obsidian';
 
 interface TaskInProgress {
     name: string;
@@ -13,13 +14,13 @@ interface TaskInProgress {
     filePath: string;
 }
 
-export function getTasksInProgressElement(settings: PersonalDevelopmentPlanSettings): HTMLElement {
+export async function getTasksInProgressElement(settings: PersonalDevelopmentPlanSettings): Promise<HTMLElement> {
     // Создаем контейнер для всех задач
     const container = document.createElement('div');
     container.className = 'tasks-container';
 
     // Получаем все задачи в работе из системы
-    const activeTasks = getActiveTasks();
+    const activeTasks = await getActiveTasks(this.app.vault, settings);
 
     // Проверка на превышение лимита задач
     const maxTasks = settings.maxActiveTasks || 10;
@@ -39,7 +40,7 @@ export function getTasksInProgressElement(settings: PersonalDevelopmentPlanSetti
         taskCard.className = 'task-card';
 
         taskCard.addEventListener('click', () => {
-            openTaskFile(task.filePath);
+            openTaskFile(task.filePath, this.app.vault);
         });
 
         // Порядковый номер (в правом верхнем углу)
@@ -113,51 +114,47 @@ export function getTasksInProgressElement(settings: PersonalDevelopmentPlanSetti
     return container;
 }
 
-function getActiveTasks(): TaskInProgress[] {
-    // Логика получения активных задач
-    return [
-        {
-            name: "Прочитать книгу 'Atomic Habits'",
-            type: "Книга",
-            section: "Саморазвитие",
-            order: 1,
-            startDate: "2023-10-01",
-            dueDate: "2023-11-15",
-            progress: 60,
-            filePath: "Tasks/Book.md"
-        },
-        {
-            name: "Прочитать статью 'Как работать над проектом'",
-            type: "Статья",
-            section: "Проектирование",
-            order: 3,
-            startDate: "2025-07-01",
-            dueDate: "2025-07-25",
-            progress: 40,
-            filePath: "Tasks/Article.md"
-        },
-        {
-            name: "Прослушать подкаст 'Culips'",
-            type: "Подкаст",
-            section: "Learning English",
-            order: 2,
-            startDate: "2025-06-01",
-            dueDate: "2025-12-25",
-            progress: 11,
-            filePath: "Tasks/Podcast.md"
-        }
-    ];
-}
+async function getActiveTasks(vault: Vault, settings: PersonalDevelopmentPlanSettings): Promise<TaskInProgress[]> {
+    const activeTasks: TaskInProgress[] = [];
+    const folderPath = settings.folderPath || 'PersonalDevelopmentPlan';
 
-function getTaskTypeIcon(type: string): string {
-    const icons: Record<string, string> = {
-        "Книга": "📚",
-        "Статья": "📄",
-        "Курс": "🎓",
-        "Видео": "▶️",
-        "Подкаст": "🎧"
-    };
-    return icons[type] || "✏️";
+    // Получаем все файлы в указанной папке
+    const files = vault.getFiles().filter(file =>
+        file.path.startsWith(folderPath + '/') &&
+        file.extension === 'md'
+    );
+
+    for (const file of files) {
+        try {
+            // Читаем содержимое файла
+            const content = await vault.cachedRead(file);
+            const frontmatter = this.app.metadataCache.getFileCache(file)?.frontmatter;
+
+            // Проверяем статус задачи
+            if (frontmatter?.status !== 'in-progress') {
+                continue;
+            }
+
+            // Формируем объект задачи
+            const task: TaskInProgress = {
+                name: frontmatter?.title || file.basename || "???",
+                type: frontmatter?.type || "???",
+                section: frontmatter?.section || "???",
+                order: frontmatter?.order ?? 100,
+                startDate: frontmatter?.startDate || "???",
+                dueDate: frontmatter?.dueDate || "???",
+                progress: frontmatter?.progress ?? 0,
+                filePath: file.path
+            };
+
+            activeTasks.push(task);
+        } catch (error) {
+            console.error(`Error reading file ${file.path}:`, error);
+        }
+    }
+
+    // Сортируем задачи по порядку
+    return activeTasks.sort((a, b) => a.order - b.order);
 }
 
 function generateProgressBar(progress: number): string {

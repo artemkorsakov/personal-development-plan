@@ -31,6 +31,18 @@ export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
 
         containerEl.createEl('h2', { text: t.generalSettings });
 
+        // Настройка пути к папке
+        new Setting(containerEl)
+            .setName(t.folderPath)
+            .setDesc(t.folderPathDesc)
+            .addText(text => text
+                .setPlaceholder('PersonalDevelopmentPlan')
+                .setValue(this.settings.folderPath)
+                .onChange(async (value) => {
+                    this.settings.folderPath = value.trim();
+                    await (this.plugin as any).saveSettings();
+                }));
+
         // Task limits
         new Setting(containerEl)
             .setName(t.maxActiveTasks)

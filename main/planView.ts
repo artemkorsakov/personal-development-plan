@@ -80,12 +80,13 @@ export class PlanView extends ItemView {
         helpIcon.setAttribute('data-tooltip', tooltip);
     }
 
-    createTabs(container: HTMLElement) {
+    async createTabs(container: HTMLElement) {
         // Создаем панель вкладок
         const tabsHeader = container.createDiv({ cls: 'plan-tabs-header' });
         const tabsContent = container.createDiv({ cls: 'plan-tabs-content' });
 
-        TAB_DEFINITIONS.forEach((tab, index) => {
+        // Заменяем forEach на for...of для работы с await
+        for (const [index, tab] of TAB_DEFINITIONS.entries()) {
             // Кнопка вкладки (без иконки вопроса)
             const tabBtn = tabsHeader.createEl('button', {
                 cls: 'plan-tab',
@@ -133,7 +134,7 @@ export class PlanView extends ItemView {
             }
 
             if (tab.id === 'in-progress') {
-                const tasksElement = getTasksInProgressElement(this.plugin.settings);
+                const tasksElement = await getTasksInProgressElement(this.plugin.settings);
                 tabContent.appendChild(tasksElement);
             } else if (tab.id === 'planned') {
                 tabContent.createEl('p', {
@@ -160,7 +161,7 @@ export class PlanView extends ItemView {
                     text: `Здесь будет содержимое раздела "${tab.id}"`
                 });
             }
-        });
+        }
     }
 
     async onClose() {

@@ -27,6 +27,8 @@ interface TranslationKeys {
     materialTypes: string;
     sectionsCategories: string;
     periodicTasks: string;
+    folderPath: string;
+    folderPathDesc: string;
     maxActiveTasks: string;
     maxActiveTasksDesc: string;
     statsStartDate: string;
@@ -105,6 +107,8 @@ const translations: Record<string, TranslationKeys> = {
         materialTypes: 'Типы материалов',
         sectionsCategories: 'Разделы и категории',
         periodicTasks: 'Периодические задачи',
+        folderPath: 'Путь к папке с задачами',
+        folderPathDesc: 'Папка, где хранятся файлы задач (например, PersonalDevelopmentPlan)',
         maxActiveTasks: 'Максимум активных задач',
         maxActiveTasksDesc: 'Максимальное количество задач "В работе"',
         statsStartDate: 'Начало отсчёта статистики',
@@ -180,6 +184,8 @@ const translations: Record<string, TranslationKeys> = {
         materialTypes: 'Material Types',
         sectionsCategories: 'Sections and Categories',
         periodicTasks: 'Periodic Tasks',
+        folderPath: 'Folder Path',
+        folderPathDesc: 'Folder where the task files are stored (e.g., PersonalDevelopmentPlan)',
         maxActiveTasks: 'Max Active Tasks',
         maxActiveTasksDesc: 'Maximum number of "In Progress" tasks',
         statsStartDate: 'Statistics Start Date',
@@ -244,7 +250,7 @@ export function t(key: keyof TranslationKeys): string {
 
 const SETTINGS_KEYS: (keyof TranslationKeys)[] = [
     'settingsTitle', 'generalSettings', 'materialTypes', 'sectionsCategories',
-    'periodicTasks', 'maxActiveTasks', 'maxActiveTasksDesc', 'statsStartDate',
+    'periodicTasks', 'folderPath', 'folderPathDesc', 'maxActiveTasks', 'maxActiveTasksDesc', 'statsStartDate',
     'statsStartDateDesc', 'addNewType', 'newType', 'addNewSection', 'newSection',
     'daily', 'weekly', 'monthly', 'quarterly', 'yearly', 'checklistItem',
     'addItem', 'sectionName', 'typeName', 'dailyTask', 'weeklyTask',
