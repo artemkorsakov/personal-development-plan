@@ -29,10 +29,12 @@ export async function getPlannedTasksElement(settings: PersonalDevelopmentPlanSe
     // Получаем все задачи
     const allTasks = await getPlannedTasks(this.app.vault, settings);
 
-    // Создаем вкладки для каждого типа материала
-    settings.materialTypes.forEach(materialType => {
-        if (!materialType.enabled) return;
+    const sortedTypes = [...settings.materialTypes]
+        .filter(type => type.enabled)
+        .sort((a, b) => a.order - b.order);
 
+    // Создаем вкладки для каждого типа материала
+    sortedTypes.forEach(materialType => {
         const tab = document.createElement('div');
         tab.className = 'planned-tab';
         tab.dataset.type = materialType.id;

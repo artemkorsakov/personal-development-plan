@@ -15,6 +15,9 @@ interface TranslationKeys {
     noTasksForThisType: string;
     knowledgeBase: string;
     knowledgeBaseTooltip: string;
+    knowledgeBaseName: string;
+    knowledgeBaseSection: string;
+    exportToJSON: string;
     sources: string;
     sourcesTooltip: string;
     statistics: string;
@@ -98,6 +101,9 @@ const translations: Record<string, TranslationKeys> = {
         noTasksForThisType: 'Нет задач для этого типа',
         knowledgeBase: '📚 База знаний',
         knowledgeBaseTooltip: 'Материалы для изучения, по которым пока не сформирован детализированный план',
+        exportToJSON: 'Экспортировать в JSON',
+        knowledgeBaseName: 'Наименование',
+        knowledgeBaseSection: 'Раздел',
         sources: '🔍 Источник',
         sourcesTooltip: 'Ресурсы для пополнения Базы знаний',
         statistics: '📊 Статистика',
@@ -177,6 +183,9 @@ const translations: Record<string, TranslationKeys> = {
         noTasksForThisType: 'No tasks for this type',
         knowledgeBase: '📚 Knowledge Base',
         knowledgeBaseTooltip: 'Materials for learning, which are not yet detailed',
+        exportToJSON: 'Export to JSON',
+        knowledgeBaseName: 'Name',
+        knowledgeBaseSection: 'Section',
         sources: '🔍 Sources',
         sourcesTooltip: 'Resources for filling the Knowledge Base',
         statistics: '📊 Statistics',
