@@ -65,6 +65,8 @@ export async function getKnowledgeBaseElement(settings: PersonalDevelopmentPlanS
         tab.addEventListener('click', () => {
             updateContentView(contentContainer, allItems, 'type', type.id);
             setActiveTab(tab, typeTabs);
+            // Сбрасываем активную секцию при переключении типа
+            resetActiveTab(sectionTabs);
         });
         typeTabs.appendChild(tab);
     });
@@ -76,10 +78,10 @@ export async function getKnowledgeBaseElement(settings: PersonalDevelopmentPlanS
         const tab = createTab(
             section.id,
             section.name,
-            allItems.filter(item => item.section === section.id).length
+            allItems.filter(item => item.section === section.name).length
         );
         tab.addEventListener('click', () => {
-            updateContentView(contentContainer, allItems, 'section', section.id);
+            updateContentView(contentContainer, allItems, 'section', section.name);
             setActiveTab(tab, sectionTabs);
         });
         sectionTabs.appendChild(tab);
@@ -94,6 +96,14 @@ export async function getKnowledgeBaseElement(settings: PersonalDevelopmentPlanS
     return mainContainer;
 }
 
+// Новая функция для сброса активной вкладки
+function resetActiveTab(container: HTMLElement) {
+    container.querySelectorAll('.knowledge-tab').forEach(tab => {
+        tab.classList.remove('active');
+    });
+}
+
+// Существующие функции остаются без изменений
 function createTab(id: string, label: string, count: number): HTMLElement {
     const tab = document.createElement('div');
     tab.className = 'knowledge-tab';
@@ -186,6 +196,11 @@ async function getKnowledgeItems(vault: Vault, settings: PersonalDevelopmentPlan
         try {
             const frontmatter = this.app.metadataCache.getFileCache(file)?.frontmatter;
             if (!frontmatter) continue;
+
+            // Проверяем статус задачи
+            if (frontmatter?.status !== 'knowledge-base') {
+                continue;
+            }
 
             const item: KnowledgeItem = {
                 name: frontmatter?.title || file.basename || "???",
