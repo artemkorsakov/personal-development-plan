@@ -1,6 +1,6 @@
 import { t } from './localization';
-import { openTaskFile, getTaskTypeIcon, getMaterialNameById } from './common';
-import { PersonalDevelopmentPlanSettings } from './../settings/settings';
+import { openTaskFile, getTaskTypeIcon, getMaterialNameById, createHelpIcon } from './common';
+import { PersonalDevelopmentPlanSettings, MaterialType } from './../settings/settings';
 import { App, TFile, Vault } from 'obsidian';
 
 interface KnowledgeItem {
@@ -24,6 +24,8 @@ export async function getKnowledgeBaseElement(settings: PersonalDevelopmentPlanS
     exportBtn.textContent = t('exportToJSON');
     exportBtn.addEventListener('click', () => exportToJSON(settings));
     header.appendChild(exportBtn);
+
+    createHelpIcon(header, t('exportToJSONTooltip'));
 
     mainContainer.appendChild(header);
 
@@ -51,6 +53,51 @@ export async function getKnowledgeBaseElement(settings: PersonalDevelopmentPlanS
     // Get all knowledge items
     const allItems = await getKnowledgeItems(this.app.vault, settings);
 
+    // Track currently selected type and section
+    let currentType: string | null = null;
+    let currentSection: string | null = null;
+
+    // Function to update section tabs counts based on current filters
+    const updateSectionTabsCounts = () => {
+        const sectionTabs = mainContainer.querySelector('.knowledge-section-tabs');
+        if (!sectionTabs) return;
+
+        sectionTabs.querySelectorAll('.knowledge-tab').forEach(tab => {
+            const sectionId = tab.getAttribute('data-id');
+            const section = settings.sections.find(s => s.id === sectionId);
+            if (!section) return;
+
+            const count = currentType
+                ? allItems.filter(item => item.section === section.name && item.type === currentType).length
+                : allItems.filter(item => item.section === section.name).length;
+
+            // Update count in the tab label
+            const labelSpan = tab.querySelector('.knowledge-tab-label');
+            if (labelSpan) {
+                const label = section.name;
+                labelSpan.textContent = `${label} (${count})`;
+            }
+        });
+    };
+
+    // Function to update content view based on current filters
+    const updateContent = () => {
+        let filteredItems = [...allItems];
+
+        // Apply type filter if set
+        if (currentType) {
+            filteredItems = filteredItems.filter(item => item.type === currentType);
+        }
+
+        // Apply section filter if set
+        if (currentSection) {
+            filteredItems = filteredItems.filter(item => item.section === currentSection);
+        }
+
+        // Update the content view
+        renderContent(contentContainer, filteredItems, settings.materialTypes);
+    };
+
     // Create type tabs
     const sortedTypes = [...settings.materialTypes]
         .filter(type => type.enabled)
@@ -63,10 +110,12 @@ export async function getKnowledgeBaseElement(settings: PersonalDevelopmentPlanS
             allItems.filter(item => item.type === type.id).length
         );
         tab.addEventListener('click', () => {
-            updateContentView(contentContainer, allItems, 'type', type.id);
+            currentType = type.id;
+            currentSection = null; // Reset section when type changes
+            updateContent();
             setActiveTab(tab, typeTabs);
-            // Сбрасываем активную секцию при переключении типа
             resetActiveTab(sectionTabs);
+            updateSectionTabsCounts(); // Обновляем счетчики в секциях
         });
         typeTabs.appendChild(tab);
     });
@@ -75,13 +124,17 @@ export async function getKnowledgeBaseElement(settings: PersonalDevelopmentPlanS
     const uniqueSections = [...settings.sections]
         .sort((a, b) => a.order - b.order);
     uniqueSections.forEach(section => {
+        // Initial count calculation
+        const initialCount = allItems.filter(item => item.section === section.name).length;
+
         const tab = createTab(
             section.id,
             section.name,
-            allItems.filter(item => item.section === section.name).length
+            initialCount
         );
         tab.addEventListener('click', () => {
-            updateContentView(contentContainer, allItems, 'section', section.name);
+            currentSection = section.name;
+            updateContent();
             setActiveTab(tab, sectionTabs);
         });
         sectionTabs.appendChild(tab);
@@ -96,6 +149,68 @@ export async function getKnowledgeBaseElement(settings: PersonalDevelopmentPlanS
     return mainContainer;
 }
 
+// Function to render content based on filtered items
+function renderContent(container: HTMLElement, items: KnowledgeItem[], materialTypes: MaterialType[]) {
+    container.empty();
+
+    const sortedItems = items.sort((a, b) => a.name.localeCompare(b.name));
+
+    if (sortedItems.length === 0) {
+        const emptyMsg = document.createElement('div');
+        emptyMsg.className = 'knowledge-empty-msg';
+        emptyMsg.textContent = t('noTasksForThisType');
+        container.appendChild(emptyMsg);
+        return;
+    }
+
+    // Create table
+    const table = document.createElement('table');
+    table.className = 'knowledge-items-table';
+
+    // Table header
+    const headerRow = document.createElement('tr');
+    const nameHeader = document.createElement('th');
+    nameHeader.textContent = t('knowledgeBaseName');
+    const typeHeader = document.createElement('th');
+    typeHeader.textContent = t('knowledgeBaseType');
+    const sectionHeader = document.createElement('th');
+    sectionHeader.textContent = t('knowledgeBaseSection');
+
+    headerRow.appendChild(nameHeader);
+    headerRow.appendChild(typeHeader);
+    headerRow.appendChild(sectionHeader);
+    table.appendChild(headerRow);
+
+    // Table rows
+    sortedItems.forEach(item => {
+        const row = document.createElement('tr');
+        row.className = 'knowledge-item-row';
+
+        const nameCell = document.createElement('td');
+        const nameLink = document.createElement('a');
+        nameLink.href = '#';
+        nameLink.textContent = item.name;
+        nameLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            openTaskFile(item.filePath, this.app.vault);
+        });
+        nameCell.appendChild(nameLink);
+
+        const typeCell = document.createElement('td');
+        typeCell.textContent = getMaterialNameById(materialTypes, item.type);
+
+        const sectionCell = document.createElement('td');
+        sectionCell.textContent = item.section;
+
+        row.appendChild(nameCell);
+        row.appendChild(typeCell);
+        row.appendChild(sectionCell);
+        table.appendChild(row);
+    });
+
+    container.appendChild(table);
+}
+
 // Новая функция для сброса активной вкладки
 function resetActiveTab(container: HTMLElement) {
     container.querySelectorAll('.knowledge-tab').forEach(tab => {
@@ -103,7 +218,6 @@ function resetActiveTab(container: HTMLElement) {
     });
 }
 
-// Существующие функции остаются без изменений
 function createTab(id: string, label: string, count: number): HTMLElement {
     const tab = document.createElement('div');
     tab.className = 'knowledge-tab';
@@ -121,66 +235,6 @@ function setActiveTab(tab: HTMLElement, container: HTMLElement) {
     container.querySelectorAll('.knowledge-tab').forEach(t =>
         t.classList.remove('active'));
     tab.classList.add('active');
-}
-
-function updateContentView(
-    container: HTMLElement,
-    items: KnowledgeItem[],
-    filterBy: 'type' | 'section',
-    value: string
-) {
-    container.empty();
-
-    const filteredItems = items.filter(item => item[filterBy] === value)
-        .sort((a, b) => a.name.localeCompare(b.name));
-
-    if (filteredItems.length === 0) {
-        const emptyMsg = document.createElement('div');
-        emptyMsg.className = 'knowledge-empty-msg';
-        emptyMsg.textContent = t('noTasksForThisType');
-        container.appendChild(emptyMsg);
-        return;
-    }
-
-    // Create table
-    const table = document.createElement('table');
-    table.className = 'knowledge-items-table';
-
-    // Table header
-    const headerRow = document.createElement('tr');
-    const nameHeader = document.createElement('th');
-    nameHeader.textContent = t('knowledgeBaseName');
-    const sectionHeader = document.createElement('th');
-    sectionHeader.textContent = t('knowledgeBaseSection');
-
-    headerRow.appendChild(nameHeader);
-    headerRow.appendChild(sectionHeader);
-    table.appendChild(headerRow);
-
-    // Table rows
-    filteredItems.forEach(item => {
-        const row = document.createElement('tr');
-        row.className = 'knowledge-item-row';
-
-        const nameCell = document.createElement('td');
-        const nameLink = document.createElement('a');
-        nameLink.href = '#';
-        nameLink.textContent = item.name;
-        nameLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            openTaskFile(item.filePath, this.app.vault);
-        });
-        nameCell.appendChild(nameLink);
-
-        const sectionCell = document.createElement('td');
-        sectionCell.textContent = item.section;
-
-        row.appendChild(nameCell);
-        row.appendChild(sectionCell);
-        table.appendChild(row);
-    });
-
-    container.appendChild(table);
 }
 
 async function getKnowledgeItems(vault: Vault, settings: PersonalDevelopmentPlanSettings): Promise<KnowledgeItem[]> {

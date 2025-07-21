@@ -16,8 +16,10 @@ interface TranslationKeys {
     knowledgeBase: string;
     knowledgeBaseTooltip: string;
     knowledgeBaseName: string;
+    knowledgeBaseType: string;
     knowledgeBaseSection: string;
     exportToJSON: string;
+    exportToJSONTooltip: string;
     sources: string;
     sourcesTooltip: string;
     statistics: string;
@@ -102,7 +104,9 @@ const translations: Record<string, TranslationKeys> = {
         knowledgeBase: '📚 База знаний',
         knowledgeBaseTooltip: 'Материалы для изучения, по которым пока не сформирован детализированный план',
         exportToJSON: 'Экспортировать в JSON',
+        exportToJSONTooltip: 'Экспортировать базу знаний в JSON-файл, чтобы можно было поделиться с сообществом. Подробнее в документации к плагину',
         knowledgeBaseName: 'Наименование',
+        knowledgeBaseType: 'Тип',
         knowledgeBaseSection: 'Раздел',
         sources: '🔍 Источник',
         sourcesTooltip: 'Ресурсы для пополнения Базы знаний',
@@ -182,8 +186,10 @@ const translations: Record<string, TranslationKeys> = {
         unknownSection: 'Unknown Section',
         noTasksForThisType: 'No tasks for this type',
         knowledgeBase: '📚 Knowledge Base',
+        knowledgeBaseType: 'Type',
         knowledgeBaseTooltip: 'Materials for learning, which are not yet detailed',
         exportToJSON: 'Export to JSON',
+        exportToJSONTooltip: 'Export the Knowledge Base to a JSON file to share with the community. More details in the plugin documentation',
         knowledgeBaseName: 'Name',
         knowledgeBaseSection: 'Section',
         sources: '🔍 Sources',

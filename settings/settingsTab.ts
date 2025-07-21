@@ -25,6 +25,13 @@ export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
         this.addPeriodicTasksSettings();
     }
 
+    // Функция для обновления порядка элементов
+    private updateItemsOrder(items: { order: number }[]) {
+        items.forEach((item, index) => {
+            item.order = index;
+        });
+    }
+
     addGeneralSettings(): void {
         const { containerEl } = this;
         const t = getLocalizedSettings();
@@ -77,7 +84,6 @@ export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
 
         // Material types list
         this.settings.materialTypes.forEach((material, index) => {
-            // Основные настройки типа материала (название, переключатель, кнопки вверх/вниз)
             const setting = new Setting(containerEl)
                 .setName(material.name)
                 .addToggle(toggle => toggle
@@ -100,6 +106,7 @@ export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
                             const temp = this.settings.materialTypes[index - 1];
                             this.settings.materialTypes[index - 1] = material;
                             this.settings.materialTypes[index] = temp;
+                            this.updateItemsOrder(this.settings.materialTypes); // Обновляем порядок
                             await (this.plugin as any).saveSettings();
                             this.display();
                         }
@@ -111,12 +118,12 @@ export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
                             const temp = this.settings.materialTypes[index + 1];
                             this.settings.materialTypes[index + 1] = material;
                             this.settings.materialTypes[index] = temp;
+                            this.updateItemsOrder(this.settings.materialTypes); // Обновляем порядок
                             await (this.plugin as any).saveSettings();
                             this.display();
                         }
                     }));
 
-            // Добавляем кнопку "Добавить пункт" (оставляем её в основной строке)
             setting.addButton(button => button
                 .setButtonText(t.addItem)
                 .onClick(async () => {
@@ -125,11 +132,10 @@ export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
                     this.display();
                 }));
 
-            // Каждый пункт чеклиста выводим в отдельной строке
             material.checklistItems.forEach((item, itemIndex) => {
                 new Setting(containerEl)
-					.addText(text => {
-                        text.inputEl.style.width = "100%"; // Растягиваем на всю ширину
+                    .addText(text => {
+                        text.inputEl.style.width = "100%";
                         text
                             .setPlaceholder(t.checklistItem)
                             .setValue(item)
@@ -139,7 +145,7 @@ export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
                             });
                     })
                     .addButton(button => button
-                        .setButtonText('×') // или '−' для удаления
+                        .setButtonText('×')
                         .onClick(async () => {
                             material.checklistItems.splice(itemIndex, 1);
                             await (this.plugin as any).saveSettings();
@@ -148,7 +154,6 @@ export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
             });
         });
 
-        // Добавление нового типа материала (оставляем без изменений)
         new Setting(containerEl)
             .addButton(button => button
                 .setButtonText(t.addNewType)
@@ -189,6 +194,7 @@ export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
                             const temp = this.settings.sections[index - 1];
                             this.settings.sections[index - 1] = section;
                             this.settings.sections[index] = temp;
+                            this.updateItemsOrder(this.settings.sections); // Обновляем порядок
                             await (this.plugin as any).saveSettings();
                             this.display();
                         }
@@ -200,13 +206,13 @@ export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
                             const temp = this.settings.sections[index + 1];
                             this.settings.sections[index + 1] = section;
                             this.settings.sections[index] = temp;
+                            this.updateItemsOrder(this.settings.sections); // Обновляем порядок
                             await (this.plugin as any).saveSettings();
                             this.display();
                         }
                     }));
         });
 
-        // Add new section
         new Setting(containerEl)
             .addButton(button => button
                 .setButtonText(t.addNewSection)
