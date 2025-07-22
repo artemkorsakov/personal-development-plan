@@ -1,8 +1,6 @@
-# Personal Development Plan (PDP) - Плагин для Obsidian
+# Personal Development Plan
 
-## Введение
-
-**Personal Development Plan (PDP)** — это специализированный плагин для системы управления знаниями Obsidian,
+**Personal Development Plan** — это Obsidian плагин для системы управления знаниями,
 предназначенный для комплексного планирования и отслеживания личного и профессионального развития.
 
 ### Основные возможности:
