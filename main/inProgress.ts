@@ -160,7 +160,7 @@ async function getActiveTasks(vault: Vault, settings: PersonalDevelopmentPlanSet
 function generateProgressBar(progress: number): string {
     const filled = '🟩';
     const empty = '⬜';
-    const totalBlocks = 5;
+    const totalBlocks = 20;
     const filledBlocks = Math.round(progress / 100 * totalBlocks);
     return filled.repeat(filledBlocks) + empty.repeat(totalBlocks - filledBlocks);
 }

@@ -512,3 +512,115 @@
     opacity: 0.6;
     transition: opacity 0.2s ease;
 }
+
+/* Основные стили для контейнера источников */
+/* Основные стили для контейнера источников */
+.sources-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+  padding: 10px;
+}
+
+/* Стили карточки источника */
+.source-card {
+  position: relative;
+  padding: 16px;
+  border-radius: 8px;
+  background: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0; /* Для правильного обрезания текста */
+  width: auto; /* Ширина по содержимому */
+  max-width: 100%; /* Не шире контейнера */
+}
+
+.source-card:hover {
+  background: var(--background-secondary);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  transform: translateY(-1px);
+}
+
+/* Иконка источника */
+.source-icon {
+  font-size: 1.4em;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Название источника */
+.source-name {
+  font-weight: 500;
+  color: var(--text-normal);
+  font-size: 0.95em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-grow: 1;
+}
+
+/* Адаптация для разных размеров экрана */
+@media (max-width: 900px) {
+  .sources-container {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 10px;
+  }
+}
+
+@media (max-width: 600px) {
+  .sources-container {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .source-card {
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .source-icon {
+    font-size: 1.2em;
+    width: 20px;
+    height: 20px;
+  }
+
+  .source-name {
+    font-size: 0.85em;
+  }
+}
+
+/* Для очень узких экранов - одна колонка */
+@media (max-width: 400px) {
+  .sources-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Анимация при наведении */
+@keyframes sourceCardHover {
+  from { transform: translateY(0); }
+  to { transform: translateY(-2px); }
+}
+
+.source-card:hover {
+  animation: sourceCardHover 0.2s ease forwards;
+}
+
+/* Стили для пользовательских источников */
+.source-custom {
+  border-left: 3px solid var(--interactive-accent);
+}
+
+/* Подсветка активного источника */
+.source-card:active {
+  transform: scale(0.98);
+}

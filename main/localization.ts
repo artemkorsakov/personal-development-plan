@@ -22,6 +22,8 @@ interface TranslationKeys {
     exportToJSONTooltip: string;
     sources: string;
     sourcesTooltip: string;
+    sourceItemsList: string;
+    sourceItemsExample: string;
     statistics: string;
     statisticsTooltip: string;
     history: string;
@@ -110,6 +112,8 @@ const translations: Record<string, TranslationKeys> = {
         knowledgeBaseSection: 'Раздел',
         sources: '🔍 Источник',
         sourcesTooltip: 'Ресурсы для пополнения Базы знаний',
+        sourceItemsList: 'Список источников',
+        sourceItemsExample: '- [ ] Пример источника 1\n- [ ] Пример источника 2',
         statistics: '📊 Статистика',
         statisticsTooltip: 'Анализ прогресса по всем разделам',
         history: '🕰️ История',
@@ -194,6 +198,8 @@ const translations: Record<string, TranslationKeys> = {
         knowledgeBaseSection: 'Section',
         sources: '🔍 Sources',
         sourcesTooltip: 'Resources for filling the Knowledge Base',
+        sourceItemsList: 'Source Items',
+        sourceItemsExample: '- [ ] Example Source 1\n- [ ] Example Source 2',
         statistics: '📊 Statistics',
         statisticsTooltip: 'Progress analysis by sections',
         history: '🕰️ History',

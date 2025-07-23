@@ -29,6 +29,27 @@ export async function openTaskFile(path: string, vault: Vault): Promise<void> {
     }
 }
 
+export async function openOrCreateSourceFile(filePath: string, vault: Vault, content: string): Promise<void> {
+    let file = vault.getAbstractFileByPath(filePath) as TFile;
+
+    if (!file) {
+        // Создаем новый файл, если он не существует
+        const folderPath = filePath.split('/').slice(0, -1).join('/');
+        const fileName = filePath.split('/').pop() || 'Untitled.md';
+
+        // Проверяем и создаем папку, если нужно
+        if (!vault.getAbstractFileByPath(folderPath)) {
+            await vault.createFolder(folderPath);
+        }
+
+        // Создаем файл с базовым содержимым
+        file = await vault.create(filePath, content);
+    }
+
+    // Открываем файл
+    openTaskFile(filePath, vault);
+}
+
 export function getTaskTypeIcon(type: string): string {
     const icons: Record<string, string> = {
         "book": "📚",
