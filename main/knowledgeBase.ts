@@ -258,8 +258,8 @@ async function getKnowledgeItems(vault: Vault, settings: PersonalDevelopmentPlan
 
             const item: KnowledgeItem = {
                 name: frontmatter?.title || file.basename || "???",
-                type: frontmatter?.type || "???",
-                section: frontmatter?.section || "???",
+                type: frontmatter?.typeId || "???",
+                section: frontmatter?.sectionId || "???",
                 filePath: file.path
             };
 

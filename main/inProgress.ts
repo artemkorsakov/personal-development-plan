@@ -20,7 +20,7 @@ export async function getTasksInProgressElement(settings: PersonalDevelopmentPla
     container.className = 'tasks-container';
 
     // Получаем все задачи в работе из системы
-    const activeTasks = await getActiveTasks(this.app.vault, settings);
+    const activeTasks = await getActiveTasks(this.app.vault, settings, this.app.metadataCache);
 
     // Проверка на превышение лимита задач
     const maxTasks = settings.maxActiveTasks || 10;
@@ -35,7 +35,7 @@ export async function getTasksInProgressElement(settings: PersonalDevelopmentPla
     activeTasks.sort((a, b) => a.order - b.order);
 
     // Создание карточек задач
-    activeTasks.forEach(task => {
+    for (const task of activeTasks) {
         const taskCard = document.createElement('div');
         taskCard.className = 'task-card';
 
@@ -109,12 +109,16 @@ export async function getTasksInProgressElement(settings: PersonalDevelopmentPla
 
         // Добавляем карточку в контейнер
         container.appendChild(taskCard);
-    });
+    }
 
     return container;
 }
 
-async function getActiveTasks(vault: Vault, settings: PersonalDevelopmentPlanSettings): Promise<TaskInProgress[]> {
+async function getActiveTasks(
+    vault: Vault,
+    settings: PersonalDevelopmentPlanSettings,
+    metadataCache: any
+): Promise<TaskInProgress[]> {
     const activeTasks: TaskInProgress[] = [];
     const folderPath = settings.folderPath;
 
@@ -128,22 +132,25 @@ async function getActiveTasks(vault: Vault, settings: PersonalDevelopmentPlanSet
         try {
             // Читаем содержимое файла
             const content = await vault.cachedRead(file);
-            const frontmatter = this.app.metadataCache.getFileCache(file)?.frontmatter;
+            const frontmatter = metadataCache.getFileCache(file)?.frontmatter;
 
             // Проверяем статус задачи
             if (frontmatter?.status !== 'in-progress') {
                 continue;
             }
 
+            // Рассчитываем прогресс на основе чекбоксов
+            const progress = calculateTaskProgress(content);
+
             // Формируем объект задачи
             const task: TaskInProgress = {
                 name: frontmatter?.title || file.basename || "???",
-                type: frontmatter?.type || "???",
-                section: frontmatter?.section || "???",
+                type: frontmatter?.typeId || "???",
+                section: frontmatter?.sectionId || "???",
                 order: frontmatter?.order ?? 100,
                 startDate: frontmatter?.startDate || "???",
                 dueDate: frontmatter?.dueDate || "???",
-                progress: frontmatter?.progress ?? 0,
+                progress: progress,
                 filePath: file.path
             };
 
@@ -153,8 +160,24 @@ async function getActiveTasks(vault: Vault, settings: PersonalDevelopmentPlanSet
         }
     }
 
-    // Сортируем задачи по порядку
     return activeTasks.sort((a, b) => a.order - b.order);
+}
+
+function calculateTaskProgress(content: string): number {
+    // Находим все чекбоксы в содержимом
+    const checkboxRegex = /- \[(x| )\]/g;
+    const checkboxes = content.match(checkboxRegex) || [];
+
+    if (checkboxes.length === 0) {
+        return 0;
+    }
+
+    // Считаем выполненные чекбоксы
+    const completed = checkboxes.filter(cb => cb === '- [x]').length;
+    const total = checkboxes.length;
+
+    // Рассчитываем процент выполнения
+    return Math.round((completed / total) * 100);
 }
 
 function generateProgressBar(progress: number): string {
@@ -166,11 +189,20 @@ function generateProgressBar(progress: number): string {
 }
 
 function isTaskOverdue(task: TaskInProgress): boolean {
+    if (task.dueDate === "???") return false;
+
     const today = new Date();
     const dueDate = new Date(task.dueDate);
-    return today > dueDate;
+    return today > dueDate && !isNaN(dueDate.getTime());
 }
 
 function formatDate(dateStr: string): string {
-    return dateStr;
+    if (dateStr === "???") return dateStr;
+
+    try {
+        const date = new Date(dateStr);
+        return isNaN(date.getTime()) ? dateStr : date.toLocaleDateString();
+    } catch {
+        return dateStr;
+    }
 }

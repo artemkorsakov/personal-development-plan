@@ -146,8 +146,8 @@ async function getPlannedTasks(vault: Vault, settings: PersonalDevelopmentPlanSe
 
             const task: PlannedTask = {
                 name: frontmatter?.title || file.basename || "???",
-                type: frontmatter?.type || "???",
-                section: frontmatter?.section || "???",
+                type: frontmatter?.typeId || "???",
+                section: frontmatter?.sectionId || "???",
                 order: frontmatter?.order ?? 100,
                 filePath: file.path
             };
