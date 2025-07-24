@@ -48,7 +48,7 @@ export async function getPlannedTasksElement(settings: PersonalDevelopmentPlanSe
         label.className = 'planned-tab-label';
 
         // Подсчет задач для этого типа
-        const taskCount = allTasks.filter(task => task.type === materialType.id).length;
+        const taskCount = allTasks.filter(task => task.type === materialType.name).length;
         label.textContent = `${materialType.name} (${taskCount})`;
         tab.appendChild(label);
 
@@ -62,7 +62,7 @@ export async function getPlannedTasksElement(settings: PersonalDevelopmentPlanSe
             tab.classList.add('active');
 
             // Обновляем контент
-            updateContent(contentContainer, allTasks, materialType.id);
+            updateContent(contentContainer, allTasks, materialType.name);
         });
 
         tabsContainer.appendChild(tab);
@@ -146,8 +146,8 @@ async function getPlannedTasks(vault: Vault, settings: PersonalDevelopmentPlanSe
 
             const task: PlannedTask = {
                 name: frontmatter?.title || file.basename || "???",
-                type: frontmatter?.typeId || "???",
-                section: frontmatter?.sectionId || "???",
+                type: frontmatter?.type || "???",
+                section: frontmatter?.section || "???",
                 order: frontmatter?.order ?? 100,
                 filePath: file.path
             };

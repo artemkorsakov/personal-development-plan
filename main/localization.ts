@@ -11,6 +11,7 @@ interface TranslationKeys {
     inProgressOverdue: string;
     planned: string;
     plannedTooltip: string;
+    unknownType: string;
     unknownSection: string;
     noTasksForThisType: string;
     knowledgeBase: string;
@@ -87,6 +88,22 @@ interface TranslationKeys {
     periodicTasksMonthly1: string;
     periodicTasksQuarterly1: string;
     periodicTasksYearly1: string;
+    // createNewTask
+    createNewTask: string;
+    fillRequiredFields: string;
+    invalidSectionOrType: string;
+    taskType: string;
+    create: string;
+    cancel: string;
+    fileCreationError: string;
+    authors: string;
+    authorsPlaceholder: string;
+    bookName: string;
+    bookNamePlaceholder: string;
+    pages: string;
+    pagesPlaceholder: string;
+    section: string;
+    bookContentHeader: string;
 }
 
 const translations: Record<string, TranslationKeys> = {
@@ -101,6 +118,7 @@ const translations: Record<string, TranslationKeys> = {
         inProgressOverdue: ' (Просрочено!)',
         planned: '⏳ Запланировано',
         plannedTooltip: 'Запланированные, но ещё не начатые задачи',
+        unknownType: 'Неизвестный тип',
         unknownSection: 'Неизвестный раздел',
         noTasksForThisType: 'Нет задач для этого типа',
         knowledgeBase: '📚 База знаний',
@@ -175,6 +193,21 @@ const translations: Record<string, TranslationKeys> = {
         periodicTasksMonthly1: 'Посмотреть видео с доклада ScalaConf',
         periodicTasksQuarterly1: 'Добавить в Базу знаний книги, рекомендованные на ScalaConf',
         periodicTasksYearly1: 'Закончить курс Продвинутая Scala',
+        createNewTask: 'Создать задачу',
+        fillRequiredFields: 'Заполните обязательные поля',
+        invalidSectionOrType: 'Неверно указан раздел или тип',
+        taskType: 'Тип задачи',
+        create: 'Создать',
+        cancel: 'Отмена',
+        fileCreationError: 'Ошибка создания файла',
+        authors: 'Автор(ы)',
+        authorsPlaceholder: 'Введите авторов через запятую',
+        bookName: 'Название книги',
+        bookNamePlaceholder: 'Введите название книги',
+        pages: 'Страниц',
+        pagesPlaceholder: 'Введите количество страниц',
+        section: 'Раздел',
+        bookContentHeader: '## Описание\n\nКраткое описание содержания и цели чтения\n\n## Прогресс выполнения\n\n',
     },
     en: {
         plan: 'Development Plan',
@@ -187,6 +220,7 @@ const translations: Record<string, TranslationKeys> = {
         inProgressOverdue: ' (Overdue!)',
         planned: '⏳ Planned',
         plannedTooltip: 'Planned, but not yet started tasks',
+        unknownType: 'Unknown Type',
         unknownSection: 'Unknown Section',
         noTasksForThisType: 'No tasks for this type',
         knowledgeBase: '📚 Knowledge Base',
@@ -261,6 +295,21 @@ const translations: Record<string, TranslationKeys> = {
         periodicTasksMonthly1: 'Watch ScalaConf talk video',
         periodicTasksQuarterly1: 'Add ScalaConf recommended books to Knowledge Base',
         periodicTasksYearly1: 'Complete Advanced Scala course',
+        createNewTask: 'Create Task',
+        fillRequiredFields: 'Fill in required fields',
+        invalidSectionOrType: 'Invalid section or type',
+        taskType: 'Task Type',
+        create: 'Create',
+        cancel: 'Cancel',
+        fileCreationError: 'File creation error',
+        authors: 'Authors',
+        authorsPlaceholder: 'Enter authors separated by commas',
+        bookName: 'Book Name',
+        bookNamePlaceholder: 'Enter book name',
+        pages: 'Pages',
+        pagesPlaceholder: 'Enter number of pages',
+        section: 'Section',
+        bookContentHeader: '## Description\n\nBrief description of the book content and reading goals\n\n## Progress\n\n',
     }
 };
 

@@ -189,6 +189,15 @@
 
 # Поддержка
 
-Создайте задачи на [GitHub repository][github].
+## Как получить помощь
 
-[github]: https://github.com/artemkorsakov/personal-development-plan/issues
+Мы рады любой помощи и обратной связи!
+
+1. **Сообщения об ошибках и новые фичи**  
+   Если вы нашли баг или хотите предложить новую функцию, создайте issue в [GitHub репозитории][github-issues].
+
+2. **Вопросы и обсуждения**  
+   Для общих вопросов и обсуждений используйте [GitHub Discussions][github-discussions].
+
+[github-issues]: https://github.com/artemkorsakov/personal-development-plan/issues
+[github-discussions]: https://github.com/artemkorsakov/personal-development-plan/discussions

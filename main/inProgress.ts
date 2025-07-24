@@ -1,5 +1,5 @@
 import { t } from './localization';
-import { openTaskFile, getTaskTypeIcon } from './common';
+import { openTaskFile, getTaskTypeIcon, getMaterialIdByName } from './common';
 import { PersonalDevelopmentPlanSettings } from './../settings/settings';
 import { App, TFile, Vault } from 'obsidian';
 
@@ -54,9 +54,10 @@ export async function getTasksInProgressElement(settings: PersonalDevelopmentPla
         firstLine.className = 'task-first-line';
 
         // Иконка типа задачи
+        const typeId = getMaterialIdByName(settings.materialTypes, task.type)
         const typeIcon = document.createElement('span');
         typeIcon.className = 'task-type-icon';
-        typeIcon.textContent = getTaskTypeIcon(task.type);
+        typeIcon.textContent = getTaskTypeIcon(typeId);
         firstLine.appendChild(typeIcon);
 
         // Название задачи
@@ -145,8 +146,8 @@ async function getActiveTasks(
             // Формируем объект задачи
             const task: TaskInProgress = {
                 name: frontmatter?.title || file.basename || "???",
-                type: frontmatter?.typeId || "???",
-                section: frontmatter?.sectionId || "???",
+                type: frontmatter?.type || "???",
+                section: frontmatter?.section || "???",
                 order: frontmatter?.order ?? 100,
                 startDate: frontmatter?.startDate || "???",
                 dueDate: frontmatter?.dueDate || "???",

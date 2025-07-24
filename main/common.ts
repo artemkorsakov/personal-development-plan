@@ -1,6 +1,6 @@
 import { Notice, TFile, Vault } from 'obsidian';
 import { t } from './localization';
-import { MaterialType } from './../settings/settings';
+import { MaterialType, PersonalDevelopmentPlanSettings } from './../settings/settings';
 
 export async function openTaskFile(path: string, vault: Vault): Promise<void> {
     try {
@@ -50,6 +50,33 @@ export async function openOrCreateSourceFile(filePath: string, vault: Vault, con
     openTaskFile(filePath, vault);
 }
 
+export function getAvailableTaskTypes(settings: PersonalDevelopmentPlanSettings): {
+    id: string;
+    name: string;
+    checklistItems: string[];
+}[] {
+    return settings.materialTypes
+        .filter(type => type.enabled)
+        .sort((a, b) => a.order - b.order)
+        .map(type => ({
+            id: type.id,
+            name: type.name,
+            checklistItems: type.checklistItems
+        }));
+}
+
+export function getAvailableSections(settings: PersonalDevelopmentPlanSettings): {
+	id: string;
+    name: string;
+}[] {
+	return settings.sections
+        .sort((a, b) => a.order - b.order)
+        .map(section => ({
+			id: section.id,
+            name: section.name
+        }));
+}
+
 export function getTaskTypeIcon(type: string): string {
     const icons: Record<string, string> = {
         "book": "📚",
@@ -61,9 +88,14 @@ export function getTaskTypeIcon(type: string): string {
     return icons[type] || "✏️";
 }
 
+export function getMaterialIdByName(materialTypes: MaterialType[], name: string): string {
+    const foundType = materialTypes.find((type: MaterialType) => type.name === name);
+    return foundType?.id || `${t('unknownType')}: ${name}`;
+}
+
 export function getMaterialNameById(materialTypes: MaterialType[], id: string): string {
     const foundType = materialTypes.find((type: MaterialType) => type.id === id);
-    return foundType?.name || `${t('unknownSection')}: ${id}`;
+    return foundType?.name || `${t('unknownType')}: ${id}`;
 }
 
 export function createHelpIcon(tabTitle: HTMLElement, tooltip: string) {

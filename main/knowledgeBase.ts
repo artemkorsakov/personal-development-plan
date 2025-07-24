@@ -1,7 +1,8 @@
 import { t } from './localization';
-import { openTaskFile, getTaskTypeIcon, getMaterialNameById, createHelpIcon } from './common';
+import { openTaskFile, getTaskTypeIcon, getMaterialNameById, createHelpIcon, getAvailableTaskTypes, getAvailableSections } from './common';
 import { PersonalDevelopmentPlanSettings, MaterialType } from './../settings/settings';
 import { App, TFile, Vault } from 'obsidian';
+import { BookTask } from './taskTypes';
 
 interface KnowledgeItem {
     name: string;
@@ -15,9 +16,16 @@ export async function getKnowledgeBaseElement(settings: PersonalDevelopmentPlanS
     const mainContainer = document.createElement('div');
     mainContainer.className = 'knowledge-base-container';
 
-    // Create header with export button
+    // Create header with export button and create task button
     const header = document.createElement('div');
     header.className = 'knowledge-header';
+
+    // Add Create Task button
+    const createTaskBtn = document.createElement('button');
+    createTaskBtn.className = 'knowledge-create-btn';
+    createTaskBtn.textContent = t('createNewTask');
+    createTaskBtn.addEventListener('click', () => showCreateTaskForm(settings));
+    header.appendChild(createTaskBtn);
 
     const exportBtn = document.createElement('button');
     exportBtn.className = 'knowledge-export-btn';
@@ -107,10 +115,10 @@ export async function getKnowledgeBaseElement(settings: PersonalDevelopmentPlanS
         const tab = createTab(
             type.id,
             `${getTaskTypeIcon(type.id)} ${type.name}`,
-            allItems.filter(item => item.type === type.id).length
+            allItems.filter(item => item.type === type.name).length
         );
         tab.addEventListener('click', () => {
-            currentType = type.id;
+            currentType = type.name;
             currentSection = null; // Reset section when type changes
             updateContent();
             setActiveTab(tab, typeTabs);
@@ -197,7 +205,7 @@ function renderContent(container: HTMLElement, items: KnowledgeItem[], materialT
         nameCell.appendChild(nameLink);
 
         const typeCell = document.createElement('td');
-        typeCell.textContent = getMaterialNameById(materialTypes, item.type);
+        typeCell.textContent = item.type;
 
         const sectionCell = document.createElement('td');
         sectionCell.textContent = item.section;
@@ -258,8 +266,8 @@ async function getKnowledgeItems(vault: Vault, settings: PersonalDevelopmentPlan
 
             const item: KnowledgeItem = {
                 name: frontmatter?.title || file.basename || "???",
-                type: frontmatter?.typeId || "???",
-                section: frontmatter?.sectionId || "???",
+                type: frontmatter?.type || "???",
+                section: frontmatter?.section || "???",
                 filePath: file.path
             };
 
@@ -286,4 +294,191 @@ async function exportToJSON(settings: PersonalDevelopmentPlanSettings) {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+}
+
+function showCreateTaskForm(settings: PersonalDevelopmentPlanSettings) {
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+
+    const modalContent = document.createElement('div');
+    modalContent.className = 'modal-content';
+
+    const closeSpan = document.createElement('span');
+    closeSpan.className = 'close';
+    closeSpan.innerHTML = '&times;';
+    closeSpan.addEventListener('click', () => modal.remove());
+
+    const title = document.createElement('h2');
+    title.textContent = t('createNewTask');
+
+    const taskTypeSelect = document.createElement('select');
+    taskTypeSelect.id = 'task-type-select';
+
+    const availableTaskTypes = getAvailableTaskTypes(settings);
+    availableTaskTypes.forEach(taskType => {
+        const option = document.createElement('option');
+        option.value = taskType.id;
+        option.textContent = taskType.name;
+        taskTypeSelect.appendChild(option);
+    });
+
+    const formContainer = document.createElement('div');
+    formContainer.id = 'task-form-container';
+
+    // Add event listener to show appropriate form based on task type
+    taskTypeSelect.addEventListener('change', () => {
+        updateFormBasedOnTaskType(formContainer, taskTypeSelect.value, settings);
+    });
+
+    modalContent.appendChild(closeSpan);
+    modalContent.appendChild(title);
+    modalContent.appendChild(createLabel(t('taskType')));
+    modalContent.appendChild(taskTypeSelect);
+    modalContent.appendChild(formContainer);
+
+    // Add buttons container
+    const buttonsContainer = document.createElement('div');
+    buttonsContainer.className = 'modal-buttons';
+
+    const cancelButton = document.createElement('button');
+    cancelButton.textContent = t('cancel');
+    cancelButton.addEventListener('click', () => modal.remove());
+
+    const createButton = document.createElement('button');
+    createButton.textContent = t('create');
+    createButton.className = 'mod-cta';
+    createButton.addEventListener('click', () => {
+        createTaskBasedOnType(taskTypeSelect.value, settings);
+        modal.remove();
+    });
+
+    buttonsContainer.appendChild(cancelButton);
+    buttonsContainer.appendChild(createButton);
+    modalContent.appendChild(buttonsContainer);
+
+    modal.appendChild(modalContent);
+    document.body.appendChild(modal);
+
+    // Initialize form for the first selected task type
+    updateFormBasedOnTaskType(formContainer, taskTypeSelect.value, settings);
+}
+
+function updateFormBasedOnTaskType(container: HTMLElement, taskTypeId: string, settings: PersonalDevelopmentPlanSettings) {
+    container.empty();
+
+    if (taskTypeId === 'book') {
+        renderBookTaskForm(container, settings);
+    }
+    // Add other task type forms here when needed
+}
+
+function renderBookTaskForm(container: HTMLElement, settings: PersonalDevelopmentPlanSettings) {
+    // Authors field
+    container.appendChild(createLabel(t('authors')));
+    const authorsInput = document.createElement('input');
+    authorsInput.type = 'text';
+    authorsInput.id = 'book-authors';
+    authorsInput.placeholder = t('authorsPlaceholder');
+    container.appendChild(authorsInput);
+
+    // Name field
+    container.appendChild(createLabel(t('bookName')));
+    const nameInput = document.createElement('input');
+    nameInput.type = 'text';
+    nameInput.id = 'book-name';
+    nameInput.placeholder = t('bookNamePlaceholder');
+    container.appendChild(nameInput);
+
+    // Pages field
+    container.appendChild(createLabel(t('pages')));
+    const pagesInput = document.createElement('input');
+    pagesInput.type = 'number';
+    pagesInput.id = 'book-pages';
+    pagesInput.placeholder = t('pagesPlaceholder');
+    container.appendChild(pagesInput);
+
+    // Section selection
+    container.appendChild(createLabel(t('section')));
+    const sectionSelect = document.createElement('select');
+    sectionSelect.id = 'book-section';
+
+    const availableSections = getAvailableSections(settings);
+    availableSections.forEach(section => {
+        const option = document.createElement('option');
+        option.value = section.id;
+        option.textContent = section.name;
+        sectionSelect.appendChild(option);
+    });
+
+    container.appendChild(sectionSelect);
+}
+
+function createTaskBasedOnType(taskTypeId: string, settings: PersonalDevelopmentPlanSettings) {
+    if (taskTypeId === 'book') {
+        createBookTask(settings);
+    }
+    // Add other task type creation functions here when needed
+}
+
+async function createBookTask(settings: PersonalDevelopmentPlanSettings) {
+    const authors = (document.getElementById('book-authors') as HTMLInputElement)?.value;
+    const name = (document.getElementById('book-name') as HTMLInputElement)?.value;
+    const pages = parseInt((document.getElementById('book-pages') as HTMLInputElement)?.value || '0');
+    const sectionId = (document.getElementById('book-section') as HTMLSelectElement)?.value;
+
+    if (!authors || !name || !sectionId) {
+        alert(t('fillRequiredFields'));
+        return;
+    }
+
+    const availableSections = getAvailableSections(settings);
+    const section = availableSections.find(s => s.id === sectionId);
+    const availableTaskTypes = getAvailableTaskTypes(settings);
+    const taskType = availableTaskTypes.find(t => t.id === 'book');
+
+    if (!section || !taskType) {
+        alert(t('invalidSectionOrType'));
+        return;
+    }
+
+    const bookTask: BookTask = {
+        type: taskType.name,
+        authors: authors,
+        name: name,
+        pages: pages,
+        title: `${authors} - ${name}`,
+        status: 'knowledge-base',
+        section: section.name,
+        order: 999,
+        startDate: '',
+        dueDate: ''
+    };
+
+    const content = `${t('bookContentHeader')}${
+        taskType.checklistItems.map(item => `- [ ] ${item}`).join('\n')
+    }`;
+
+    await createTaskFile(bookTask, content, settings);
+}
+
+async function createTaskFile(task: BookTask, content: string, settings: PersonalDevelopmentPlanSettings) {
+    const fileName = `${task.title}.md`;
+    const filePath = `${settings.folderPath}/${fileName}`;
+
+    const frontmatter = `---\n${Object.entries(task)
+        .map(([key, value]) => `${key}: ${typeof value === 'string' ? value : JSON.stringify(value)}`)
+        .join('\n')}\n---\n\n${content}`;
+
+    try {
+        await this.app.vault.create(filePath, frontmatter);
+    } catch (error) {
+        console.error('Error creating task file:', error);
+        alert(t('fileCreationError'));
+    }
+}
+
+function createLabel(text: string): HTMLElement {
+    const label = document.createElement('label');
+    label.textContent = text;
+    return label;
 }
