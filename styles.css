@@ -1,42 +1,11 @@
-/* Заголовок вкладки плагина */
-.view-header-title {
-  font-size: 1.1em;
-  font-weight: 600;
-  color: var(--text-normal);
-  padding: 8px 0;
-  margin: 0;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+/****************************** Common ******************************/
+/* Анимация появления */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* Иконка в заголовке */
-.view-header-title .icon {
-  color: var(--interactive-accent);
-  width: 18px;
-  height: 18px;
-  flex-shrink: 0;
-}
-
-/* Адаптация для узких областей */
-.view-header-title-container {
-  min-width: 0;
-  overflow: hidden;
-}
-
-/* Настройки */
-.periodic-task-setting {
-    margin-left: 10px;
-}
-
-.delete-task-button {
-    min-width: unset !important;
-    width: 24px;
-    margin-left: 8px;
-}
+/****************************** Закладки индивидуального плана ******************************/
 
 /* Основные стили для view */
 .plan-development-view {
@@ -121,13 +90,7 @@
   display: block;
 }
 
-/* Анимация появления */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(5px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Стили для заголовка с иконкой и иконки вопроса */
+/****************************** Стили для заголовка с иконкой и иконки вопроса ******************************/
 /* Заголовок вкладки */
 .tab-title {
   display: flex;
@@ -197,7 +160,7 @@
   transform: translateX(-50%) translateY(10px); /* Финальное положение при hover */
 }
 
-/* Стили для карточки задачи */
+/****************************** Закладка "В работе" ******************************/
 .task-warning {
   padding: 12px 16px;
   background-color: var(--background-modifier-error);
@@ -283,14 +246,7 @@
   color: var(--text-muted);
 }
 
-/* Закладка "Запланированные задачи" */
-/* Основные стили для view */
-.planned-development-view {
-  height: 100%;
-  overflow: hidden;
-  background: var(--background-primary);
-}
-
+/****************************** Закладка "Запланировано" ******************************/
 /* Главный контейнер */
 .planned-main-container {
   display: flex;
@@ -406,38 +362,7 @@
   color: var(--text-faint);
 }
 
-/* Анимации */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(5px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Адаптация для мобильных устройств */
-@media (max-width: 768px) {
-  .planned-tabs-container {
-    padding: 8px 12px 0;
-    gap: 3px;
-  }
-
-  .planned-tab {
-    padding: 6px 8px;
-    font-size: 0.8em;
-  }
-
-  .planned-content-container {
-    padding: 12px;
-  }
-
-  .planned-card {
-    padding: 12px;
-  }
-
-  .planned-name {
-    font-size: 0.9em;
-  }
-}
-
-/* База знаний */
+/****************************** Закладка "База знаний" ******************************/
 .knowledge-base-container {
   display: flex;
   flex-direction: column;
@@ -538,132 +463,39 @@
   transition: opacity 0.2s ease;
 }
 
-/* Modal styles */
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
+/****************************** Форма создания новой задачи ******************************/
+.pdp-modal-content {
+    padding: 1em;
+    font-family: var(--font-family);
 }
 
-.modal-content {
-  background: var(--background-primary);
-  padding: 20px;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 500px;
-  max-height: 90vh;
-  overflow-y: auto;
-  position: relative;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+.pdp-modal-content label {
+    display: block;
+    margin-bottom: 0.5em;
+    color: var(--text-normal);
+    font-weight: 500;
 }
 
-.modal-content h2 {
-  margin-top: 0;
-  color: var(--text-normal);
-}
-
-.close {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  font-size: 24px;
-  cursor: pointer;
-  color: var(--text-muted);
-}
-
-/* Form styles */
-#task-form-container {
-  margin-top: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-label {
-  display: block;
-  margin-bottom: 4px;
-  color: var(--text-normal);
-  font-size: var(--font-ui-small);
-}
-
-input[type="text"],
-input[type="number"],
-select {
-  width: 100%;
-  padding: 8px;
-  border-radius: 4px;
-  border: 1px solid var(--background-modifier-border);
-  background: var(--background-primary);
-  color: var(--text-normal);
-  font-size: var(--font-ui-small);
-}
-
-input[type="text"]:focus,
-input[type="number"]:focus,
-select:focus {
-  outline: none;
-  border-color: var(--interactive-accent);
-  box-shadow: 0 0 0 2px var(--interactive-accent-hover);
-}
-
-/* Modal buttons */
-.modal-buttons {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  margin-top: 20px;
-}
-
-.modal-buttons button {
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: var(--font-ui-small);
-  transition: background-color 0.2s ease;
-}
-
-.modal-buttons button:first-child {
-  background: var(--background-secondary);
-  color: var(--text-normal);
-  border: 1px solid var(--background-modifier-border);
-}
-
-.modal-buttons button:first-child:hover {
-  background: var(--background-secondary-alt);
-}
-
-.modal-buttons button.mod-cta {
-  background: var(--interactive-accent);
-  color: var(--text-on-accent);
-  border: none;
-}
-
-.modal-buttons button.mod-cta:hover {
-  background: var(--interactive-accent-hover);
-}
-
-/* Responsive adjustments */
-@media (max-width: 400px) {
-  .modal-content {
-    width: 95%;
-    padding: 15px;
-  }
-
-  .modal-buttons {
-    flex-direction: column;
-  }
-
-  .modal-buttons button {
+.pdp-modal-content select,
+.pdp-modal-content input,
+.pdp-modal-content textarea {
     width: 100%;
-  }
+    padding: 0.5em;
+    margin-bottom: 1em;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 4px;
+    background-color: var(--background-primary);
+    color: var(--text-normal);
 }
+
+.modal-button-container {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5em;
+    margin-top: 1em;
+}
+
+/****************************** Закладка "Источники" ******************************/
 
 /* Основные стили для контейнера источников */
 .sources-container {
@@ -716,44 +548,6 @@ select:focus {
   overflow: hidden;
   text-overflow: ellipsis;
   flex-grow: 1;
-}
-
-/* Адаптация для разных размеров экрана */
-@media (max-width: 900px) {
-  .sources-container {
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 10px;
-  }
-}
-
-@media (max-width: 600px) {
-  .sources-container {
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 8px;
-    padding: 8px;
-  }
-
-  .source-card {
-    padding: 12px;
-    gap: 8px;
-  }
-
-  .source-icon {
-    font-size: 1.2em;
-    width: 20px;
-    height: 20px;
-  }
-
-  .source-name {
-    font-size: 0.85em;
-  }
-}
-
-/* Для очень узких экранов - одна колонка */
-@media (max-width: 400px) {
-  .sources-container {
-    grid-template-columns: 1fr;
-  }
 }
 
 /* Анимация при наведении */

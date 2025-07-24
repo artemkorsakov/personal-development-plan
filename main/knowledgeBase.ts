@@ -1,7 +1,7 @@
 import { t } from './localization';
 import { openTaskFile, getTaskTypeIcon, getMaterialNameById, createHelpIcon, getAvailableTaskTypes, getAvailableSections } from './common';
 import { PersonalDevelopmentPlanSettings, MaterialType } from './../settings/settings';
-import { App, TFile, Vault } from 'obsidian';
+import { App, TFile, Vault, Modal } from 'obsidian';
 import { BookTask } from './taskTypes';
 
 interface KnowledgeItem {
@@ -297,70 +297,61 @@ async function exportToJSON(settings: PersonalDevelopmentPlanSettings) {
 }
 
 function showCreateTaskForm(settings: PersonalDevelopmentPlanSettings) {
-    const modal = document.createElement('div');
-    modal.className = 'modal';
+    const modal = new Modal(this.app);
+    modal.titleEl.setText(t('createNewTask'));
 
-    const modalContent = document.createElement('div');
-    modalContent.className = 'modal-content';
+    const contentEl = modal.contentEl;
+    contentEl.addClass('pdp-modal-content');
 
-    const closeSpan = document.createElement('span');
-    closeSpan.className = 'close';
-    closeSpan.innerHTML = '&times;';
-    closeSpan.addEventListener('click', () => modal.remove());
-
-    const title = document.createElement('h2');
-    title.textContent = t('createNewTask');
-
-    const taskTypeSelect = document.createElement('select');
-    taskTypeSelect.id = 'task-type-select';
+    // Task type selection
+    const taskTypeContainer = contentEl.createDiv();
+    taskTypeContainer.createEl('label', { text: t('taskType') });
+    const taskTypeSelect = taskTypeContainer.createEl('select', {
+        attr: { id: 'task-type-select' }
+    });
 
     const availableTaskTypes = getAvailableTaskTypes(settings);
     availableTaskTypes.forEach(taskType => {
-        const option = document.createElement('option');
-        option.value = taskType.id;
-        option.textContent = taskType.name;
-        taskTypeSelect.appendChild(option);
+        taskTypeSelect.createEl('option', {
+            value: taskType.id,
+            text: taskType.name
+        });
     });
 
-    const formContainer = document.createElement('div');
-    formContainer.id = 'task-form-container';
+    // Form container
+    const formContainer = contentEl.createDiv({
+        attr: { id: 'task-form-container' }
+    });
 
-    // Add event listener to show appropriate form based on task type
+    // Event listener for task type change
     taskTypeSelect.addEventListener('change', () => {
         updateFormBasedOnTaskType(formContainer, taskTypeSelect.value, settings);
     });
 
-    modalContent.appendChild(closeSpan);
-    modalContent.appendChild(title);
-    modalContent.appendChild(createLabel(t('taskType')));
-    modalContent.appendChild(taskTypeSelect);
-    modalContent.appendChild(formContainer);
-
-    // Add buttons container
-    const buttonsContainer = document.createElement('div');
-    buttonsContainer.className = 'modal-buttons';
-
-    const cancelButton = document.createElement('button');
-    cancelButton.textContent = t('cancel');
-    cancelButton.addEventListener('click', () => modal.remove());
-
-    const createButton = document.createElement('button');
-    createButton.textContent = t('create');
-    createButton.className = 'mod-cta';
-    createButton.addEventListener('click', () => {
-        createTaskBasedOnType(taskTypeSelect.value, settings);
-        modal.remove();
-    });
-
-    buttonsContainer.appendChild(cancelButton);
-    buttonsContainer.appendChild(createButton);
-    modalContent.appendChild(buttonsContainer);
-
-    modal.appendChild(modalContent);
-    document.body.appendChild(modal);
-
     // Initialize form for the first selected task type
     updateFormBasedOnTaskType(formContainer, taskTypeSelect.value, settings);
+
+    // Create action buttons manually
+    const buttonsContainer = contentEl.createDiv({ cls: 'modal-button-container' });
+
+    // Cancel button
+    const cancelButton = buttonsContainer.createEl('button', {
+        text: t('cancel'),
+        cls: 'mod-cta'
+    });
+    cancelButton.addEventListener('click', () => modal.close());
+
+    // Create button
+    const createButton = buttonsContainer.createEl('button', {
+        text: t('create'),
+        cls: 'mod-cta'
+    });
+    createButton.addEventListener('click', () => {
+        createTaskBasedOnType(taskTypeSelect.value, settings);
+        modal.close();
+    });
+
+    modal.open();
 }
 
 function updateFormBasedOnTaskType(container: HTMLElement, taskTypeId: string, settings: PersonalDevelopmentPlanSettings) {

@@ -252,8 +252,7 @@ export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
 
             // Список задач
             taskConfig.tasks.forEach((task, index) => {
-                const setting = new Setting(containerEl)
-                    .setClass('periodic-task-setting');
+                const setting = new Setting(containerEl);
 
                 // Поле ввода (на всю ширину)
                 setting.addText(text => {
@@ -270,7 +269,6 @@ export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
                 // Кнопка удаления
                 setting.addButton(button => button
                     .setButtonText('×')
-                    .setClass('delete-task-button')
                     .onClick(async () => {
                         taskConfig.tasks.splice(index, 1);
                         await (this.plugin as any).saveSettings();
