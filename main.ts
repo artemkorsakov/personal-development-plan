@@ -1,8 +1,9 @@
-import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting, WorkspaceLeaf } from 'obsidian';
-import { PersonalDevelopmentPlanSettings, DEFAULT_SETTINGS } from './settings/settings';
-import { PersonalDevelopmentPlanSettingsTab } from './settings/settingsTab';
-import { PlanView, PLAN_VIEW_TYPE } from './main/planView';
-import { t } from './main/localization';
+import { Plugin, Vault } from 'obsidian';
+import { PLAN_VIEW_TYPE } from './views/PlanView';
+import { PersonalDevelopmentPlanSettings } from './types';
+import { PersonalDevelopmentPlanSettingsTab, DEFAULT_SETTINGS } from './settings/settings';
+import { t } from './localization/localization';
+import PlanView from './views/PlanView';
 
 export default class PersonalDevelopmentPlanPlugin extends Plugin {
     settings: PersonalDevelopmentPlanSettings;
@@ -10,9 +11,12 @@ export default class PersonalDevelopmentPlanPlugin extends Plugin {
     async onload() {
         await this.loadSettings();
 
+        // Проверяем и инициализируем настройки по умолчанию
+        this.ensureDefaultSettings();
+
         this.addSettingTab(new PersonalDevelopmentPlanSettingsTab(this.app, this));
 
-	    this.registerView(
+        this.registerView(
             PLAN_VIEW_TYPE,
             (leaf) => new PlanView(leaf, this)
         );
@@ -23,24 +27,36 @@ export default class PersonalDevelopmentPlanPlugin extends Plugin {
             callback: () => this.openPlanView()
         });
 
-        this.addRibbonIcon(
-            'graduation-cap',
-            t('plan'),
-            () => this.openPlanView()
-        );
+        this.addRibbonIcon('graduation-cap', t('plan'), () => this.openPlanView());
+    }
 
-		// If the plugin hooks up any global DOM events (on parts of the app that doesn't belong to this plugin)
-    	// Using this function will automatically remove the event listener when this plugin is disabled.
-    	this.registerDomEvent(document, 'click', (evt: MouseEvent) => {
-    		console.log('click', evt);
-    	});
+    private ensureDefaultSettings() {
+        // Проверяем и добавляем отсутствующие настройки
+        const defaultKeys = Object.keys(DEFAULT_SETTINGS) as Array<keyof PersonalDevelopmentPlanSettings>;
 
-    	// When registering intervals, this function will automatically clear the interval when the plugin is disabled.
-    	this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
+        defaultKeys.forEach(key => {
+            if (this.settings[key] === undefined) {
+                (this.settings[key] as typeof DEFAULT_SETTINGS[typeof key]) = DEFAULT_SETTINGS[key];
+            }
+        });
+
+        // Специальная обработка для вложенных структур
+        if (!this.settings.materialTypes || this.settings.materialTypes.length === 0) {
+            this.settings.materialTypes = [...DEFAULT_SETTINGS.materialTypes];
+        }
+
+        if (!this.settings.sections || this.settings.sections.length === 0) {
+            this.settings.sections = [...DEFAULT_SETTINGS.sections];
+        }
+
+        if (!this.settings.periodicTasks) {
+            this.settings.periodicTasks = { ...DEFAULT_SETTINGS.periodicTasks };
+        }
     }
 
     async loadSettings() {
-        this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+        const loadedData = await this.loadData();
+        this.settings = Object.assign({}, DEFAULT_SETTINGS, loadedData);
     }
 
     async saveSettings() {
@@ -48,26 +64,25 @@ export default class PersonalDevelopmentPlanPlugin extends Plugin {
     }
 
     async openPlanView() {
-        const { workspace } = this.app;
-
-        // Ищем уже открытый view
-        const existing = workspace.getLeavesOfType(PLAN_VIEW_TYPE);
+        const existing = this.app.workspace.getLeavesOfType(PLAN_VIEW_TYPE);
         if (existing.length > 0) {
-            workspace.revealLeaf(existing[0]);
+            this.app.workspace.revealLeaf(existing[0]);
             return;
         }
 
-        // Создаем новый leaf в центральной области
-        const leaf = workspace.getLeaf('tab');
+        const leaf = this.app.workspace.getLeaf('tab');
         await leaf.setViewState({
             type: PLAN_VIEW_TYPE,
-            active: true,
+            active: true
         });
-
-        workspace.revealLeaf(leaf);
+        this.app.workspace.revealLeaf(leaf);
     }
 
     async onunload() {
         this.app.workspace.detachLeavesOfType(PLAN_VIEW_TYPE);
+    }
+
+    get vault(): Vault {
+        return this.app.vault;
     }
 }
