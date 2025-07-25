@@ -1,7 +1,7 @@
 import { Vault } from 'obsidian';
 import { getActiveTasks, getTaskTypeIcon, isTaskOverdue } from '../../utils/taskUtils';
 import { formatDate } from '../../utils/dateUtils';
-import { getFilesInFolder, openTaskFile } from '../../utils/fileUtils';
+import { openTaskFile } from '../../utils/fileUtils';
 import { generateProgressBar } from '../../utils/progressUtils';
 import { t } from '../../localization/localization';
 import { PersonalDevelopmentPlanSettings, getMaterialNameById, getMaterialIdByName } from '../../types';
@@ -32,10 +32,8 @@ export default class InProgressTab {
             const taskCard = container.createDiv({ cls: 'task-card' });
             taskCard.onclick = () => openTaskFile(task.filePath, vault, this.app.workspace);
 
-            // Порядковый номер
             const orderBadge = taskCard.createDiv({ cls: 'task-order-badge', text: `#${task.order}` });
 
-            // Первая строка (иконка типа, название и секция)
             const firstLine = taskCard.createDiv({ cls: 'task-first-line' });
             firstLine.createSpan({
                 cls: 'task-type-icon',
@@ -44,7 +42,6 @@ export default class InProgressTab {
             firstLine.createSpan({ cls: 'task-name', text: task.name });
             firstLine.createSpan({ cls: 'task-section', text: `[${task.section}]` });
 
-            // Даты
             const datesDiv = taskCard.createDiv({ cls: 'task-dates' });
             datesDiv.createSpan({ text: `${t('inProgressStartDate')}: ${formatDate(task.startDate)}` });
 
@@ -58,7 +55,6 @@ export default class InProgressTab {
                 dueDateSpan.textContent += t('inProgressOverdue');
             }
 
-            // Прогресс
             const progressContainer = taskCard.createDiv({ cls: 'task-progress-line' });
             progressContainer.createSpan({
                 cls: 'task-progress-bar',

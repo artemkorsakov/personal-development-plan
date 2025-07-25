@@ -16,7 +16,7 @@ export async function openTaskFile(path: string, vault: Vault, workspace: Worksp
             return;
         }
 
-        // Используем переданный workspace вместо глобального app
+        // Use the provided workspace
         const leaf = workspace.getLeaf();
         await leaf.openFile(file, { active: true });
     } catch (error) {
@@ -25,9 +25,6 @@ export async function openTaskFile(path: string, vault: Vault, workspace: Worksp
     }
 }
 
-/**
- * Создает или открывает файл источника
- */
 export async function openOrCreateSourceFile(
     filePath: string,
     vault: Vault,
@@ -41,20 +38,19 @@ export async function openOrCreateSourceFile(
             const folderPath = filePath.split('/').slice(0, -1).join('/');
             const fileName = filePath.split('/').pop() || 'Untitled.md';
 
-            // Создаем папку если не существует
+            // Create folder if it doesn't exist
             if (!vault.getAbstractFileByPath(folderPath)) {
                 await vault.createFolder(folderPath).catch(err => {
                     throw new Error(`Failed to create folder: ${err.message}`);
                 });
             }
 
-            // Создаем файл с заданным содержимым
+            // Create file with the given content
             file = await vault.create(filePath, content).catch(err => {
                 throw new Error(`Failed to create file: ${err.message}`);
             });
         }
 
-        // Открываем файл с использованием переданного workspace
         const leaf = workspace.getLeaf();
         await leaf.openFile(file, { active: true });
 
@@ -65,9 +61,6 @@ export async function openOrCreateSourceFile(
     }
 }
 
-/**
- * Создает файл задачи на основе шаблона
- */
 export async function createTaskFile(
     task: BookTask,
     content: string,
@@ -91,9 +84,6 @@ export async function createTaskFile(
     }
 }
 
-/**
- * Получает все markdown файлы из указанной папки
- */
 export function getFilesInFolder(vault: Vault, folderPath: string): TFile[] {
     return vault.getFiles().filter(file =>
         file.path.startsWith(folderPath + '/') &&
@@ -101,47 +91,6 @@ export function getFilesInFolder(vault: Vault, folderPath: string): TFile[] {
     );
 }
 
-/**
- * Проверяет существует ли файл
- */
 export function fileExists(vault: Vault, path: string): boolean {
     return vault.getAbstractFileByPath(path) !== null;
-}
-
-/**
- * Читает содержимое файла с обработкой ошибок
- */
-export async function safeReadFile(vault: Vault, file: TFile): Promise<string> {
-    try {
-        return await vault.cachedRead(file);
-    } catch (error) {
-        console.error(`Error reading file ${file.path}:`, error);
-        throw new Error(t('fileReadError'));
-    }
-}
-
-/**
- * Создает стандартные файлы источников если они отсутствуют
- */
-export async function initializeSourceFiles(
-    settings: PersonalDevelopmentPlanSettings,
-    vault: Vault
-): Promise<void> {
-    const sourcesFolder = `${settings.folderPath}/Sources`;
-    if (!fileExists(vault, sourcesFolder)) {
-        await vault.createFolder(sourcesFolder);
-    }
-
-    const sourceItems = settings.materialTypes
-        .filter(material => material.enabled)
-        .map(material => ({
-            filePath: `${sourcesFolder}/${material.id}.md`,
-            content: `# ${material.name} ${t('sources')}\n\n${t('sourcesDefaultContent')}`
-        }));
-
-    for (const { filePath, content } of sourceItems) {
-        if (!fileExists(vault, filePath)) {
-            await vault.create(filePath, content);
-        }
-    }
 }

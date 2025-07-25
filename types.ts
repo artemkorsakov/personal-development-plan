@@ -1,7 +1,7 @@
 import { App, TFile, Vault, EventRef, WorkspaceLeaf } from 'obsidian';
 import { t } from './localization/localization';
 
-/* Настройки плагина */
+/* Plugin settings */
 export interface PersonalDevelopmentPlanSettings {
     maxActiveTasks: number;
     statsStartDate: string;
@@ -43,7 +43,7 @@ export interface PeriodicTaskSettings {
     yearly: { enabled: boolean; tasks: string[] };
 }
 
-/* Определения вкладок */
+/* Tabs */
 export interface TabDefinition {
     id: string;
     name: string;
@@ -96,7 +96,7 @@ export const TAB_DEFINITIONS: TabDefinition[] = [
     },
 ];
 
-/* Типы задач */
+/* Tab's tasks */
 export interface BaseTask {
     name: string;
     type: string;
@@ -115,6 +115,7 @@ export interface PlannedTask extends BaseTask {}
 
 export interface KnowledgeItem extends BaseTask {}
 
+/* Types for tasks */
 export interface BaseTypeTask {
 	status: string;
     title: string;
@@ -132,53 +133,9 @@ export interface BookTask extends BaseTypeTask {
     pages: number;
 }
 
-export interface SourceItem {
-    type: string;
-    name: string;
-    icon: string;
-    filePath: string;
-}
-
-/* Вспомогательные типы */
-export type TaskStatus = 'in-progress' | 'planned' | 'knowledge-base' | 'completed';
-
-export interface PluginContext {
-    app: App;
-    vault: Vault;
-    settings: PersonalDevelopmentPlanSettings;
-    metadataCache: any;
-}
-
-/* Типы для работы с файлами */
-export interface FileHandler {
-    (file: TFile): Promise<void>;
-}
-
-/* Типы для компонентов */
-export interface TabComponent {
-    create(settings: PersonalDevelopmentPlanSettings, vault: Vault, metadataCache: any): Promise<HTMLElement>;
-    refresh?(): Promise<void>;
-}
-
-export interface ModalComponent {
-    new (app: App, settings: PersonalDevelopmentPlanSettings): any;
-}
-
-/* Типы для событий */
-export interface FileEventHandlers {
-    create: EventRef;
-    modify: EventRef;
-    delete: EventRef;
-}
-
-/* Типы для утилит */
+/* Types for utilities */
 export interface ProgressData {
     completed: number;
     total: number;
     percentage: number;
-}
-
-export interface DateRange {
-    start: Date;
-    end: Date;
 }

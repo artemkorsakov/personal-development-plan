@@ -10,7 +10,7 @@ export function calculateTaskProgress(content: string): number {
 export function generateProgressBar(progress: number): string {
     const filled = '🟩';
     const empty = '⬜';
-    const totalBlocks = 20;
+    const totalBlocks = 50;
     const filledBlocks = Math.round(progress / 100 * totalBlocks);
     return filled.repeat(filledBlocks) + empty.repeat(totalBlocks - filledBlocks);
 }

@@ -18,10 +18,8 @@ export default class CreateTaskModal extends Modal {
         contentEl.empty();
         contentEl.addClass('pdp-create-task-modal');
 
-        // Заголовок модального окна
         contentEl.createEl('h2', { text: t('createNewTask') });
 
-        // Выбор типа задачи
         new Setting(contentEl)
             .setName(t('taskType'))
             .addDropdown(dropdown => {
@@ -39,11 +37,9 @@ export default class CreateTaskModal extends Modal {
                 dropdown.setValue(this.selectedTaskType);
             });
 
-        // Контейнер для динамической формы
         const formContainer = contentEl.createDiv({ cls: 'task-form-container' });
         this.updateForm(formContainer);
 
-        // Кнопки действий
         const actionsEl = contentEl.createDiv({ cls: 'modal-actions' });
         new Setting(actionsEl)
             .addButton(button => {

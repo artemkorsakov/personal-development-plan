@@ -1,6 +1,6 @@
 import { Notice, Vault, TFile } from 'obsidian';
-import { getFilesInFolder, openTaskFile } from '../../utils/fileUtils';
-import { getTaskTypeIcon } from '../../utils/taskUtils';
+import { openTaskFile } from '../../utils/fileUtils';
+import { getKnowledgeItems, getTaskTypeIcon } from '../../utils/taskUtils';
 import { t } from '../../localization/localization';
 import { KnowledgeItem, MaterialType, PersonalDevelopmentPlanSettings, Section } from '../../types';
 import CreateTaskModal from '../modals/CreateTaskModal';
@@ -23,16 +23,12 @@ export default class KnowledgeBaseTab {
         const mainContainer = document.createElement('div');
         mainContainer.className = 'knowledge-base-container';
 
-        // Создаем заголовок с кнопками
         this.createHeader(mainContainer, settings, vault, metadataCache);
 
-        // Получаем все элементы базы знаний
-        const allItems = await this.getKnowledgeItems(vault, settings, metadataCache);
+        const allItems = await getKnowledgeItems(vault, settings, metadataCache);
 
-        // Создаем контейнеры вкладок и контента
         const [typeTabs, sectionTabs, contentContainer] = this.createTabContainers(mainContainer);
 
-        // Инициализируем вкладки
         this.initializeTypeTabs(typeTabs, settings, allItems, contentContainer);
         this.initializeSectionTabs(sectionTabs, settings, allItems, contentContainer);
 
@@ -47,7 +43,6 @@ export default class KnowledgeBaseTab {
     ) {
         const header = container.createDiv({ cls: 'knowledge-header' });
 
-        // Кнопка создания новой задачи
         const createBtn = header.createEl('button', {
             cls: 'knowledge-create-btn',
             text: t('createNewTask')
@@ -56,7 +51,6 @@ export default class KnowledgeBaseTab {
             new CreateTaskModal(this.app, this.settings).open();
         });
 
-        // Кнопка экспорта в JSON
         const exportBtn = header.createEl('button', {
             cls: 'knowledge-export-btn',
             text: t('exportToJSON')
@@ -104,7 +98,6 @@ export default class KnowledgeBaseTab {
             container.appendChild(tab);
         });
 
-        // Активируем первую вкладку
         if (enabledTypes.length > 0 && !this.currentType) {
             const firstTab = container.children[0] as HTMLElement;
             firstTab.click();
@@ -159,7 +152,6 @@ export default class KnowledgeBaseTab {
 
         let filteredItems = [...items];
 
-        // Применяем фильтры
         if (this.currentType) {
             filteredItems = filteredItems.filter(item => item.type === this.currentType);
         }
@@ -174,25 +166,20 @@ export default class KnowledgeBaseTab {
             return;
         }
 
-        // Сортируем по имени
         filteredItems.sort((a, b) => a.name.localeCompare(b.name));
 
-        // Создаем таблицу
         const table = document.createElement('table');
         table.className = 'knowledge-items-table';
 
-        // Заголовок таблицы
         const headerRow = table.createEl('tr');
         headerRow.createEl('th', { text: t('knowledgeBaseName') });
         headerRow.createEl('th', { text: t('knowledgeBaseType') });
         headerRow.createEl('th', { text: t('knowledgeBaseSection') });
 
-        // Строки таблицы
         filteredItems.forEach(item => {
             const row = table.createEl('tr');
             row.className = 'knowledge-item-row';
 
-            // Название (ссылка)
             const nameCell = row.createEl('td');
             const nameLink = nameCell.createEl('a', {
                 href: '#',
@@ -203,10 +190,7 @@ export default class KnowledgeBaseTab {
                 openTaskFile(item.filePath, this.app.vault, this.app.workspace);
             });
 
-            // Тип
             row.createEl('td', { text: item.type });
-
-            // Раздел
             row.createEl('td', { text: item.section });
         });
 
@@ -249,35 +233,7 @@ export default class KnowledgeBaseTab {
         });
     }
 
-    private static async getKnowledgeItems(
-        vault: Vault,
-        settings: PersonalDevelopmentPlanSettings,
-        metadataCache: any
-    ): Promise<KnowledgeItem[]> {
-        const items: KnowledgeItem[] = [];
-        const files = getFilesInFolder(vault, settings.folderPath);
 
-        for (const file of files) {
-            try {
-                const frontmatter = metadataCache.getFileCache(file)?.frontmatter;
-                if (!frontmatter) continue;
-
-                if (frontmatter.status !== 'knowledge-base') continue;
-
-                items.push({
-                    name: frontmatter.title || file.basename || "???",
-                    type: frontmatter.type || "???",
-                    section: frontmatter.section || "???",
-                    filePath: file.path,
-                    order: frontmatter.order || 0 // Добавлено недостающее свойство order
-                });
-            } catch (error) {
-                console.error(`Error reading file ${file.path}:`, error);
-            }
-        }
-
-        return items;
-    }
 
     private static async handleExport(
         settings: PersonalDevelopmentPlanSettings,
@@ -285,7 +241,7 @@ export default class KnowledgeBaseTab {
         metadataCache: any
     ) {
         try {
-            const items = await this.getKnowledgeItems(vault, settings, metadataCache);
+            const items = await getKnowledgeItems(vault, settings, metadataCache);
             await this.exportToJSON(items);
             new Notice(t('exportSuccess'));
         } catch (error) {

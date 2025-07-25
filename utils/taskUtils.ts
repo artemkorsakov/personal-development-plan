@@ -1,68 +1,128 @@
-import { Vault, TFile } from 'obsidian';
-import { PersonalDevelopmentPlanSettings } from '../types';
+import { Vault, TFile, MetadataCache } from 'obsidian';
+import { KnowledgeItem, PersonalDevelopmentPlanSettings, PlannedTask, TaskInProgress } from '../types';
 import { calculateTaskProgress } from './progressUtils';
+import { getFilesInFolder } from './fileUtils';
 
-export interface TaskInProgress {
+type TaskCommonFields = {
     name: string;
     type: string;
     section: string;
     order: number;
-    startDate: string;
-    dueDate: string;
-    progress: number;
     filePath: string;
+};
+
+type FileProcessor<T> = {
+    filter: (frontmatter: any) => boolean;
+    needsContent: boolean;
+    transform: (file: TFile, frontmatter: any, content?: string) => T;
+};
+
+async function processFiles<T>(
+    vault: Vault,
+    files: TFile[],
+    metadataCache: MetadataCache,
+    processor: FileProcessor<T>
+): Promise<T[]> {
+    const results: T[] = [];
+
+    await Promise.all(files.map(async (file) => {
+        try {
+            const frontmatter = metadataCache.getFileCache(file)?.frontmatter;
+            if (!frontmatter || !processor.filter(frontmatter)) return;
+
+            const content = processor.needsContent
+                ? await vault.cachedRead(file)
+                : undefined;
+
+            results.push(processor.transform(file, frontmatter, content));
+        } catch (error) {
+            console.error(`Error processing file ${file.path}:`, error);
+        }
+    }));
+
+    return results;
+}
+
+function getCommonFields(file: TFile, frontmatter: any): TaskCommonFields {
+    return {
+        name: frontmatter?.title || file.basename || "???",
+        type: frontmatter?.type || "???",
+        section: frontmatter?.section || "???",
+        order: frontmatter?.order ?? 100,
+        filePath: file.path
+    };
 }
 
 export async function getActiveTasks(
     vault: Vault,
     settings: PersonalDevelopmentPlanSettings,
-    metadataCache: any
+    metadataCache: MetadataCache
 ): Promise<TaskInProgress[]> {
-    const activeTasks: TaskInProgress[] = [];
-    const files = vault.getFiles().filter(file =>
-        file.path.startsWith(settings.folderPath + '/') &&
-        file.extension === 'md'
-    );
+    const files = getFilesInFolder(vault, settings.folderPath);
+    const processor: FileProcessor<TaskInProgress> = {
+        filter: (frontmatter) => frontmatter?.status === 'in-progress',
+        needsContent: true,
+        transform: (file, frontmatter, content) => ({
+            ...getCommonFields(file, frontmatter),
+            startDate: frontmatter?.startDate || "???",
+            dueDate: frontmatter?.dueDate || "???",
+            progress: calculateTaskProgress(content || ''),
+        })
+    };
 
-    for (const file of files) {
-        try {
-            const content = await vault.cachedRead(file);
-            const frontmatter = metadataCache.getFileCache(file)?.frontmatter;
+    const tasks = await processFiles(vault, files, metadataCache, processor);
+    return tasks.sort((a, b) => a.order - b.order);
+}
 
-            if (frontmatter?.status !== 'in-progress') continue;
+export async function getPlannedTasks(
+    vault: Vault,
+    settings: PersonalDevelopmentPlanSettings,
+    metadataCache: MetadataCache
+): Promise<PlannedTask[]> {
+    const files = getFilesInFolder(vault, settings.folderPath);
+    const processor: FileProcessor<PlannedTask> = {
+        filter: (frontmatter) => frontmatter?.status === 'planned',
+        needsContent: false,
+        transform: (file, frontmatter) => getCommonFields(file, frontmatter)
+    };
 
-            activeTasks.push({
-                name: frontmatter?.title || file.basename || "???",
-                type: frontmatter?.type || "???",
-                section: frontmatter?.section || "???",
-                order: frontmatter?.order ?? 100,
-                startDate: frontmatter?.startDate || "???",
-                dueDate: frontmatter?.dueDate || "???",
-                progress: calculateTaskProgress(content),
-                filePath: file.path
-            });
-        } catch (error) {
-            console.error(`Error reading file ${file.path}:`, error);
-        }
-    }
+    return processFiles(vault, files, metadataCache, processor);
+}
 
-    return activeTasks.sort((a, b) => a.order - b.order);
+export async function getKnowledgeItems(
+    vault: Vault,
+    settings: PersonalDevelopmentPlanSettings,
+    metadataCache: MetadataCache
+): Promise<KnowledgeItem[]> {
+    const files = getFilesInFolder(vault, settings.folderPath);
+    const processor: FileProcessor<KnowledgeItem> = {
+        filter: (frontmatter) => frontmatter?.status === 'knowledge-base',
+        needsContent: false,
+        transform: (file, frontmatter) => ({
+            ...getCommonFields(file, frontmatter),
+            order: frontmatter?.order ?? 0
+        })
+    };
+
+    return processFiles(vault, files, metadataCache, processor);
 }
 
 export function isTaskOverdue(task: TaskInProgress): boolean {
     if (task.dueDate === "???") return false;
+
     const today = new Date();
     const dueDate = new Date(task.dueDate);
     return today > dueDate && !isNaN(dueDate.getTime());
 }
 
+const TYPE_ICONS: Record<string, string> = {
+    book: "📚",
+    article: "📄",
+    course: "🎓",
+    video: "▶️",
+    podcast: "🎧"
+};
+
 export function getTaskTypeIcon(type: string): string {
-    const icons: Record<string, string> = {
-        "book": "📚",
-        "article": "📄",
-        "course": "🎓",
-        "video": "▶️",
-        "podcast": "🎧"
-    };
-    return icons[type] || "✏️";
+    return TYPE_ICONS[type] || "✏️";
 }

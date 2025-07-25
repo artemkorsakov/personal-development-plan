@@ -38,7 +38,6 @@ export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
         const { containerEl } = this;
         containerEl.createEl('h2', { text: t('generalSettings') });
 
-        // Настройка пути к папке
         new Setting(containerEl)
             .setName(t('folderPath'))
             .setDesc(t('folderPathDesc'))
@@ -50,7 +49,6 @@ export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
                     await this.saveSettings();
                 }));
 
-        // Task limits
         new Setting(containerEl)
             .setName(t('maxActiveTasks'))
             .setDesc(t('maxActiveTasksDesc'))
@@ -63,7 +61,6 @@ export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
                     await this.saveSettings();
                 }));
 
-        // Stats start date
         new Setting(containerEl)
             .setName(t('statsStartDate'))
             .setDesc(t('statsStartDateDesc'))

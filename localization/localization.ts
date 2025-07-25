@@ -1,7 +1,7 @@
 import { getLanguage } from 'obsidian';
 
 export interface TranslationKeys {
-    // Основной интерфейс
+    // Main interface
     plan: string;
     openPlan: string;
     inProgress: string;
@@ -21,7 +21,7 @@ export interface TranslationKeys {
     knowledgeBaseType: string;
     knowledgeBaseSection: string;
 
-    // Экспорт и источники
+    // Export and sources
     exportToJSON: string;
     exportToJSONTooltip: string;
     sources: string;
@@ -29,7 +29,7 @@ export interface TranslationKeys {
     sourceItemsList: string;
     sourceItemsExample: string;
 
-    // Статистика и история
+    // Statistics and history
     statistics: string;
     statisticsTooltip: string;
     history: string;
@@ -37,7 +37,7 @@ export interface TranslationKeys {
     examples: string;
     examplesTooltip: string;
 
-    // Настройки
+    // Settings
     settingsTitle: string;
     generalSettings: string;
     materialTypes: string;
@@ -50,7 +50,7 @@ export interface TranslationKeys {
     statsStartDate: string;
     statsStartDateDesc: string;
 
-    // Управление элементами
+    // Item management
     addNewType: string;
     newType: string;
     addNewSection: string;
@@ -65,7 +65,7 @@ export interface TranslationKeys {
     deleteItem: string;
     enableDisable: string;
 
-    // Периодические задачи
+    // Periodic tasks
     daily: string;
     weekly: string;
     monthly: string;
@@ -77,7 +77,7 @@ export interface TranslationKeys {
     quarterlyTask: string;
     yearlyTask: string;
 
-    // Типы материалов по умолчанию
+    // Default material types
     book: string;
     bookTask1: string;
     bookTask2: string;
@@ -94,12 +94,12 @@ export interface TranslationKeys {
     courseTask1: string;
     courseTask2: string;
 
-    // Разделы по умолчанию
+    // Default sections
     section1: string;
     section2: string;
     section3: string;
 
-    // Периодические задачи по умолчанию
+    // Default periodic tasks
     periodicTasksDaily1: string;
     periodicTasksDaily2: string;
     periodicTasksWeekly1: string;
@@ -108,7 +108,7 @@ export interface TranslationKeys {
     periodicTasksQuarterly1: string;
     periodicTasksYearly1: string;
 
-    // Создание задач
+    // Task creation
     createNewTask: string;
     fillRequiredFields: string;
     invalidSectionOrType: string;
@@ -123,13 +123,13 @@ export interface TranslationKeys {
     create: string;
     cancel: string;
 
-    // Ошибки файловой системы
+    // File system
     fileCreationError: string;
     fileReadError: string;
     folderCreationError: string;
     taskCreatedSuccessfully: string;
 
-    // Метаданные материалов
+    // Material details
     authors: string;
     authorsPlaceholder: string;
     bookName: string;
@@ -138,14 +138,13 @@ export interface TranslationKeys {
     pagesPlaceholder: string;
     section: string;
     bookContentHeader: string;
-    sourcesDefaultContent: string;
     articleTitle: string;
     articleTitlePlaceholder: string;
     articleUrl: string;
     notes: string;
     addYourThoughts: string;
 
-    // Дополнительные
+    // Extra
     openSourceError: string;
     recommendedResources: string;
     findAndAddResources: string;
@@ -153,7 +152,7 @@ export interface TranslationKeys {
     exportSuccess: string;
     exportError: string;
 
-    // Группы настроек
+    // Setting groups
     taskLimit: string;
     startTrackingDate: string;
     customFolder: string;
@@ -164,7 +163,7 @@ export interface TranslationKeys {
 
 const translations: Record<string, TranslationKeys> = {
     ru: {
-        // Основной интерфейс
+        // Main interface
         plan: 'План развития',
         openPlan: 'Открыть план развития',
         inProgress: '🛠️ В работе',
@@ -184,7 +183,7 @@ const translations: Record<string, TranslationKeys> = {
         knowledgeBaseType: 'Тип',
         knowledgeBaseSection: 'Раздел',
 
-        // Экспорт и источники
+        // Export and sources
         exportToJSON: 'Экспортировать в JSON',
         exportToJSONTooltip: 'Экспортировать базу знаний в JSON-файл, чтобы можно было поделиться с сообществом',
         sources: '🔍 Источник',
@@ -192,7 +191,7 @@ const translations: Record<string, TranslationKeys> = {
         sourceItemsList: 'Список источников',
         sourceItemsExample: '- [ ] Пример источника 1\n- [ ] Пример источника 2',
 
-        // Статистика и история
+        // Statistics and history
         statistics: '📊 Статистика',
         statisticsTooltip: 'Анализ прогресса по всем разделам',
         history: '🕰️ История',
@@ -200,7 +199,7 @@ const translations: Record<string, TranslationKeys> = {
         examples: '📂 Примеры',
         examplesTooltip: 'Шаблоны планов от сообщества',
 
-        // Настройки
+        // Settings
         settingsTitle: 'Настройки системы',
         generalSettings: 'Общие настройки',
         materialTypes: 'Типы материалов',
@@ -213,7 +212,7 @@ const translations: Record<string, TranslationKeys> = {
         statsStartDate: 'Начало отсчёта статистики',
         statsStartDateDesc: 'Дата начала сбора данных (формат: ГГГГ-ММ-ДД)',
 
-        // Управление элементами
+        // Item management
         addNewType: '+ Новый тип',
         newType: 'Новый тип',
         addNewSection: '+ Новый раздел',
@@ -228,7 +227,7 @@ const translations: Record<string, TranslationKeys> = {
         deleteItem: 'Удалить',
         enableDisable: 'Вкл/Выкл',
 
-        // Периодические задачи
+        // Periodic tasks
         daily: 'Ежедневно',
         weekly: 'Еженедельно',
         monthly: 'Ежемесячно',
@@ -240,7 +239,7 @@ const translations: Record<string, TranslationKeys> = {
         quarterlyTask: 'Ежеквартальная задача (пример)',
         yearlyTask: 'Ежегодная задача (пример)',
 
-        // Типы материалов по умолчанию
+        // Default material types
         book: 'Книга',
         bookTask1: 'Прочитать книгу',
         bookTask2: 'Конспектировать',
@@ -257,12 +256,12 @@ const translations: Record<string, TranslationKeys> = {
         courseTask1: 'Пройти урок',
         courseTask2: 'Выполнить задания',
 
-        // Разделы по умолчанию
+        // Default sections
         section1: 'Общие',
         section2: 'Обучение',
         section3: 'Работа',
 
-        // Периодические задачи по умолчанию
+        // Default periodic tasks
         periodicTasksDaily1: 'Утренний обзор почты',
         periodicTasksDaily2: 'Прочитать главу из книги',
         periodicTasksWeekly1: 'Решить задачу на Project Euler',
@@ -271,7 +270,7 @@ const translations: Record<string, TranslationKeys> = {
         periodicTasksQuarterly1: 'Добавить в Базу знаний книги, рекомендованные на ScalaConf',
         periodicTasksYearly1: 'Закончить курс Продвинутая Scala',
 
-        // Создание задач
+        // Task creation
         createNewTask: 'Создать задачу',
         fillRequiredFields: 'Заполните обязательные поля',
         invalidSectionOrType: 'Неверно указан раздел или тип',
@@ -286,13 +285,13 @@ const translations: Record<string, TranslationKeys> = {
         create: 'Создать',
         cancel: 'Отмена',
 
-        // Ошибки файловой системы
+        // File system
         fileCreationError: 'Ошибка создания файла',
         fileReadError: 'Ошибка чтения файла',
         folderCreationError: 'Ошибка создания папки',
         taskCreatedSuccessfully: 'Задача успешно создана',
 
-        // Метаданные материалов
+        // Material details
         authors: 'Автор(ы)',
         authorsPlaceholder: 'Введите авторов через запятую',
         bookName: 'Название книги',
@@ -301,14 +300,13 @@ const translations: Record<string, TranslationKeys> = {
         pagesPlaceholder: 'Введите количество страниц',
         section: 'Раздел',
         bookContentHeader: '## Описание\n\nКраткое описание содержания и цели чтения\n\n## Прогресс выполнения\n\n',
-        sourcesDefaultContent: '- [ ] Пример источника 1\n- [ ] Пример источника 2',
         articleTitle: 'Название статьи',
         articleTitlePlaceholder: 'Введите название статьи',
         articleUrl: 'Ссылка на статью',
         notes: 'Заметки',
         addYourThoughts: 'Добавьте ваши мысли',
 
-        // Дополнительные
+        // Extra
         openSourceError: 'Ошибка открытия исходного кода',
         recommendedResources: 'Рекомендуемые ресурсы',
         findAndAddResources: 'Найдите и добавьте ресурсы',
@@ -316,7 +314,7 @@ const translations: Record<string, TranslationKeys> = {
         exportSuccess: 'Экспорт успешно завершён',
         exportError: 'Ошибка экспорта',
 
-        // Группы настроек
+        // Setting groups
         taskLimit: 'Лимит задач',
         startTrackingDate: 'Начало отслеживания',
         customFolder: 'Пользовательская папка',
@@ -462,7 +460,6 @@ const translations: Record<string, TranslationKeys> = {
         pagesPlaceholder: 'Enter number of pages',
         section: 'Section',
         bookContentHeader: '## Description\n\nBrief description of the book content and reading goals\n\n## Progress\n\n',
-        sourcesDefaultContent: '- [ ] Example Source 1\n- [ ] Example Source 2',
         articleTitle: 'Article Title',
         articleTitlePlaceholder: 'Enter article title',
         articleUrl: 'Article URL',

@@ -1,27 +1,22 @@
 /****************************** Common ******************************/
-/* Анимация появления */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(5px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/****************************** Закладки индивидуального плана ******************************/
-
-/* Основные стили для view */
+/****************************** Individual plan tabs ******************************/
 .plan-development-view {
   height: 100%;
   overflow: hidden;
   background: var(--background-primary);
 }
 
-/* Главный контейнер вкладок */
 .plan-main-container {
   display: flex;
   flex-direction: column;
   height: 100%;
 }
 
-/* Заголовок вкладок */
 .plan-tabs-header {
   display: flex;
   border-bottom: 1px solid var(--background-modifier-border);
@@ -31,7 +26,6 @@
   background: var(--background-primary);
 }
 
-/* Отдельная вкладка */
 .plan-tab {
   background: none;
   border: none;
@@ -48,18 +42,15 @@
   position: relative;
 }
 
-/* Иконка вкладки */
 .plan-tab .icon {
   font-size: 1.1em;
   opacity: 0.8;
 }
 
-/* Текст вкладки */
 .plan-tab .tab-text {
   font-weight: 500;
 }
 
-/* Активная вкладка */
 .plan-tab.active {
   border-bottom: 2px solid var(--interactive-accent);
   color: var(--text-normal);
@@ -71,7 +62,6 @@
   color: var(--interactive-accent);
 }
 
-/* Контейнер содержимого */
 .plan-tabs-content {
   flex-grow: 1;
   overflow-y: auto;
@@ -79,7 +69,6 @@
   background: var(--background-primary);
 }
 
-/* Содержимое вкладки */
 .plan-tab-content {
   display: none;
   height: 100%;
@@ -90,8 +79,7 @@
   display: block;
 }
 
-/****************************** Стили для заголовка с иконкой и иконки вопроса ******************************/
-/* Заголовок вкладки */
+/****************************** Styles for Header with Icon and Question Icon ******************************/
 .tab-title {
   display: flex;
   align-items: center;
@@ -103,7 +91,6 @@
   position: relative;
 }
 
-/* Иконка помощи */
 .tab-help-icon {
   display: inline-flex;
   width: 16px;
@@ -112,7 +99,7 @@
   color: var(--text-muted);
   opacity: 0.7;
   transition: opacity 0.15s ease;
-  position: relative; /* Добавляем для позиционирования tooltip */
+  position: relative;
 }
 
 .tab-help-icon:hover {
@@ -120,20 +107,18 @@
   color: var(--text-accent);
 }
 
-/* SVG иконки */
 .tab-help-icon svg {
   width: 100%;
   height: 100%;
   stroke-width: 2px;
 }
 
-/* Всплывающая подсказка (теперь ниже знака вопроса) */
 .tab-help-icon[data-tooltip]::after {
   content: attr(data-tooltip);
   position: absolute;
-  top: 100%; /* Позиционируем ниже иконки */
+  top: 100%;
   left: 50%;
-  transform: translateX(-50%) translateY(6px); /* Смещаем вниз */
+  transform: translateX(-50%) translateY(6px);
   background: var(--background-primary);
   color: var(--text-normal);
   padding: 8px 12px;
@@ -157,10 +142,10 @@
 .tab-help-icon:hover[data-tooltip]::after {
   visibility: visible;
   opacity: 1;
-  transform: translateX(-50%) translateY(10px); /* Финальное положение при hover */
+  transform: translateX(-50%) translateY(10px);
 }
 
-/****************************** Закладка "В работе" ******************************/
+/****************************** "In progress" tab ******************************/
 .task-warning {
   padding: 12px 16px;
   background-color: var(--background-modifier-error);
@@ -246,8 +231,7 @@
   color: var(--text-muted);
 }
 
-/****************************** Закладка "Запланировано" ******************************/
-/* Главный контейнер */
+/****************************** "Planned" tab ******************************/
 .planned-main-container {
   display: flex;
   flex-direction: column;
@@ -255,7 +239,6 @@
   gap: 0;
 }
 
-/* Контейнер вкладок */
 .planned-tabs-container {
   display: flex;
   flex-wrap: wrap;
@@ -268,7 +251,6 @@
   z-index: 1;
 }
 
-/* Стиль вкладки */
 .planned-tab {
   display: flex;
   align-items: center;
@@ -283,7 +265,6 @@
   transition: all 0.2s ease;
 }
 
-/* Активная вкладка */
 .planned-tab.active {
   color: var(--text-normal);
   background: var(--interactive-accent);
@@ -294,18 +275,15 @@
   color: var(--text-on-accent);
 }
 
-/* Иконка вкладки */
 .planned-tab-icon {
   font-size: 1.1em;
   opacity: 0.8;
 }
 
-/* Текст вкладки */
 .planned-tab-label {
   font-weight: 500;
 }
 
-/* Контейнер контента */
 .planned-content-container {
   flex-grow: 1;
   overflow-y: auto;
@@ -314,7 +292,6 @@
   animation: fadeIn 0.3s ease;
 }
 
-/* Сообщение об отсутствии задач */
 .planned-empty-message {
   padding: 24px;
   text-align: center;
@@ -322,7 +299,6 @@
   font-size: 0.95em;
 }
 
-/* Стили карточки задачи (обновленные) */
 .planned-card {
   position: relative;
   padding: 14px;
@@ -362,7 +338,7 @@
   color: var(--text-faint);
 }
 
-/****************************** Закладка "База знаний" ******************************/
+/****************************** "Knowledge base" tab ******************************/
 .knowledge-base-container {
   display: flex;
   flex-direction: column;
@@ -427,7 +403,6 @@
   background: var(--background-secondary);
 }
 
-/* Header buttons */
 .knowledge-header {
   display: flex;
   gap: 8px;
@@ -463,41 +438,66 @@
   transition: opacity 0.2s ease;
 }
 
-/****************************** Форма создания новой задачи ******************************/
-.pdp-modal-content {
-    padding: 1em;
+/****************************** Create task modal ******************************/
+.pdp-create-task-modal {
+    padding: 20px;
     font-family: var(--font-family);
-}
-
-.pdp-modal-content label {
-    display: block;
-    margin-bottom: 0.5em;
     color: var(--text-normal);
-    font-weight: 500;
+    max-width: 600px;
 }
 
-.pdp-modal-content select,
-.pdp-modal-content input,
-.pdp-modal-content textarea {
+.pdp-create-task-modal h2 {
+    margin-top: 0;
+    color: var(--text-accent);
+    border-bottom: 1px solid var(--background-modifier-border);
+    padding-bottom: 10px;
+}
+
+.task-form-container {
+    margin: 15px 0;
+}
+
+.pdp-create-task-modal .setting-item-control input[type="text"],
+.pdp-create-task-modal .setting-item-control input[type="number"] {
     width: 100%;
-    padding: 0.5em;
-    margin-bottom: 1em;
-    border: 1px solid var(--background-modifier-border);
-    border-radius: 4px;
-    background-color: var(--background-primary);
-    color: var(--text-normal);
+    min-width: 300px;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
-.modal-button-container {
+.pdp-create-task-modal .setting-item-control select {
+    width: 100%;
+    min-width: 300px;
+    max-width: 100%;
+}
+
+.pdp-create-task-modal .setting-item-control button {
+    width: auto;
+    min-width: unset;
+}
+
+.modal-actions {
+    border-top: 1px solid var(--background-modifier-border);
+    padding-top: 15px;
+    margin-top: 15px;
     display: flex;
     justify-content: flex-end;
-    gap: 0.5em;
-    margin-top: 1em;
+    gap: 10px;
 }
 
-/****************************** Закладка "Источники" ******************************/
+@media (max-width: 400px) {
+    .pdp-create-task-modal .setting-item-control input[type="text"],
+    .pdp-create-task-modal .setting-item-control input[type="number"],
+    .pdp-create-task-modal .setting-item-control select {
+        min-width: 100%;
+    }
 
-/* Основные стили для контейнера источников */
+    .pdp-create-task-modal {
+        padding: 15px;
+    }
+}
+
+/****************************** "Sources" tab ******************************/
 .sources-container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -505,7 +505,6 @@
   padding: 10px;
 }
 
-/* Стили карточки источника */
 .source-card {
   position: relative;
   padding: 16px;
@@ -517,9 +516,9 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  min-width: 0; /* Для правильного обрезания текста */
-  width: auto; /* Ширина по содержимому */
-  max-width: 100%; /* Не шире контейнера */
+  min-width: 0;
+  width: auto;
+  max-width: 100%;
 }
 
 .source-card:hover {
@@ -528,7 +527,6 @@
   transform: translateY(-1px);
 }
 
-/* Иконка источника */
 .source-icon {
   font-size: 1.4em;
   width: 24px;
@@ -539,7 +537,6 @@
   flex-shrink: 0;
 }
 
-/* Название источника */
 .source-name {
   font-weight: 500;
   color: var(--text-normal);
@@ -550,7 +547,6 @@
   flex-grow: 1;
 }
 
-/* Анимация при наведении */
 @keyframes sourceCardHover {
   from { transform: translateY(0); }
   to { transform: translateY(-2px); }
@@ -560,12 +556,10 @@
   animation: sourceCardHover 0.2s ease forwards;
 }
 
-/* Стили для пользовательских источников */
 .source-custom {
   border-left: 3px solid var(--interactive-accent);
 }
 
-/* Подсветка активного источника */
 .source-card:active {
   transform: scale(0.98);
 }

@@ -11,7 +11,6 @@ export default class PersonalDevelopmentPlanPlugin extends Plugin {
     async onload() {
         await this.loadSettings();
 
-        // Проверяем и инициализируем настройки по умолчанию
         this.ensureDefaultSettings();
 
         this.addSettingTab(new PersonalDevelopmentPlanSettingsTab(this.app, this));
@@ -31,7 +30,6 @@ export default class PersonalDevelopmentPlanPlugin extends Plugin {
     }
 
     private ensureDefaultSettings() {
-        // Проверяем и добавляем отсутствующие настройки
         const defaultKeys = Object.keys(DEFAULT_SETTINGS) as Array<keyof PersonalDevelopmentPlanSettings>;
 
         defaultKeys.forEach(key => {
@@ -40,7 +38,7 @@ export default class PersonalDevelopmentPlanPlugin extends Plugin {
             }
         });
 
-        // Специальная обработка для вложенных структур
+        // Special handling for nested structures
         if (!this.settings.materialTypes || this.settings.materialTypes.length === 0) {
             this.settings.materialTypes = [...DEFAULT_SETTINGS.materialTypes];
         }

@@ -1,7 +1,7 @@
 import { Vault, TFile, Workspace } from 'obsidian';
-import { getFilesInFolder, openTaskFile } from '../../utils/fileUtils';
+import { openTaskFile } from '../../utils/fileUtils';
 import { generateProgressBar } from '../../utils/progressUtils';
-import { getTaskTypeIcon, isTaskOverdue } from '../../utils/taskUtils';
+import { getPlannedTasks, getTaskTypeIcon, isTaskOverdue } from '../../utils/taskUtils';
 import { t } from '../../localization/localization';
 import { PersonalDevelopmentPlanSettings, PlannedTask, getMaterialNameById, getMaterialIdByName } from '../../types';
 
@@ -22,7 +22,7 @@ export default class PlannedTab {
         const mainContainer = document.createElement('div');
         mainContainer.className = 'planned-main-container';
 
-        const allTasks = await this.getPlannedTasks(vault, settings, metadataCache);
+        const allTasks = await getPlannedTasks(vault, settings, metadataCache);
         const [tabsContainer, contentContainer] = this.createContainers(mainContainer);
         this.createTypeTabs(tabsContainer, settings, allTasks, contentContainer);
 
@@ -107,34 +107,6 @@ export default class PlannedTab {
         });
     }
 
-    private static async getPlannedTasks(
-        vault: Vault,
-        settings: PersonalDevelopmentPlanSettings,
-        metadataCache: any
-    ): Promise<PlannedTask[]> {
-        const plannedTasks: PlannedTask[] = [];
-        const files = getFilesInFolder(vault, settings.folderPath);
-
-        for (const file of files) {
-            try {
-                const frontmatter = metadataCache.getFileCache(file)?.frontmatter;
-                if (frontmatter?.status !== 'planned') continue;
-
-                plannedTasks.push({
-                    name: frontmatter?.title || file.basename || "???",
-                    type: frontmatter?.type || "???",
-                    section: frontmatter?.section || "???",
-                    order: frontmatter?.order ?? 100,
-                    filePath: file.path
-                });
-            } catch (error) {
-                console.error(`Error reading file ${file.path}:`, error);
-            }
-        }
-
-        return plannedTasks;
-    }
-
     static async refresh(
         vault?: Vault,
         workspace?: Workspace
@@ -143,7 +115,7 @@ export default class PlannedTab {
         if (workspace) this.workspace = workspace;
 
         if (this.currentType) {
-            // Логика обновления при изменении файлов
+            // TODO: Refactor this
         }
     }
 }
