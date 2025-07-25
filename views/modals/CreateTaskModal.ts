@@ -102,12 +102,18 @@ export default class CreateTaskModal extends Modal {
         new Setting(container)
             .setName(t('section'))
             .addDropdown(dropdown => {
-                this.settings.sections
-                    .sort((a, b) => a.order - b.order)
-                    .forEach(section => {
-                        dropdown.addOption(section.id, section.name);
-                    });
-                dropdown.onChange(value => this.formData.section = value);
+                const sections = this.settings.sections.sort((a, b) => a.order - b.order);
+                sections.forEach(section => {
+                    dropdown.addOption(section.id, section.name);
+                });
+
+                // Устанавливаем первое значение по умолчанию
+                if (sections.length > 0) {
+                    this.formData.sectionId = sections[0].id;
+                    dropdown.setValue(sections[0].id);
+                }
+
+                dropdown.onChange(value => this.formData.sectionId = value);
             });
     }
 
@@ -129,12 +135,18 @@ export default class CreateTaskModal extends Modal {
         new Setting(container)
             .setName(t('section'))
             .addDropdown(dropdown => {
-                this.settings.sections
-                    .sort((a, b) => a.order - b.order)
-                    .forEach(section => {
-                        dropdown.addOption(section.id, section.name);
-                    });
-                dropdown.onChange(value => this.formData.section = value);
+                const sections = this.settings.sections.sort((a, b) => a.order - b.order);
+                sections.forEach(section => {
+                    dropdown.addOption(section.id, section.name);
+                });
+
+                // Устанавливаем первое значение по умолчанию
+                if (sections.length > 0) {
+                    this.formData.sectionId = sections[0].id;
+                    dropdown.setValue(sections[0].id);
+                }
+
+                dropdown.onChange(value => this.formData.sectionId = value);
             });
     }
 
@@ -143,25 +155,45 @@ export default class CreateTaskModal extends Modal {
             const taskType = this.settings.materialTypes.find(t => t.id === this.selectedTaskType);
             if (!taskType) throw new Error(t('invalidTaskType'));
 
-            const taskData: Partial<BookTask> = {
-				status: 'knowledge-base',
+            // Generate task title to check if it already exists
+            const tempTaskData: Partial<BookTask> = {
                 type: taskType.name,
+                section: this.settings.sections.find(s => s.id === this.formData.sectionId)?.name || '',
+                ...this.formData
+            };
+            tempTaskData.title = this.generateTaskTitle(tempTaskData);
+
+            // Check if task already exists
+            const filePath = `${this.settings.folderPath}/${tempTaskData.title}.md`;
+            const fileExists = await this.app.vault.adapter.exists(filePath);
+            if (fileExists) {
+                new Notice(t('fileAlreadyExists'));
+                return;
+            }
+
+            const { sectionId, ...taskDataWithoutSectionId } = this.formData;
+
+            const taskData: BookTask = {
+                status: 'knowledge-base',
+                type: taskType.name,
+                section: this.settings.sections.find(s => s.id === sectionId)?.name || '',
+                authors: this.formData.authors || '',
+                name: this.formData.name || '',
+                title: tempTaskData.title as string,
+                pages: this.formData.pages || 0,
                 order: 999,
                 startDate: '',
                 dueDate: '',
-                ...this.formData
+                filePath: filePath
             };
 
-            taskData.title = this.generateTaskTitle(taskData);
-            taskData.section = this.settings.sections.find(s => s.id === this.formData.section)?.name || '';
             const content = this.generateTaskContent(taskType);
 
-            await createTaskFile(taskData as BookTask, content, this.settings, this.app.vault);
-            new Notice(t('taskCreatedSuccessfully'));
+            await createTaskFile(taskData, content, this.settings, this.app.vault);
             this.close();
         } catch (error) {
             console.error('Error creating task:', error);
-            new Notice(t('taskCreationError') + ': ' + error.message);
+            new Notice(t('taskCreationError') + ': ' + (error instanceof Error ? error.message : String(error)));
         }
     }
 

@@ -125,6 +125,7 @@ export interface TranslationKeys {
 
     // File system
     fileCreationError: string;
+    fileAlreadyExists: string;
     fileReadError: string;
     folderCreationError: string;
     taskCreatedSuccessfully: string;
@@ -287,6 +288,7 @@ const translations: Record<string, TranslationKeys> = {
 
         // File system
         fileCreationError: 'Ошибка создания файла',
+        fileAlreadyExists: 'Файл с таким именем уже существует! Измените название файла или удалите старый.',
         fileReadError: 'Ошибка чтения файла',
         folderCreationError: 'Ошибка создания папки',
         taskCreatedSuccessfully: 'Задача успешно создана',
@@ -447,6 +449,7 @@ const translations: Record<string, TranslationKeys> = {
 
         // Filesystem errors
         fileCreationError: 'File creation error',
+        fileAlreadyExists: 'File with this name already exists! Change the file name or delete the old one.',
         fileReadError: 'File read error',
         folderCreationError: 'Folder creation error',
         taskCreatedSuccessfully: 'Task created successfully',
