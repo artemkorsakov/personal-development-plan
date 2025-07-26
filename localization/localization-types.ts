@@ -116,6 +116,8 @@ export interface TranslationKeys {
     taskCreationError: string;
     selectTaskType: string;
     untitledTask: string;
+    dontForgetToFillPlan: string;
+    taskOrder: string;
     taskLabel: string;
     taskDefaultDescription: string;
     checklist: string;

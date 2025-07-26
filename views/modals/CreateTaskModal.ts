@@ -57,6 +57,9 @@ export default class CreateTaskModal extends Modal {
         const formContainer = contentEl.createDiv({ cls: 'task-form-container' });
         this.updateForm(formContainer);
 
+        // Добавляем напоминалку перед кнопками
+        this.renderReminder();
+
         const actionsEl = contentEl.createDiv({ cls: 'modal-actions' });
         new Setting(actionsEl)
             .addButton(button => {
@@ -94,6 +97,7 @@ export default class CreateTaskModal extends Modal {
     }
 
     private renderBookForm(container: HTMLElement) {
+        // Основные поля формы
         new Setting(container)
             .setName(t('authors'))
             .addText(text => {
@@ -124,7 +128,6 @@ export default class CreateTaskModal extends Modal {
                     dropdown.addOption(section.id, section.name);
                 });
 
-                // Устанавливаем первое значение по умолчанию
                 if (sections.length > 0) {
                     this.formData.sectionId = sections[0].id;
                     dropdown.setValue(sections[0].id);
@@ -132,9 +135,12 @@ export default class CreateTaskModal extends Modal {
 
                 dropdown.onChange(value => this.formData.sectionId = value);
             });
+
+        this.renderStatusSpecificFields(container);
     }
 
     private renderArticleForm(container: HTMLElement) {
+        // Основные поля формы
         new Setting(container)
             .setName(t('articleTitle'))
             .addText(text => {
@@ -157,7 +163,6 @@ export default class CreateTaskModal extends Modal {
                     dropdown.addOption(section.id, section.name);
                 });
 
-                // Устанавливаем первое значение по умолчанию
                 if (sections.length > 0) {
                     this.formData.sectionId = sections[0].id;
                     dropdown.setValue(sections[0].id);
@@ -165,6 +170,60 @@ export default class CreateTaskModal extends Modal {
 
                 dropdown.onChange(value => this.formData.sectionId = value);
             });
+
+        this.renderStatusSpecificFields(container);
+    }
+
+    private renderStatusSpecificFields(container: HTMLElement) {
+        // Общее для planned и in-progress (кроме напоминалки)
+        if (this.taskStatus !== 'knowledge-base') {
+            // Поле order
+            new Setting(container)
+                .setName(t('taskOrder'))
+                .addText(text => {
+                    text.setPlaceholder('999')
+                        .inputEl.type = 'number';
+                    text.setValue('999');
+                    text.onChange(value => {
+                        this.formData.order = parseInt(value) || 999;
+                    });
+                });
+
+            // Специфичное для in-progress
+            if (this.taskStatus === 'in-progress') {
+                // Поле startDate
+                new Setting(container)
+                    .setName(t('inProgressStartDate'))
+                    .addText(text => {
+                        text.setPlaceholder('YYYY-MM-DD')
+                            .onChange(value => {
+                                this.formData.startDate = value;
+                            });
+                    });
+
+                // Поле dueDate
+                new Setting(container)
+                    .setName(t('inProgressDueDate'))
+                    .addText(text => {
+                        text.setPlaceholder('YYYY-MM-DD')
+                            .onChange(value => {
+                                this.formData.dueDate = value;
+                            });
+                    });
+            }
+        }
+    }
+
+    private renderReminder() {
+        if (this.taskStatus !== 'knowledge-base') {
+            const reminderContainer = this.contentEl.createDiv({ cls: 'task-reminder-container' });
+            reminderContainer.createDiv({ cls: 'task-reminder' }, el => {
+                el.textContent = t('dontForgetToFillPlan');
+                el.style.color = 'var(--text-accent)';
+                el.style.margin = '10px 0';
+                el.style.fontStyle = 'italic';
+            });
+        }
     }
 
     private async handleCreateTask() {
@@ -172,7 +231,7 @@ export default class CreateTaskModal extends Modal {
             const taskType = this.settings.materialTypes.find(t => t.id === this.selectedTaskType);
             if (!taskType) throw new Error(t('invalidTaskType'));
 
-            // Generate task title to check if it already exists
+            // Generate task title
             const tempTaskData: Partial<BookTask> = {
                 type: taskType.name,
                 section: this.settings.sections.find(s => s.id === this.formData.sectionId)?.name || '',
@@ -180,16 +239,16 @@ export default class CreateTaskModal extends Modal {
             };
             tempTaskData.title = this.generateTaskTitle(tempTaskData);
 
-            // Check if task already exists
+            // Check if task exists
             const filePath = `${this.settings.folderPath}/${tempTaskData.title}.md`;
-            const fileExists = await this.app.vault.adapter.exists(filePath);
-            if (fileExists) {
+            if (await this.app.vault.adapter.exists(filePath)) {
                 new Notice(t('fileAlreadyExists'));
                 return;
             }
 
             const { sectionId, ...taskDataWithoutSectionId } = this.formData;
 
+            // Формируем данные задачи
             const taskData: BookTask = {
                 status: this.taskStatus,
                 type: taskType.name,
@@ -198,9 +257,9 @@ export default class CreateTaskModal extends Modal {
                 name: this.formData.name || '',
                 title: tempTaskData.title as string,
                 pages: this.formData.pages || 0,
-                order: 999,
-                startDate: '',
-                dueDate: '',
+                order: this.formData.order || 999,
+                startDate: this.formData.startDate || '',
+                dueDate: this.formData.dueDate || '',
                 filePath: filePath
             };
 

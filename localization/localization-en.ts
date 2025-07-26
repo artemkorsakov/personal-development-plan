@@ -118,6 +118,8 @@ export const en: TranslationKeys = {
     taskCreationError: 'Task creation error',
     selectTaskType: 'Select Task Type',
     untitledTask: 'Untitled Task',
+    dontForgetToFillPlan: 'Don\'t forget to fill in the plan!',
+    taskOrder: 'Order',
     taskLabel: 'Information',
     taskDefaultDescription: 'Task description',
     checklist: 'Checklist',

@@ -538,6 +538,19 @@
     }
 }
 
+.task-reminder-container {
+    margin: 15px 0;
+    padding: 10px;
+    background-color: var(--background-secondary);
+    border-radius: 4px;
+}
+
+.task-reminder {
+    color: var(--text-accent);
+    font-style: italic;
+    font-size: var(--font-ui-small);
+}
+
 /****************************** "Sources" tab ******************************/
 .sources-container {
   display: grid;

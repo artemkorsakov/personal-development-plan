@@ -118,6 +118,8 @@ export const ru: TranslationKeys = {
     taskCreationError: 'Ошибка создания задачи',
     selectTaskType: 'Выберите тип задачи',
     untitledTask: 'Без названия',
+    dontForgetToFillPlan: "Не забудьте заполнить план выполнения задачи",
+    taskOrder: "Порядок выполнения",
     taskLabel: 'Информация',
     taskDefaultDescription: 'Описание задачи',
     checklist: 'План выполнения',
