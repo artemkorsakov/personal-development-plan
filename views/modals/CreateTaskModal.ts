@@ -1,18 +1,22 @@
 import { App, Modal, Setting, Notice } from 'obsidian';
-import { BookTask } from '../../settings/task-types';
-import { MaterialType, PersonalDevelopmentPlanSettings } from '../../settings/settings-types';
 import { createTaskFile } from '../../utils/fileUtils';
 import { t } from '../../localization/localization';
+import { MaterialType, PersonalDevelopmentPlanSettings } from '../../settings/settings-types';
+import { TaskFormBuilder } from './TaskFormFactory';
+import { ArticleFormBuilder } from './ArticleFormBuilder';
+import { BookFormBuilder } from './BookFormBuilder';
+
+
 
 export default class CreateTaskModal extends Modal {
     private settings: PersonalDevelopmentPlanSettings;
     private selectedTaskType: string = '';
-    private formData: Record<string, any> = {};
     private onSubmitCallback: ((success: boolean, taskType?: string) => void) | null = null;
     private taskStatus: string;
+    private formBuilder: TaskFormBuilder | null = null;
 
     constructor(
-        app: any,
+        app: App,
         settings: PersonalDevelopmentPlanSettings,
         taskStatus: string,
         onSubmit?: (success: boolean, taskType?: string) => void
@@ -86,131 +90,19 @@ export default class CreateTaskModal extends Modal {
 
         switch (this.selectedTaskType) {
             case 'book':
-                this.renderBookForm(container);
+                this.formBuilder = new BookFormBuilder(this.settings, container, this.taskStatus);
                 break;
             case 'article':
-                this.renderArticleForm(container);
+                this.formBuilder = new ArticleFormBuilder(this.settings, container, this.taskStatus);
                 break;
+            // Добавить другие case для каждого типа задачи
             default:
                 container.createEl('p', { text: t('selectTaskType') });
+                return;
         }
-    }
 
-    private renderBookForm(container: HTMLElement) {
-        // Основные поля формы
-        new Setting(container)
-            .setName(t('authors'))
-            .addText(text => {
-                text.setPlaceholder(t('authorsPlaceholder'))
-                    .onChange(value => this.formData.authors = value);
-            });
-
-        new Setting(container)
-            .setName(t('bookName'))
-            .addText(text => {
-                text.setPlaceholder(t('bookNamePlaceholder'))
-                    .onChange(value => this.formData.name = value);
-            });
-
-        new Setting(container)
-            .setName(t('pages'))
-            .addText(text => {
-                text.setPlaceholder(t('pagesPlaceholder'))
-                    .inputEl.type = 'number';
-                text.onChange(value => this.formData.pages = parseInt(value) || 0);
-            });
-
-        new Setting(container)
-            .setName(t('section'))
-            .addDropdown(dropdown => {
-                const sections = this.settings.sections.sort((a, b) => a.order - b.order);
-                sections.forEach(section => {
-                    dropdown.addOption(section.id, section.name);
-                });
-
-                if (sections.length > 0) {
-                    this.formData.sectionId = sections[0].id;
-                    dropdown.setValue(sections[0].id);
-                }
-
-                dropdown.onChange(value => this.formData.sectionId = value);
-            });
-
-        this.renderStatusSpecificFields(container);
-    }
-
-    private renderArticleForm(container: HTMLElement) {
-        // Основные поля формы
-        new Setting(container)
-            .setName(t('articleTitle'))
-            .addText(text => {
-                text.setPlaceholder(t('articleTitlePlaceholder'))
-                    .onChange(value => this.formData.name = value);
-            });
-
-        new Setting(container)
-            .setName(t('articleUrl'))
-            .addText(text => {
-                text.setPlaceholder('https://example.com')
-                    .onChange(value => this.formData.url = value);
-            });
-
-        new Setting(container)
-            .setName(t('section'))
-            .addDropdown(dropdown => {
-                const sections = this.settings.sections.sort((a, b) => a.order - b.order);
-                sections.forEach(section => {
-                    dropdown.addOption(section.id, section.name);
-                });
-
-                if (sections.length > 0) {
-                    this.formData.sectionId = sections[0].id;
-                    dropdown.setValue(sections[0].id);
-                }
-
-                dropdown.onChange(value => this.formData.sectionId = value);
-            });
-
-        this.renderStatusSpecificFields(container);
-    }
-
-    private renderStatusSpecificFields(container: HTMLElement) {
-        // Общее для planned и in-progress (кроме напоминалки)
-        if (this.taskStatus !== 'knowledge-base') {
-            // Поле order
-            new Setting(container)
-                .setName(t('taskOrder'))
-                .addText(text => {
-                    text.setPlaceholder('999')
-                        .inputEl.type = 'number';
-                    text.setValue('999');
-                    text.onChange(value => {
-                        this.formData.order = parseInt(value) || 999;
-                    });
-                });
-
-            // Специфичное для in-progress
-            if (this.taskStatus === 'in-progress') {
-                // Поле startDate
-                new Setting(container)
-                    .setName(t('inProgressStartDate'))
-                    .addText(text => {
-                        text.setPlaceholder('YYYY-MM-DD')
-                            .onChange(value => {
-                                this.formData.startDate = value;
-                            });
-                    });
-
-                // Поле dueDate
-                new Setting(container)
-                    .setName(t('inProgressDueDate'))
-                    .addText(text => {
-                        text.setPlaceholder('YYYY-MM-DD')
-                            .onChange(value => {
-                                this.formData.dueDate = value;
-                            });
-                    });
-            }
+        if (this.formBuilder) {
+            this.formBuilder.buildForm();
         }
     }
 
@@ -228,69 +120,29 @@ export default class CreateTaskModal extends Modal {
 
     private async handleCreateTask() {
         try {
+            if (!this.formBuilder) return;
+
             const taskType = this.settings.materialTypes.find(t => t.id === this.selectedTaskType);
             if (!taskType) throw new Error(t('invalidTaskType'));
 
-            // Generate task title
-            const tempTaskData: Partial<BookTask> = {
-                type: taskType.name,
-                section: this.settings.sections.find(s => s.id === this.formData.sectionId)?.name || '',
-                ...this.formData
-            };
-            tempTaskData.title = this.generateTaskTitle(tempTaskData);
+            const taskData = this.formBuilder.getTaskData();
+            taskData.filePath = `${this.settings.folderPath}/${this.formBuilder.generateTitle()}.md`;
 
-            // Check if task exists
-            const filePath = `${this.settings.folderPath}/${tempTaskData.title}.md`;
-            if (await this.app.vault.adapter.exists(filePath)) {
+            if (await this.app.vault.adapter.exists(taskData.filePath)) {
                 new Notice(t('fileAlreadyExists'));
                 return;
             }
 
-            const { sectionId, ...taskDataWithoutSectionId } = this.formData;
-
-            // Формируем данные задачи
-            const taskData: BookTask = {
-                status: this.taskStatus,
-                type: taskType.name,
-                section: this.settings.sections.find(s => s.id === sectionId)?.name || '',
-                authors: this.formData.authors || '',
-                name: this.formData.name || '',
-                title: tempTaskData.title as string,
-                pages: this.formData.pages || 0,
-                order: this.formData.order || 999,
-                startDate: this.formData.startDate || '',
-                dueDate: this.formData.dueDate || '',
-                filePath: filePath
-            };
-
             const content = this.generateTaskContent(taskType);
-
             await createTaskFile(taskData, content, this.settings, this.app.vault);
             await new Promise(resolve => setTimeout(resolve, 200));
 
             this.close();
-
-            if (this.onSubmitCallback) {
-                this.onSubmitCallback(true, taskType.id);
-            }
+            this.onSubmitCallback?.(true, taskType.id);
         } catch (error) {
             console.error('Error creating task:', error);
             new Notice(t('taskCreationError') + ': ' + (error instanceof Error ? error.message : String(error)));
-
-            if (this.onSubmitCallback) {
-                this.onSubmitCallback(false);
-            }
-        }
-    }
-
-    private generateTaskTitle(taskData: Partial<BookTask>): string {
-        switch (this.selectedTaskType) {
-            case 'book':
-                return `${taskData.authors} - ${taskData.name}`;
-            case 'article':
-                return `Article: ${taskData.name}`;
-            default:
-                return taskData.name || t('untitledTask');
+            this.onSubmitCallback?.(false);
         }
     }
 

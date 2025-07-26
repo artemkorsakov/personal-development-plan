@@ -121,6 +121,7 @@ export const en: TranslationKeys = {
     dontForgetToFillPlan: 'Don\'t forget to fill in the plan!',
     taskOrder: 'Order',
     taskLabel: 'Information',
+    laborInputInHours: 'Labor (in hours)',
     taskDefaultDescription: 'Task description',
     checklist: 'Checklist',
     create: 'Create',

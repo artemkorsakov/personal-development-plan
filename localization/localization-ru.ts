@@ -121,6 +121,7 @@ export const ru: TranslationKeys = {
     dontForgetToFillPlan: "Не забудьте заполнить план выполнения задачи",
     taskOrder: "Порядок выполнения",
     taskLabel: 'Информация',
+    laborInputInHours: "Трудоемкость (часы)",
     taskDefaultDescription: 'Описание задачи',
     checklist: 'План выполнения',
     create: 'Создать',

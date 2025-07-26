@@ -119,6 +119,10 @@ export interface TranslationKeys {
     dontForgetToFillPlan: string;
     taskOrder: string;
     taskLabel: string;
+    articleTitle: string;
+    articleTitlePlaceholder: string;
+    articleUrl: string;
+    laborInputInHours: string;
     taskDefaultDescription: string;
     checklist: string;
     create: string;
@@ -141,9 +145,6 @@ export interface TranslationKeys {
     pagesPlaceholder: string;
     section: string;
     bookContentHeader: string;
-    articleTitle: string;
-    articleTitlePlaceholder: string;
-    articleUrl: string;
     notes: string;
     addYourThoughts: string;
 

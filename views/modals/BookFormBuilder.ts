@@ -1,0 +1,64 @@
+import { Setting } from 'obsidian';
+import { TaskFormBuilder } from './TaskFormFactory';
+import { t } from '../../localization/localization';
+import { BookTask } from '../../settings/task-types';
+import { getMaterialNameById } from '../../settings/settings-types';
+import { PersonalDevelopmentPlanSettings } from '../../settings/settings-types';
+
+export class BookFormBuilder extends TaskFormBuilder {
+	constructor(
+		settings: PersonalDevelopmentPlanSettings,
+        container: HTMLElement,
+        taskStatus: string
+    ) {
+		super(settings, container, taskStatus);
+    }
+
+    buildForm() {
+        this.addSectionField();
+
+        new Setting(this.container)
+            .setName(t('authors'))
+            .addText(text => {
+                text.setPlaceholder(t('authorsPlaceholder'))
+                    .onChange(value => this.formData.authors = value);
+            });
+
+        new Setting(this.container)
+            .setName(t('bookName'))
+            .addText(text => {
+                text.setPlaceholder(t('bookNamePlaceholder'))
+                    .onChange(value => this.formData.name = value);
+            });
+
+        new Setting(this.container)
+            .setName(t('pages'))
+            .addText(text => {
+                text.setPlaceholder(t('pagesPlaceholder'))
+                    .inputEl.type = 'number';
+                text.onChange(value => this.formData.pages = parseInt(value) || 0);
+            });
+
+        this.addCommonFields(this.formData.status);
+    }
+
+    getTaskData(): BookTask {
+        return {
+			status: this.formData.status,
+            type: getMaterialNameById(this.settings.materialTypes, 'book'),
+            section: this.settings.sections.find(s => s.id === this.formData.sectionId)?.name || '',
+            authors: this.formData.authors || '',
+            name: this.formData.name || '',
+            title: this.generateTitle(),
+            pages: this.formData.pages || 0,
+            order: this.formData.order || 999,
+            startDate: this.formData.startDate || '',
+            dueDate: this.formData.dueDate || '',
+            filePath: this.formData.filePath
+        };
+    }
+
+    generateTitle(): string {
+        return `${this.formData.authors || 'Unknown'} - ${this.formData.name || 'Untitled Book'}`;
+    }
+}

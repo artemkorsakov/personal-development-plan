@@ -14,3 +14,32 @@ export interface BookTask extends BaseTypeTask {
     name: string;
     pages: number;
 }
+
+export interface ArticleTask extends BaseTypeTask {
+    link: string;
+    laborInputInHours: number;
+}
+
+export interface VideoTask extends BaseTypeTask {
+	author: string;
+	platform: string;
+    link: string;
+    durationInMinutes: number;
+}
+
+export interface PodcastTask extends BaseTypeTask {
+	author: string;
+	platform: string;
+    link: string;
+    durationInMinutes: number;
+}
+
+export interface CourseTask extends BaseTypeTask {
+	platform: string;
+    link: string;
+    durationInMinutes: number;
+}
+
+export interface UserTypeTask extends BaseTypeTask {
+    laborInputInHours: number;
+}
