@@ -2,7 +2,7 @@ import { Vault, Workspace, Notice } from 'obsidian';
 import { openOrCreateSourceFile } from '../../utils/fileUtils';
 import { getTaskTypeIcon } from '../../utils/taskUtils';
 import { t } from '../../localization/localization';
-import { MaterialType, PersonalDevelopmentPlanSettings } from '../../types';
+import { MaterialType, PersonalDevelopmentPlanSettings } from '../../settings/settings-types';
 
 export default class SourcesTab {
     private static appWorkspace: Workspace;

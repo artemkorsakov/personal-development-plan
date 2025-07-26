@@ -1,0 +1,164 @@
+import { TranslationKeys } from './localization-types';
+
+export const en: TranslationKeys = {
+    // Main interface
+    plan: 'Development Plan',
+    openPlan: 'Open Development Plan',
+    inProgress: '🛠️ In Progress',
+    inProgressTooltip: 'Current tasks in progress',
+    maxActiveTasksWarning: 'Too many tasks in progress, return some to Planned',
+    inProgressStartDate: 'Start Date',
+    inProgressDueDate: 'Due Date',
+    inProgressOverdue: ' (Overdue!)',
+    planned: '⏳ Planned',
+    plannedTooltip: 'Planned, but not yet started tasks',
+    unknownType: 'Unknown Type',
+    unknownSection: 'Unknown Section',
+    noTasksForThisType: 'No tasks for this type',
+    knowledgeBase: '📚 Knowledge Base',
+    knowledgeBaseTooltip: 'Materials for learning, which are not yet detailed',
+    knowledgeBaseName: 'Name',
+    knowledgeBaseType: 'Type',
+    knowledgeBaseSection: 'Section',
+
+    // Export and sources
+    exportToJSON: 'Export to JSON',
+    exportToJSONTooltip: 'Export the Knowledge Base to a JSON file to share with the community',
+    sources: '🔍 Sources',
+    sourcesTooltip: 'Resources for filling the Knowledge Base',
+    sourceItemsList: 'Source Items',
+    sourceItemsExample: '- [ ] Example Source 1\n- [ ] Example Source 2',
+
+    // Statistics and history
+    statistics: '📊 Statistics',
+    statisticsTooltip: 'Progress analysis by sections',
+    history: '🕰️ History',
+    historyTooltip: 'Archive of completed tasks',
+    examples: '📂 Examples',
+    examplesTooltip: 'Development plans from the community',
+
+    // Settings
+    settingsTitle: 'System Settings',
+    generalSettings: 'General Settings',
+    materialTypes: 'Material Types',
+    sectionsCategories: 'Sections and Categories',
+    periodicTasks: 'Periodic Tasks',
+    folderPath: 'Folder Path',
+    folderPathDesc: 'Folder to store all development plan files (default: PersonalDevelopmentPlan)',
+    maxActiveTasks: 'Max Active Tasks',
+    maxActiveTasksDesc: 'Maximum number of simultaneously active tasks (1-10)',
+    statsStartDate: 'Statistics Start Date',
+    statsStartDateDesc: 'Start date for statistics collection (format: YYYY-MM-DD)',
+
+    // Item management
+    addNewType: '+ New Type',
+    newType: 'New Type',
+    addNewSection: '+ New Section',
+    newSection: 'New Section',
+    checklistItem: 'Checklist Item',
+    addItem: 'Add Item',
+    sectionName: 'Section Name',
+    typeName: 'Type Name',
+    addTask: '+ Task',
+    moveUp: 'Move Up',
+    moveDown: 'Move Down',
+    deleteItem: 'Delete',
+    enableDisable: 'Enable/Disable',
+
+    // Periodic tasks
+    daily: 'Daily',
+    weekly: 'Weekly',
+    monthly: 'Monthly',
+    quarterly: 'Quarterly',
+    yearly: 'Yearly',
+    dailyTask: 'Daily Task (example)',
+    weeklyTask: 'Weekly Task (example)',
+    monthlyTask: 'Monthly Task (example)',
+    quarterlyTask: 'Quarterly Task (example)',
+    yearlyTask: 'Yearly Task (example)',
+
+    // Default material types
+    all: 'All',
+    book: 'Book',
+    bookTask1: 'Read book',
+    bookTask2: 'Take notes',
+    article: 'Article',
+    articleTask1: 'Read',
+    articleTask2: 'Extract quotes',
+    video: 'Video',
+    videoTask1: 'Watch',
+    videoTask2: 'Take notes',
+    podcast: 'Podcast',
+    podcastTask1: 'Listen',
+    podcastTask2: 'Take notes',
+    course: 'Course',
+    courseTask1: 'Complete lesson',
+    courseTask2: 'Do assignments',
+
+    // Default sections
+    section1: 'General',
+    section2: 'Learning',
+    section3: 'Work',
+
+    // Default periodic tasks
+    periodicTasksDaily1: 'Morning email review',
+    periodicTasksDaily2: 'Read a book chapter',
+    periodicTasksWeekly1: 'Solve Project Euler problem',
+    periodicTasksWeekly2: 'Listen to Culips podcast',
+    periodicTasksMonthly1: 'Watch ScalaConf talk video',
+    periodicTasksQuarterly1: 'Add ScalaConf recommended books to Knowledge Base',
+    periodicTasksYearly1: 'Complete Advanced Scala course',
+
+    // Task creation
+    createNewTask: 'Create Task',
+    fillRequiredFields: 'Fill in required fields',
+    invalidSectionOrType: 'Invalid section or type',
+    taskType: 'Task Type',
+    invalidTaskType: 'Invalid task type',
+    taskCreationError: 'Task creation error',
+    selectTaskType: 'Select Task Type',
+    untitledTask: 'Untitled Task',
+    taskLabel: 'Information',
+    taskDefaultDescription: 'Task description',
+    checklist: 'Checklist',
+    create: 'Create',
+    cancel: 'Cancel',
+
+    // Filesystem errors
+    fileCreationError: 'File creation error',
+    fileAlreadyExists: 'File with this name already exists! Change the file name or delete the old one.',
+    fileReadError: 'File read error',
+    folderCreationError: 'Folder creation error',
+    taskCreatedSuccessfully: 'Task created successfully',
+
+    // Material metadata
+    authors: 'Authors',
+    authorsPlaceholder: 'Enter authors separated by commas',
+    bookName: 'Book Name',
+    bookNamePlaceholder: 'Enter book name',
+    pages: 'Pages',
+    pagesPlaceholder: 'Enter number of pages',
+    section: 'Section',
+    bookContentHeader: '## Description\n\nBrief description of the book content and reading goals\n\n## Progress\n\n',
+    articleTitle: 'Article Title',
+    articleTitlePlaceholder: 'Enter article title',
+    articleUrl: 'Article URL',
+    notes: 'Notes',
+    addYourThoughts: 'Add your thoughts',
+
+    // Additional
+    openSourceError: 'Error opening source code',
+    recommendedResources: 'Recommended Resources',
+    findAndAddResources: 'Find and add resources',
+    personalNotes: 'Personal Notes',
+    exportSuccess: 'Export successful',
+    exportError: 'Export error',
+
+    // Settings groups
+    taskLimit: 'Task Limit',
+    startTrackingDate: 'Start Tracking Date',
+    customFolder: 'Custom Folder',
+    materialTypeSettings: 'Material Types Settings',
+    sectionSettings: 'Sections Settings',
+    taskSettings: 'Tasks Settings'
+};

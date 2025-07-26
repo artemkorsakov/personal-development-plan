@@ -3,7 +3,8 @@ import { openTaskFile } from '../../utils/fileUtils';
 import { generateProgressBar } from '../../utils/progressUtils';
 import { getPlannedTasks, getTaskTypeIcon, isTaskOverdue } from '../../utils/taskUtils';
 import { t } from '../../localization/localization';
-import { PersonalDevelopmentPlanSettings, PlannedTask, getMaterialNameById, getMaterialIdByName } from '../../types';
+import { PlannedTask } from '../tabs-types';
+import { PersonalDevelopmentPlanSettings, getMaterialNameById, getMaterialIdByName } from '../../settings/settings-types';
 
 export default class PlannedTab {
     private static currentType: string | null = null;

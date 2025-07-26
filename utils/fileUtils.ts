@@ -1,5 +1,6 @@
 import { Vault, TFile, Notice, Workspace } from 'obsidian';
-import { BookTask, PersonalDevelopmentPlanSettings } from '../types';
+import { BookTask } from '../settings/task-types';
+import { PersonalDevelopmentPlanSettings } from '../settings/settings-types';
 import { t } from '../localization/localization';
 
 export async function openTaskFile(path: string, vault: Vault, workspace: Workspace): Promise<void> {
@@ -70,7 +71,10 @@ export async function createTaskFile(
     const fileName = `${task.title}.md`;
     const filePath = `${settings.folderPath}/${fileName}`;
 
-    const frontmatter = `---\n${Object.entries(task)
+    // Деструктуризация с исключением filePath
+    const { filePath: _, ...taskWithoutFilePath } = task;
+
+    const frontmatter = `---\n${Object.entries(taskWithoutFilePath)
         .map(([key, value]) => `${key}: ${typeof value === 'string' ? value : JSON.stringify(value)}`)
         .join('\n')}\n---\n\n${content}`;
 

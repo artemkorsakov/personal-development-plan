@@ -4,7 +4,7 @@ import { formatDate } from '../../utils/dateUtils';
 import { openTaskFile } from '../../utils/fileUtils';
 import { generateProgressBar } from '../../utils/progressUtils';
 import { t } from '../../localization/localization';
-import { PersonalDevelopmentPlanSettings, getMaterialNameById, getMaterialIdByName } from '../../types';
+import { PersonalDevelopmentPlanSettings, getMaterialNameById, getMaterialIdByName } from '../../settings/settings-types';
 
 export default class InProgressTab {
     private static app: any;

@@ -1,5 +1,6 @@
 import { App, Modal, Setting, Notice } from 'obsidian';
-import { BookTask, MaterialType, PersonalDevelopmentPlanSettings } from '../../types';
+import { BookTask } from '../../settings/task-types';
+import { MaterialType, PersonalDevelopmentPlanSettings } from '../../settings/settings-types';
 import { createTaskFile } from '../../utils/fileUtils';
 import { t } from '../../localization/localization';
 
@@ -7,10 +8,23 @@ export default class CreateTaskModal extends Modal {
     private settings: PersonalDevelopmentPlanSettings;
     private selectedTaskType: string = '';
     private formData: Record<string, any> = {};
+    private onSubmitCallback: ((success: boolean, taskType?: string) => void) | null = null;
 
-    constructor(app: App, settings: PersonalDevelopmentPlanSettings) {
+    constructor(
+        app: any,
+        settings: PersonalDevelopmentPlanSettings,
+        onSubmit?: (success: boolean, taskType?: string) => void
+    ) {
         super(app);
         this.settings = settings;
+        this.onSubmitCallback = onSubmit || null;
+    }
+
+    setInitialType(type: string) {
+        this.selectedTaskType = type;
+        if (this.contentEl.querySelector('#task-type')) {
+            (this.contentEl.querySelector('#task-type') as HTMLSelectElement).value = type;
+        }
     }
 
     onOpen() {
@@ -191,9 +205,17 @@ export default class CreateTaskModal extends Modal {
 
             await createTaskFile(taskData, content, this.settings, this.app.vault);
             this.close();
+
+            if (this.onSubmitCallback) {
+                this.onSubmitCallback(true, taskType.id);
+            }
         } catch (error) {
             console.error('Error creating task:', error);
             new Notice(t('taskCreationError') + ': ' + (error instanceof Error ? error.message : String(error)));
+
+            if (this.onSubmitCallback) {
+                this.onSubmitCallback(false);
+            }
         }
     }
 

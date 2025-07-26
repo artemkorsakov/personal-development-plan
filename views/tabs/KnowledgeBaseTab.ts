@@ -1,8 +1,10 @@
-import { Notice, Vault, TFile } from 'obsidian';
+import { Notice, Vault } from 'obsidian';
 import { openTaskFile } from '../../utils/fileUtils';
 import { getKnowledgeItems, getTaskTypeIcon } from '../../utils/taskUtils';
+import { exportToJSON } from '../../utils/exportUtils';
 import { t } from '../../localization/localization';
-import { KnowledgeItem, MaterialType, PersonalDevelopmentPlanSettings, Section } from '../../types';
+import { KnowledgeItem } from '../tabs-types';
+import { PersonalDevelopmentPlanSettings, Section } from '../../settings/settings-types';
 import CreateTaskModal from '../modals/CreateTaskModal';
 
 export default class KnowledgeBaseTab {
@@ -10,6 +12,9 @@ export default class KnowledgeBaseTab {
     private static currentSection: string | null = null;
     private static app: any;
     private static settings: PersonalDevelopmentPlanSettings;
+    private static contentContainer: HTMLElement;
+    private static vault: Vault;
+    private static metadataCache: any;
 
     static async create(
         app: any,
@@ -19,6 +24,10 @@ export default class KnowledgeBaseTab {
     ): Promise<HTMLElement> {
         this.app = app;
         this.settings = settings;
+        this.vault = vault;
+        this.metadataCache = metadataCache;
+        this.currentType = null;
+        this.currentSection = null;
 
         const mainContainer = document.createElement('div');
         mainContainer.className = 'knowledge-base-container';
@@ -28,11 +37,23 @@ export default class KnowledgeBaseTab {
         const allItems = await getKnowledgeItems(vault, settings, metadataCache);
 
         const [typeTabs, sectionTabs, contentContainer] = this.createTabContainers(mainContainer);
+        this.contentContainer = contentContainer;
 
         this.initializeTypeTabs(typeTabs, settings, allItems, contentContainer);
         this.initializeSectionTabs(sectionTabs, settings, allItems, contentContainer);
 
         return mainContainer;
+    }
+
+    private static async refreshContent() {
+        const allItems = await getKnowledgeItems(this.vault, this.settings, this.metadataCache);
+        this.updateContent(this.contentContainer, allItems);
+
+        const typeTabs = this.contentContainer.closest('.knowledge-base-container')?.querySelector('.knowledge-type-tabs') as HTMLElement;
+        const sectionTabs = this.contentContainer.closest('.knowledge-base-container')?.querySelector('.knowledge-section-tabs') as HTMLElement;
+
+        if (typeTabs) this.updateTabCounts(typeTabs, allItems);
+        if (sectionTabs) this.updateSectionTabsCounts(sectionTabs, allItems);
     }
 
     private static createHeader(
@@ -48,7 +69,29 @@ export default class KnowledgeBaseTab {
             text: t('createNewTask')
         });
         createBtn.addEventListener('click', () => {
-            new CreateTaskModal(this.app, this.settings).open();
+            const modal = new CreateTaskModal(
+                this.app,
+                this.settings,
+                (success, newTaskType) => {
+                    if (success) {
+                        this.refreshContent();
+                        if (this.currentType && newTaskType && newTaskType !== this.currentType) {
+                            // Переключаем на вкладку "all" только после успешного создания
+                            const allTab = container.querySelector('.knowledge-tab[data-id="all"]') as HTMLElement;
+                            if (allTab) {
+                                this.currentType = null;
+                                this.setActiveTab(allTab, container);
+                            }
+                        }
+                    }
+                }
+            );
+
+            if (this.currentType) {
+                modal.setInitialType(this.currentType);
+            }
+
+            modal.open();
         });
 
         const exportBtn = header.createEl('button', {
@@ -79,6 +122,24 @@ export default class KnowledgeBaseTab {
             .filter(type => type.enabled)
             .sort((a, b) => a.order - b.order);
 
+        // Add "All" tab
+        const allTab = this.createTab(
+            'all',
+            `${getTaskTypeIcon('all')} ${t('all')}`,
+            items.length
+        );
+
+        allTab.addEventListener('click', () => {
+            this.currentType = null;
+            this.currentSection = null;
+            this.setActiveTab(allTab, container);
+            this.resetActiveTab(container.parentElement?.querySelector('.knowledge-section-tabs'));
+            this.updateContent(contentContainer, items);
+            this.updateSectionTabsCounts(container.parentElement?.querySelector('.knowledge-section-tabs'), items);
+        });
+
+        container.appendChild(allTab);
+
         enabledTypes.forEach(type => {
             const tab = this.createTab(
                 type.id,
@@ -98,10 +159,8 @@ export default class KnowledgeBaseTab {
             container.appendChild(tab);
         });
 
-        if (enabledTypes.length > 0 && !this.currentType) {
-            const firstTab = container.children[0] as HTMLElement;
-            firstTab.click();
-        }
+        // Set 'all' tab as active by default
+        allTab.click();
     }
 
     private static initializeSectionTabs(
@@ -111,6 +170,23 @@ export default class KnowledgeBaseTab {
         contentContainer: HTMLElement
     ) {
         const sections = [...settings.sections].sort((a, b) => a.order - b.order);
+
+        // Add "All" tab
+        const allTab = this.createTab(
+            'all-sections',
+            t('all'),
+            this.currentType
+                ? items.filter(item => item.type === this.currentType).length
+                : items.length
+        );
+
+        allTab.addEventListener('click', () => {
+            this.currentSection = null;
+            this.setActiveTab(allTab, container);
+            this.updateContent(contentContainer, items);
+        });
+
+        container.appendChild(allTab);
 
         sections.forEach(section => {
             const count = items.filter(item =>
@@ -197,13 +273,46 @@ export default class KnowledgeBaseTab {
         container.appendChild(table);
     }
 
+    private static updateTabCounts(container: HTMLElement, items: KnowledgeItem[]) {
+        container.querySelectorAll('.knowledge-tab').forEach(tab => {
+            const tabId = tab.getAttribute('data-id');
+            if (tabId === 'all') {
+                const count = items.length;
+                const labelSpan = tab.querySelector('.knowledge-tab-label');
+                if (labelSpan) {
+                    labelSpan.textContent = `${t('all')} (${count})`;
+                }
+                return;
+            }
+
+            const type = this.settings.materialTypes.find(t => t.id === tabId);
+            if (!type) return;
+
+            const count = items.filter(item => item.type === type.name).length;
+            const labelSpan = tab.querySelector('.knowledge-tab-label');
+            if (labelSpan) {
+                labelSpan.textContent = `${type.name} (${count})`;
+            }
+        });
+    }
+
     private static updateSectionTabsCounts(container: HTMLElement | null | undefined, items: KnowledgeItem[]) {
         if (!container) return;
 
         container.querySelectorAll('.knowledge-tab').forEach(tab => {
             const sectionId = tab.getAttribute('data-id');
-            const section = this.settings.sections.find((s: Section) => s.id === sectionId);
+            if (sectionId === 'all-sections') {
+                const count = this.currentType
+                    ? items.filter(item => item.type === this.currentType).length
+                    : items.length;
+                const labelSpan = tab.querySelector('.knowledge-tab-label');
+                if (labelSpan) {
+                    labelSpan.textContent = `${t('all')} (${count})`;
+                }
+                return;
+            }
 
+            const section = this.settings.sections.find((s: Section) => s.id === sectionId);
             if (!section) return;
 
             const count = this.currentType
@@ -233,8 +342,6 @@ export default class KnowledgeBaseTab {
         });
     }
 
-
-
     private static async handleExport(
         settings: PersonalDevelopmentPlanSettings,
         vault: Vault,
@@ -242,26 +349,11 @@ export default class KnowledgeBaseTab {
     ) {
         try {
             const items = await getKnowledgeItems(vault, settings, metadataCache);
-            await this.exportToJSON(items);
+            await exportToJSON(items);
             new Notice(t('exportSuccess'));
         } catch (error) {
             console.error('Export failed:', error);
             new Notice(t('exportError'));
         }
-    }
-
-    private static async exportToJSON(items: KnowledgeItem[]) {
-        const jsonStr = JSON.stringify(items, null, 2);
-
-        // Create download link
-        const blob = new Blob([jsonStr], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `knowledge-base-export-${new Date().toISOString().slice(0,10)}.json`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
     }
 }

@@ -1,6 +1,7 @@
 import { App, Plugin, Setting, PluginSettingTab } from 'obsidian';
-import { MaterialType, PersonalDevelopmentPlanSettings, Section } from '../types';
-import { t, TranslationKeys } from '../localization/localization';
+import { MaterialType, PersonalDevelopmentPlanSettings, Section } from './settings-types';
+import { t } from '../localization/localization';
+import { TranslationKeys } from '../localization/localization-types';
 
 export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
     private readonly plugin: Plugin;

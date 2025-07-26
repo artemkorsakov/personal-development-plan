@@ -1,6 +1,6 @@
 import { Plugin, Vault } from 'obsidian';
 import { PLAN_VIEW_TYPE } from './views/PlanView';
-import { PersonalDevelopmentPlanSettings } from './types';
+import { PersonalDevelopmentPlanSettings } from './settings/settings-types';
 import { PersonalDevelopmentPlanSettingsTab, DEFAULT_SETTINGS } from './settings/settings';
 import { t } from './localization/localization';
 import PlanView from './views/PlanView';

@@ -1,5 +1,6 @@
 import { Vault, TFile, MetadataCache } from 'obsidian';
-import { KnowledgeItem, PersonalDevelopmentPlanSettings, PlannedTask, TaskInProgress } from '../types';
+import { KnowledgeItem, PlannedTask, TaskInProgress } from '../views/tabs-types';
+import { PersonalDevelopmentPlanSettings } from '../settings/settings-types';
 import { calculateTaskProgress } from './progressUtils';
 import { getFilesInFolder } from './fileUtils';
 
@@ -116,6 +117,7 @@ export function isTaskOverdue(task: TaskInProgress): boolean {
 }
 
 const TYPE_ICONS: Record<string, string> = {
+	all: "🗂️",
     book: "📚",
     article: "📄",
     course: "🎓",

@@ -1,6 +1,6 @@
 import { ItemView, WorkspaceLeaf, TFile, Vault, EventRef } from 'obsidian';
 import PersonalDevelopmentPlanPlugin from "../main";
-import { TabDefinition, TAB_DEFINITIONS } from '../types';
+import { TabDefinition, TAB_DEFINITIONS } from './tabs-types';
 import { t } from '../localization/localization';
 import InProgressTab from './tabs/InProgressTab';
 import PlannedTab from './tabs/PlannedTab';
