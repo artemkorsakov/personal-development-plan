@@ -5,6 +5,10 @@ import { MaterialType, PersonalDevelopmentPlanSettings } from '../../settings/se
 import { TaskFormBuilder } from './TaskFormFactory';
 import { ArticleFormBuilder } from './ArticleFormBuilder';
 import { BookFormBuilder } from './BookFormBuilder';
+import { CourseFormBuilder } from './CourseFormBuilder';
+import { PodcastFormBuilder } from './PodcastFormBuilder';
+import { VideoFormBuilder } from './VideoFormBuilder';
+import { UserTypeFormBuilder } from './UserTypeFormBuilder';
 
 export default class CreateTaskModal extends Modal {
     private settings: PersonalDevelopmentPlanSettings;
@@ -97,15 +101,29 @@ export default class CreateTaskModal extends Modal {
         this.formContainer.empty();
 
         switch (this.selectedTaskType) {
-            case 'book':
-                this.formBuilder = new BookFormBuilder(this.settings, this.formContainer, this.taskStatus);
-                break;
             case 'article':
                 this.formBuilder = new ArticleFormBuilder(this.settings, this.formContainer, this.taskStatus);
                 break;
+            case 'book':
+                this.formBuilder = new BookFormBuilder(this.settings, this.formContainer, this.taskStatus);
+                break;
+            case 'course':
+				this.formBuilder = new CourseFormBuilder(this.settings, this.formContainer, this.taskStatus);
+				break;
+            case 'podcast':
+				this.formBuilder = new PodcastFormBuilder(this.settings, this.formContainer, this.taskStatus);
+				break;
+			case 'video':
+				this.formBuilder = new VideoFormBuilder(this.settings, this.formContainer, this.taskStatus);
+				break;
             default:
-                this.formContainer.createEl('p', { text: t('selectTaskType') });
-                return;
+				this.formBuilder = new UserTypeFormBuilder(
+                    this.settings,
+                    this.formContainer,
+                    this.taskStatus,
+                    this.selectedTaskType
+                );
+                break;
         }
 
         if (this.formBuilder) {

@@ -145,6 +145,22 @@ export interface TranslationKeys {
     pagesPlaceholder: string;
     section: string;
     bookContentHeader: string;
+    videoTitle: string;
+    videoTitlePlaceholder: string;
+    videoUrl: string;
+    podcastTitle: string;
+    podcastTitlePlaceholder: string;
+    podcastUrl: string;
+    courseTitle: string;
+    courseTitlePlaceholder: string;
+    courseUrl: string;
+    taskTitle: string;
+    taskTitlePlaceholder: string;
+    author: string;
+    authorPlaceholder: string;
+    platform: string;
+    platformPlaceholder: string;
+    durationInMinutes: string;
     notes: string;
     addYourThoughts: string;
 

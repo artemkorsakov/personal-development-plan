@@ -250,7 +250,32 @@ dueDate: 2025-09-15
 #### Тело задачи
 
 ```markdown
-???
+---
+status: planned
+type: Видео
+section: Общие
+title: Пример видео
+author: Автор видео
+platform: vimeo
+link: vimeo.ru
+durationInMinutes: 45
+order: 5
+startDate: 
+dueDate: 
+---
+
+# Информация
+
+Описание задачи
+
+## План выполнения
+
+- [ ] Посмотреть
+- [ ] Конспектировать
+
+## Заметки
+
+Добавьте ваши мысли
 ```
 
 ### Подкаст
@@ -264,7 +289,32 @@ dueDate: 2025-09-15
 #### Тело задачи
 
 ```markdown
-???
+---
+status: in-progress
+type: Подкаст
+section: Общие
+title: Culips
+author: James
+platform: spotify
+link: spotidy.ru
+durationInMinutes: 43
+order: 4
+startDate: 2025-06-06
+dueDate: 2025-06-30
+---
+
+# Информация
+
+Описание задачи
+
+## План выполнения
+
+- [ ] Прослушать
+- [ ] Конспектировать
+
+## Заметки
+
+Добавьте ваши мысли
 ```
 
 ### Курс
@@ -277,7 +327,31 @@ dueDate: 2025-09-15
 #### Тело задачи
 
 ```markdown
-???
+---
+status: in-progress
+type: Курс
+section: Общие
+title: Scala для начинающих
+platform: Cuorsera
+link: courcera.ru
+durationInMinutes: 145
+order: 5
+startDate: 2025-04-05
+dueDate: 2025-07-31
+---
+
+# Информация
+
+Описание задачи
+
+## План выполнения
+
+- [ ] Пройти урок
+- [ ] Выполнить задания
+
+## Заметки
+
+Добавьте ваши мысли
 ```
 
 ### Произвольный тип (UserType)
@@ -289,5 +363,26 @@ dueDate: 2025-09-15
 #### Тело задачи
 
 ```markdown
-???
+---
+status: in-progress
+type: OpenSearch
+section: Общие
+title: пппп
+laborInputInHours: 5
+order: 999
+startDate: 2025-10-10
+dueDate: 2025-10-10
+---
+
+# Информация
+
+Описание задачи
+
+## План выполнения
+
+- [ ] Изучить OpenSearch проект
+
+## Заметки
+
+Добавьте ваши мысли
 ```
