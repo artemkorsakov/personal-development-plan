@@ -203,7 +203,10 @@ export default class CreateTaskModal extends Modal {
 
             const content = this.generateTaskContent(taskType);
 
-            await createTaskFile(taskData, content, this.settings, this.app.vault);
+		    await createTaskFile(taskData, content, this.settings, this.app.vault);
+
+            await new Promise(resolve => setTimeout(resolve, 200));
+
             this.close();
 
             if (this.onSubmitCallback) {

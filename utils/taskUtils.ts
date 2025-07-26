@@ -59,20 +59,42 @@ export async function getActiveTasks(
     settings: PersonalDevelopmentPlanSettings,
     metadataCache: MetadataCache
 ): Promise<TaskInProgress[]> {
-    const files = getFilesInFolder(vault, settings.folderPath);
-    const processor: FileProcessor<TaskInProgress> = {
-        filter: (frontmatter) => frontmatter?.status === 'in-progress',
-        needsContent: true,
-        transform: (file, frontmatter, content) => ({
-            ...getCommonFields(file, frontmatter),
-            startDate: frontmatter?.startDate || "???",
-            dueDate: frontmatter?.dueDate || "???",
-            progress: calculateTaskProgress(content || ''),
-        })
-    };
+    try {
+        // 1. Пауза для возможного обновления кэша
+        await new Promise(resolve => setTimeout(resolve, 50));
 
-    const tasks = await processFiles(vault, files, metadataCache, processor);
-    return tasks.sort((a, b) => a.order - b.order);
+        // 2. Получаем файлы с повторными попытками
+        const files = await getFilesInFolderWithRetry(vault, settings.folderPath);
+
+        // 3. Процессор с улучшенной проверкой данных
+        const processor: FileProcessor<TaskInProgress> = {
+            filter: (frontmatter) => {
+                const status = frontmatter?.status;
+                return typeof status === 'string' &&
+                       status.toLowerCase() === 'in-progress';
+            },
+            needsContent: true,
+            transform: (file, frontmatter, content) => {
+                const commonFields = getCommonFields(file, frontmatter);
+                return {
+                    ...commonFields,
+                    startDate: typeof frontmatter?.startDate === 'string' ? frontmatter.startDate : "???",
+                    dueDate: typeof frontmatter?.dueDate === 'string' ? frontmatter.dueDate : "???",
+                    progress: calculateTaskProgress(content || ''),
+                    order: typeof frontmatter?.order === 'number' ? frontmatter.order : 0
+                };
+            }
+        };
+
+        // 4. Обработка с повторными попытками
+        const tasks = await processFilesWithRetry(vault, files, metadataCache, processor);
+
+        // 5. Сортировка с защитой от отсутствующих order
+        return tasks.sort((a, b) => (a.order || 0) - (b.order || 0));
+    } catch (error) {
+        console.error('Failed to get active tasks:', error);
+        return []; // Возвращаем пустой массив вместо ошибки
+    }
 }
 
 export async function getPlannedTasks(
@@ -80,14 +102,35 @@ export async function getPlannedTasks(
     settings: PersonalDevelopmentPlanSettings,
     metadataCache: MetadataCache
 ): Promise<PlannedTask[]> {
-    const files = getFilesInFolder(vault, settings.folderPath);
-    const processor: FileProcessor<PlannedTask> = {
-        filter: (frontmatter) => frontmatter?.status === 'planned',
-        needsContent: false,
-        transform: (file, frontmatter) => getCommonFields(file, frontmatter)
-    };
+    try {
+        // 1. Пауза для возможного обновления кэша
+        await new Promise(resolve => setTimeout(resolve, 50));
 
-    return processFiles(vault, files, metadataCache, processor);
+        // 2. Получаем файлы с повторными попытками
+        const files = await getFilesInFolderWithRetry(vault, settings.folderPath);
+
+        // 3. Процессор с улучшенной проверкой данных
+        const processor: FileProcessor<PlannedTask> = {
+            filter: (frontmatter) => {
+                const status = frontmatter?.status;
+                return typeof status === 'string' &&
+                       status.toLowerCase() === 'planned';
+            },
+            needsContent: false,
+            transform: (file, frontmatter) => {
+                return {
+                    ...getCommonFields(file, frontmatter),
+                    order: typeof frontmatter?.order === 'number' ? frontmatter.order : 0
+                };
+            }
+        };
+
+        // 4. Обработка с повторными попытками
+        return await processFilesWithRetry(vault, files, metadataCache, processor);
+    } catch (error) {
+        console.error('Failed to get planned tasks:', error);
+        return []; // Возвращаем пустой массив вместо ошибки
+    }
 }
 
 export async function getKnowledgeItems(
@@ -95,17 +138,76 @@ export async function getKnowledgeItems(
     settings: PersonalDevelopmentPlanSettings,
     metadataCache: MetadataCache
 ): Promise<KnowledgeItem[]> {
-    const files = getFilesInFolder(vault, settings.folderPath);
-    const processor: FileProcessor<KnowledgeItem> = {
-        filter: (frontmatter) => frontmatter?.status === 'knowledge-base',
-        needsContent: false,
-        transform: (file, frontmatter) => ({
-            ...getCommonFields(file, frontmatter),
-            order: frontmatter?.order ?? 0
-        })
-    };
+    try {
+        // 1. Явная пауза для возможного обновления кэша
+        await new Promise(resolve => setTimeout(resolve, 50));
 
-    return processFiles(vault, files, metadataCache, processor);
+        // 2. Получаем файлы с дополнительными проверками
+        const files = await getFilesInFolderWithRetry(vault, settings.folderPath);
+
+        // 3. Процессор для преобразования данных
+        const processor: FileProcessor<KnowledgeItem> = {
+            filter: (frontmatter) => {
+                // Более надежная проверка статуса
+                const status = frontmatter?.status;
+                return typeof status === 'string' &&
+                       status.toLowerCase() === 'knowledge-base';
+            },
+            needsContent: false,
+            transform: (file, frontmatter) => ({
+                ...getCommonFields(file, frontmatter),
+                order: typeof frontmatter?.order === 'number' ? frontmatter.order : 0
+            })
+        };
+
+        // 4. Обработка файлов с повторными попытками
+        return await processFilesWithRetry(vault, files, metadataCache, processor);
+    } catch (error) {
+        console.error('Failed to get knowledge items:', error);
+        return []; // Возвращаем пустой массив вместо ошибки
+    }
+}
+
+async function getFilesInFolderWithRetry(
+    vault: Vault,
+    folderPath: string,
+    retries = 3,
+    delay = 100
+): Promise<TFile[]> {
+    for (let i = 0; i < retries; i++) {
+        try {
+            const files = getFilesInFolder(vault, folderPath);
+            if (files.length > 0 || i === retries - 1) {
+                return files;
+            }
+            await new Promise(resolve => setTimeout(resolve, delay * (i + 1)));
+        } catch (error) {
+            if (i === retries - 1) throw error;
+        }
+    }
+    return [];
+}
+
+async function processFilesWithRetry(
+    vault: Vault,
+    files: TFile[],
+    metadataCache: MetadataCache,
+    processor: FileProcessor<any>,
+    retries = 3,
+    delay = 100
+): Promise<any[]> {
+    for (let i = 0; i < retries; i++) {
+        try {
+            const result = await processFiles(vault, files, metadataCache, processor);
+            if (result.length > 0 || i === retries - 1) {
+                return result;
+            }
+            await new Promise(resolve => setTimeout(resolve, delay * (i + 1)));
+        } catch (error) {
+            if (i === retries - 1) throw error;
+        }
+    }
+    return [];
 }
 
 export function isTaskOverdue(task: TaskInProgress): boolean {

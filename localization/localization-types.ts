@@ -121,6 +121,7 @@ export interface TranslationKeys {
     checklist: string;
     create: string;
     cancel: string;
+    refreshFailed: string;
 
     // File system
     fileCreationError: string;

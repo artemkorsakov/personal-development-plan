@@ -123,6 +123,7 @@ export const ru: TranslationKeys = {
     checklist: 'План выполнения',
     create: 'Создать',
     cancel: 'Отмена',
+    refreshFailed: 'Ошибка обновления',
 
     // File system
     fileCreationError: 'Ошибка создания файла',

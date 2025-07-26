@@ -71,7 +71,6 @@ export async function createTaskFile(
     const fileName = `${task.title}.md`;
     const filePath = `${settings.folderPath}/${fileName}`;
 
-    // Деструктуризация с исключением filePath
     const { filePath: _, ...taskWithoutFilePath } = task;
 
     const frontmatter = `---\n${Object.entries(taskWithoutFilePath)

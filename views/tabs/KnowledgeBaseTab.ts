@@ -32,7 +32,7 @@ export default class KnowledgeBaseTab {
         const mainContainer = document.createElement('div');
         mainContainer.className = 'knowledge-base-container';
 
-        this.createHeader(mainContainer, settings, vault, metadataCache);
+        this.createHeader(mainContainer); // Убрали лишние параметры
 
         const allItems = await getKnowledgeItems(vault, settings, metadataCache);
 
@@ -45,44 +45,72 @@ export default class KnowledgeBaseTab {
         return mainContainer;
     }
 
-    private static async refreshContent() {
-        const allItems = await getKnowledgeItems(this.vault, this.settings, this.metadataCache);
-        this.updateContent(this.contentContainer, allItems);
+    static async refreshContent() {
+        try {
+            // Получаем свежие экземпляры vault и metadataCache
+            const vault = this.app.vault;
+            const metadataCache = this.app.metadataCache;
 
-        const typeTabs = this.contentContainer.closest('.knowledge-base-container')?.querySelector('.knowledge-type-tabs') as HTMLElement;
-        const sectionTabs = this.contentContainer.closest('.knowledge-base-container')?.querySelector('.knowledge-section-tabs') as HTMLElement;
+            // Принудительно обновляем данные
+            const allItems = await getKnowledgeItems(vault, this.settings, metadataCache);
 
-        if (typeTabs) this.updateTabCounts(typeTabs, allItems);
-        if (sectionTabs) this.updateSectionTabsCounts(sectionTabs, allItems);
+            // Обновляем UI
+            this.updateContent(this.contentContainer, allItems);
+
+            // Обновляем счетчики во вкладках
+            const mainContainer = this.contentContainer.closest('.knowledge-base-container');
+            if (mainContainer) {
+                const typeTabs = mainContainer.querySelector('.knowledge-type-tabs') as HTMLElement;
+                const sectionTabs = mainContainer.querySelector('.knowledge-section-tabs') as HTMLElement;
+
+                if (typeTabs) this.updateTabCounts(typeTabs, allItems);
+                if (sectionTabs) this.updateSectionTabsCounts(sectionTabs, allItems);
+            }
+
+            return allItems;
+        } catch (error) {
+            console.error('Refresh error:', error);
+            new Notice('Failed to refresh content');
+            throw error;
+        }
     }
 
-    private static createHeader(
-        container: HTMLElement,
-        settings: PersonalDevelopmentPlanSettings,
-        vault: Vault,
-        metadataCache: any
-    ) {
+    private static createHeader(container: HTMLElement) {
         const header = container.createDiv({ cls: 'knowledge-header' });
 
         const createBtn = header.createEl('button', {
             cls: 'knowledge-create-btn',
             text: t('createNewTask')
         });
+
         createBtn.addEventListener('click', () => {
             const modal = new CreateTaskModal(
                 this.app,
                 this.settings,
-                (success, newTaskType) => {
-                    if (success) {
-                        this.refreshContent();
-                        if (this.currentType && newTaskType && newTaskType !== this.currentType) {
-                            // Переключаем на вкладку "all" только после успешного создания
-                            const allTab = container.querySelector('.knowledge-tab[data-id="all"]') as HTMLElement;
-                            if (allTab) {
-                                this.currentType = null;
-                                this.setActiveTab(allTab, container);
-                            }
+                async (success) => {
+                    if (!success) return;
+
+                    try {
+                        // 1. Ждем обновления данных
+                        await this.refreshContent();
+
+                        // 2. Получаем свежие DOM-элементы
+                        const allTab = container.querySelector('.knowledge-tab[data-id="all"]') as HTMLElement;
+                        const typeTabs = container.querySelector('.knowledge-type-tabs') as HTMLElement;
+                        const sectionTabs = container.querySelector('.knowledge-section-tabs') as HTMLElement;
+
+                        // 3. Переключаем на вкладку all
+                        if (allTab && typeTabs) {
+                            this.currentType = null;
+                            this.currentSection = null;
+                            this.setActiveTab(allTab, typeTabs);
+                            if (sectionTabs) this.resetActiveTab(sectionTabs);
+
+                            // 4. Дополнительное обновление для гарантии
+                            await this.refreshContent();
                         }
+                    } catch (error) {
+                        console.error('Post-create error:', error);
                     }
                 }
             );
@@ -98,7 +126,7 @@ export default class KnowledgeBaseTab {
             cls: 'knowledge-export-btn',
             text: t('exportToJSON')
         });
-        exportBtn.addEventListener('click', () => this.handleExport(settings, vault, metadataCache));
+        exportBtn.addEventListener('click', () => this.handleExport());
     }
 
     private static createTabContainers(container: HTMLElement): [HTMLElement, HTMLElement, HTMLElement] {
@@ -342,13 +370,9 @@ export default class KnowledgeBaseTab {
         });
     }
 
-    private static async handleExport(
-        settings: PersonalDevelopmentPlanSettings,
-        vault: Vault,
-        metadataCache: any
-    ) {
+    private static async handleExport() {
         try {
-            const items = await getKnowledgeItems(vault, settings, metadataCache);
+            const items = await getKnowledgeItems(this.vault, this.settings, this.metadataCache);
             await exportToJSON(items);
             new Notice(t('exportSuccess'));
         } catch (error) {

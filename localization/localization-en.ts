@@ -123,6 +123,7 @@ export const en: TranslationKeys = {
     checklist: 'Checklist',
     create: 'Create',
     cancel: 'Cancel',
+    refreshFailed: 'Refresh failed',
 
     // Filesystem errors
     fileCreationError: 'File creation error',
