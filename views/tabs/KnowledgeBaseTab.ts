@@ -87,6 +87,7 @@ export default class KnowledgeBaseTab {
             const modal = new CreateTaskModal(
                 this.app,
                 this.settings,
+                'knowledge-base',
                 async (success) => {
                     if (!success) return;
 

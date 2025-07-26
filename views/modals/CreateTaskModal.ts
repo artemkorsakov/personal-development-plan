@@ -9,14 +9,17 @@ export default class CreateTaskModal extends Modal {
     private selectedTaskType: string = '';
     private formData: Record<string, any> = {};
     private onSubmitCallback: ((success: boolean, taskType?: string) => void) | null = null;
+    private taskStatus: string;
 
     constructor(
         app: any,
         settings: PersonalDevelopmentPlanSettings,
+        taskStatus: string,
         onSubmit?: (success: boolean, taskType?: string) => void
     ) {
         super(app);
         this.settings = settings;
+        this.taskStatus = taskStatus;
         this.onSubmitCallback = onSubmit || null;
     }
 
@@ -188,7 +191,7 @@ export default class CreateTaskModal extends Modal {
             const { sectionId, ...taskDataWithoutSectionId } = this.formData;
 
             const taskData: BookTask = {
-                status: 'knowledge-base',
+                status: this.taskStatus,
                 type: taskType.name,
                 section: this.settings.sections.find(s => s.id === sectionId)?.name || '',
                 authors: this.formData.authors || '',
@@ -203,8 +206,7 @@ export default class CreateTaskModal extends Modal {
 
             const content = this.generateTaskContent(taskType);
 
-		    await createTaskFile(taskData, content, this.settings, this.app.vault);
-
+            await createTaskFile(taskData, content, this.settings, this.app.vault);
             await new Promise(resolve => setTimeout(resolve, 200));
 
             this.close();

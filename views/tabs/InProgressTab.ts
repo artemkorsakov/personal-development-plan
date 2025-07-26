@@ -5,9 +5,13 @@ import { openTaskFile } from '../../utils/fileUtils';
 import { generateProgressBar } from '../../utils/progressUtils';
 import { t } from '../../localization/localization';
 import { PersonalDevelopmentPlanSettings, getMaterialNameById, getMaterialIdByName } from '../../settings/settings-types';
+import CreateTaskModal from '../modals/CreateTaskModal';
 
 export default class InProgressTab {
     private static app: any;
+    private static settings: PersonalDevelopmentPlanSettings;
+    private static vault: Vault;
+    private static metadataCache: any;
 
     static async create(
         app: any,
@@ -16,9 +20,15 @@ export default class InProgressTab {
         metadataCache: any
     ): Promise<HTMLElement> {
         this.app = app;
+        this.settings = settings;
+        this.vault = vault;
+        this.metadataCache = metadataCache;
 
         const container = document.createElement('div');
         container.className = 'tasks-container';
+
+        // Добавляем заголовок с кнопкой создания
+        this.createHeader(container);
 
         const activeTasks = await getActiveTasks(vault, settings, metadataCache);
         const maxTasks = settings.maxActiveTasks || 10;
@@ -63,5 +73,47 @@ export default class InProgressTab {
         });
 
         return container;
+    }
+
+    private static createHeader(container: HTMLElement) {
+        const header = container.createDiv({ cls: 'tasks-header' });
+
+        const createBtn = header.createEl('button', {
+            cls: 'task-create-btn',
+            text: t('createNewTask')
+        });
+
+        createBtn.addEventListener('click', () => {
+            const modal = new CreateTaskModal(
+                this.app,
+                this.settings,
+                'in-progress', // Устанавливаем статус для активных задач
+                async (success) => {
+                    if (success) {
+                        // Обновляем список задач после успешного создания
+                        const newContainer = await InProgressTab.create(
+                            this.app,
+                            this.settings,
+                            this.vault,
+                            this.metadataCache
+                        );
+                        container.replaceWith(newContainer);
+                    }
+                }
+            );
+            modal.open();
+        });
+    }
+
+    static async refresh(
+        app: any,
+        settings: PersonalDevelopmentPlanSettings,
+        vault: Vault,
+        metadataCache: any,
+        container: HTMLElement
+    ): Promise<HTMLElement> {
+        const newContainer = await this.create(app, settings, vault, metadataCache);
+        container.replaceWith(newContainer);
+        return newContainer;
     }
 }

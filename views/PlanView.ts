@@ -107,7 +107,7 @@ export default class PlanView extends ItemView {
                 tabContent.appendChild(await InProgressTab.create(app, settings, app.vault, app.metadataCache));
                 break;
             case 'planned':
-                tabContent.appendChild(await PlannedTab.create(settings, app.vault, app.workspace, app.metadataCache));
+                tabContent.appendChild(await PlannedTab.create(app, settings, app.vault, app.workspace, app.metadataCache));
                 break;
             case 'knowledge-base':
                 tabContent.appendChild(await KnowledgeBaseTab.create(app, settings, app.vault, app.metadataCache));
