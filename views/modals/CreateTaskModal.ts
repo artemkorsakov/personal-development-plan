@@ -6,14 +6,14 @@ import { TaskFormBuilder } from './TaskFormFactory';
 import { ArticleFormBuilder } from './ArticleFormBuilder';
 import { BookFormBuilder } from './BookFormBuilder';
 
-
-
 export default class CreateTaskModal extends Modal {
     private settings: PersonalDevelopmentPlanSettings;
     private selectedTaskType: string = '';
     private onSubmitCallback: ((success: boolean, taskType?: string) => void) | null = null;
     private taskStatus: string;
     private formBuilder: TaskFormBuilder | null = null;
+    private typeDropdown: HTMLSelectElement | null = null;
+    private formContainer: HTMLElement | null = null;
 
     constructor(
         app: App,
@@ -29,8 +29,8 @@ export default class CreateTaskModal extends Modal {
 
     setInitialType(type: string) {
         this.selectedTaskType = type;
-        if (this.contentEl.querySelector('#task-type')) {
-            (this.contentEl.querySelector('#task-type') as HTMLSelectElement).value = type;
+        if (this.typeDropdown) {
+            this.typeDropdown.value = type;
         }
     }
 
@@ -39,11 +39,14 @@ export default class CreateTaskModal extends Modal {
         contentEl.empty();
         contentEl.addClass('pdp-create-task-modal');
 
+        // Заголовок
         contentEl.createEl('h2', { text: t('createNewTask') });
 
-        new Setting(contentEl)
+        // Поле выбора типа
+        const typeSetting = new Setting(contentEl)
             .setName(t('taskType'))
             .addDropdown(dropdown => {
+                this.typeDropdown = dropdown.selectEl;
                 const taskTypes = this.getAvailableTaskTypes();
                 taskTypes.forEach(type => {
                     dropdown.addOption(type.id, type.name);
@@ -51,19 +54,22 @@ export default class CreateTaskModal extends Modal {
 
                 dropdown.onChange(value => {
                     this.selectedTaskType = value;
-                    this.updateForm(contentEl);
+                    this.updateForm();
+                    setTimeout(() => dropdown.selectEl.focus(), 0);
                 });
 
                 this.selectedTaskType = taskTypes[0]?.id || '';
                 dropdown.setValue(this.selectedTaskType);
             });
 
-        const formContainer = contentEl.createDiv({ cls: 'task-form-container' });
-        this.updateForm(formContainer);
+        // Контейнер для динамической формы
+        this.formContainer = contentEl.createDiv({ cls: 'task-form-container' });
+        this.updateForm();
 
-        // Добавляем напоминалку перед кнопками
+        // Напоминалка
         this.renderReminder();
 
+        // Кнопки действий
         const actionsEl = contentEl.createDiv({ cls: 'modal-actions' });
         new Setting(actionsEl)
             .addButton(button => {
@@ -85,19 +91,20 @@ export default class CreateTaskModal extends Modal {
             .sort((a, b) => a.order - b.order);
     }
 
-    private updateForm(container: HTMLElement) {
-        container.empty();
+    private updateForm() {
+        if (!this.formContainer) return;
+
+        this.formContainer.empty();
 
         switch (this.selectedTaskType) {
             case 'book':
-                this.formBuilder = new BookFormBuilder(this.settings, container, this.taskStatus);
+                this.formBuilder = new BookFormBuilder(this.settings, this.formContainer, this.taskStatus);
                 break;
             case 'article':
-                this.formBuilder = new ArticleFormBuilder(this.settings, container, this.taskStatus);
+                this.formBuilder = new ArticleFormBuilder(this.settings, this.formContainer, this.taskStatus);
                 break;
-            // Добавить другие case для каждого типа задачи
             default:
-                container.createEl('p', { text: t('selectTaskType') });
+                this.formContainer.createEl('p', { text: t('selectTaskType') });
                 return;
         }
 

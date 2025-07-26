@@ -537,6 +537,16 @@
     min-width: unset;
 }
 
+.pdp-create-task-modal .dropdown-select {
+    margin-bottom: 10px;
+}
+
+.pdp-create-task-modal .task-form-container {
+    margin-top: 10px;
+    border-top: 1px solid var(--background-modifier-border);
+    padding-top: 10px;
+}
+
 .modal-actions {
     border-top: 1px solid var(--background-modifier-border);
     padding-top: 15px;
@@ -544,18 +554,6 @@
     display: flex;
     justify-content: flex-end;
     gap: 10px;
-}
-
-@media (max-width: 400px) {
-    .pdp-create-task-modal .setting-item-control input[type="text"],
-    .pdp-create-task-modal .setting-item-control input[type="number"],
-    .pdp-create-task-modal .setting-item-control select {
-        min-width: 100%;
-    }
-
-    .pdp-create-task-modal {
-        padding: 15px;
-    }
 }
 
 .task-reminder-container {
