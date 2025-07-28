@@ -2,16 +2,16 @@ import { Setting } from 'obsidian';
 import { TaskFormBuilder } from './TaskFormFactory';
 import { t } from '../../localization/localization';
 import { VideoTask } from '../../settings/task-types';
-import { getMaterialNameById } from '../../settings/settings-types';
 import { PersonalDevelopmentPlanSettings } from '../../settings/settings-types';
 
 export class VideoFormBuilder extends TaskFormBuilder {
     constructor(
         settings: PersonalDevelopmentPlanSettings,
         container: HTMLElement,
-        taskStatus: string
+        taskStatus: string,
+        taskType: string
     ) {
-        super(settings, container, taskStatus);
+        super(settings, container, taskStatus, taskType);
     }
 
     buildForm() {
@@ -61,7 +61,7 @@ export class VideoFormBuilder extends TaskFormBuilder {
     getTaskData(): VideoTask {
         return {
             status: this.formData.status,
-            type: getMaterialNameById(this.settings.materialTypes, 'video'),
+            type: this.getType(),
             section: this.settings.sections.find(s => s.id === this.formData.sectionId)?.name || '',
             title: this.generateTitle(),
             author: this.formData.author || '',

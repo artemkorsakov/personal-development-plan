@@ -102,19 +102,44 @@ export default class CreateTaskModal extends Modal {
 
         switch (this.selectedTaskType) {
             case 'article':
-                this.formBuilder = new ArticleFormBuilder(this.settings, this.formContainer, this.taskStatus);
+                this.formBuilder = new ArticleFormBuilder(
+                    this.settings,
+                    this.formContainer,
+                    this.taskStatus,
+                    this.selectedTaskType
+                );
                 break;
             case 'book':
-                this.formBuilder = new BookFormBuilder(this.settings, this.formContainer, this.taskStatus);
+                this.formBuilder = new BookFormBuilder(
+                    this.settings,
+                    this.formContainer,
+                    this.taskStatus,
+                    this.selectedTaskType
+                );
                 break;
             case 'course':
-				this.formBuilder = new CourseFormBuilder(this.settings, this.formContainer, this.taskStatus);
+				this.formBuilder = new CourseFormBuilder(
+                    this.settings,
+                    this.formContainer,
+                    this.taskStatus,
+                    this.selectedTaskType
+                );
 				break;
             case 'podcast':
-				this.formBuilder = new PodcastFormBuilder(this.settings, this.formContainer, this.taskStatus);
+				this.formBuilder = new PodcastFormBuilder(
+                    this.settings,
+                    this.formContainer,
+                    this.taskStatus,
+                    this.selectedTaskType
+                );
 				break;
 			case 'video':
-				this.formBuilder = new VideoFormBuilder(this.settings, this.formContainer, this.taskStatus);
+				this.formBuilder = new VideoFormBuilder(
+                    this.settings,
+                    this.formContainer,
+                    this.taskStatus,
+                    this.selectedTaskType
+                );
 				break;
             default:
 				this.formBuilder = new UserTypeFormBuilder(

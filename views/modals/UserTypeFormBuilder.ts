@@ -2,20 +2,16 @@ import { Setting } from 'obsidian';
 import { TaskFormBuilder } from './TaskFormFactory';
 import { t } from '../../localization/localization';
 import { UserTypeTask } from '../../settings/task-types';
-import { getMaterialNameById } from '../../settings/settings-types';
 import { PersonalDevelopmentPlanSettings } from '../../settings/settings-types';
 
 export class UserTypeFormBuilder extends TaskFormBuilder {
-	private taskType: string;
-
     constructor(
         settings: PersonalDevelopmentPlanSettings,
         container: HTMLElement,
         taskStatus: string,
         taskType: string
     ) {
-        super(settings, container, taskStatus);
-        this.taskType = taskType;
+        super(settings, container, taskStatus, taskType);
     }
 
     buildForm() {
@@ -44,7 +40,7 @@ export class UserTypeFormBuilder extends TaskFormBuilder {
     getTaskData(): UserTypeTask {
         return {
             status: this.formData.status,
-            type: getMaterialNameById(this.settings.materialTypes, this.taskType),
+            type: this.getType(),
             section: this.settings.sections.find(s => s.id === this.formData.sectionId)?.name || '',
             title: this.generateTitle(),
             laborInputInHours: this.formData.laborInputInHours || 0,

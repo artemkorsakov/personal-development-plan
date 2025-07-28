@@ -1,6 +1,7 @@
 import { Setting } from 'obsidian';
 import { t } from '../../localization/localization';
 import { PersonalDevelopmentPlanSettings } from '../../settings/settings-types';
+import { getMaterialNameById } from '../../settings/settings-types';
 
 export abstract class TaskFormBuilder {
     protected formData: Record<string, any> = {};
@@ -8,7 +9,8 @@ export abstract class TaskFormBuilder {
     constructor(
         protected settings: PersonalDevelopmentPlanSettings,
         protected container: HTMLElement,
-        protected taskStatus: string
+        protected taskStatus: string,
+        protected taskType: string
     ) {
         this.formData.status = taskStatus;
     }
@@ -69,4 +71,8 @@ export abstract class TaskFormBuilder {
             }
         }
     }
+
+    protected getType() {
+		return getMaterialNameById(this.settings.materialTypes, this.taskType);
+	}
 }
