@@ -149,7 +149,7 @@
 	- Кникните **Browse** и найдите "Personal Development Plan".
 	- Установите и включите плагин.
 
-2. [**Настройте ваш Personal Development Plan**](settings.md).
+2. [**Настройте Personal Development Plan**](settings.md).
 
 ---
 
