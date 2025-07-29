@@ -6,6 +6,7 @@ import InProgressTab from './tabs/InProgressTab';
 import PlannedTab from './tabs/PlannedTab';
 import KnowledgeBaseTab from './tabs/KnowledgeBaseTab';
 import SourcesTab from './tabs/SourcesTab';
+import { HistoryTab } from './tabs/HistoryTab';
 
 export default class PlanView extends ItemView {
     private plugin: PersonalDevelopmentPlanPlugin;
@@ -118,6 +119,9 @@ export default class PlanView extends ItemView {
                     app.vault,
                     app.workspace
                 ));
+                break;
+            case 'history':
+                tabContent.appendChild(await HistoryTab.create(app, settings, app.vault));
                 break;
             default:
                 tabContent.createEl('p', { text: `Content for "${tabId}" section` });

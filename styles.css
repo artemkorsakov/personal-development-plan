@@ -835,3 +835,81 @@
 .source-card:active {
   transform: scale(0.98);
 }
+
+/****************************** "History" tab ******************************/
+.history-tab-container {
+  padding: 16px;
+  overflow-y: auto;
+  height: 100%;
+}
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  font-size: var(--font-ui-small);
+}
+
+.history-table th {
+  background-color: var(--background-secondary-alt);
+  color: var(--text-normal);
+  padding: 10px 12px;
+  text-align: left;
+  position: sticky;
+  top: 0;
+  border-bottom: 2px solid var(--background-modifier-border);
+}
+
+.history-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--background-modifier-border);
+  vertical-align: top;
+}
+
+.history-task-title {
+  font-weight: 500;
+}
+
+.history-task-type {
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+}
+
+.history-task-rating {
+  font-family: var(--font-monospace);
+  letter-spacing: 2px;
+  color: var(--color-orange);
+}
+
+.history-task-review {
+  max-width: 300px;
+}
+
+.history-review-content {
+  font-size: var(--font-ui-smaller);
+  line-height: 1.4;
+  max-height: 100px;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+.history-task-days {
+  text-align: right;
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+
+.history-table tr:hover {
+  background-color: var(--background-secondary);
+}
+
+/* Полоса прокрутки для отзывов */
+.history-review-content::-webkit-scrollbar {
+  width: 3px;
+}
+
+.history-review-content::-webkit-scrollbar-thumb {
+  background-color: var(--background-modifier-border);
+  border-radius: 3px;
+}

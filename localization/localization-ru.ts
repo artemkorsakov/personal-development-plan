@@ -33,7 +33,7 @@ export const ru: TranslationKeys = {
     statistics: '📊 Статистика',
     statisticsTooltip: 'Анализ прогресса по всем разделам',
     history: '🕰️ История',
-    historyTooltip: 'Архив выполненных задач',
+    historyTooltip: 'Архив выполненных задач, отсортированный по дате завершения',
     examples: '📂 Примеры',
     examplesTooltip: 'Шаблоны планов от сообщества',
 
@@ -220,7 +220,19 @@ export const ru: TranslationKeys = {
     customFolder: 'Пользовательская папка',
     materialTypeSettings: 'Настройки типов материалов',
     sectionSettings: 'Настройки разделов',
-    taskSettings: 'Настройки задач'
+    taskSettings: 'Настройки задач',
+
+    // History
+    noCompletedTasks: "Выполненных задач не найдено",
+    errorLoadingHistory: "Ошибка загрузки истории",
+    historyFileNotFound: "Файл истории не найден",
+    historyType: "Тип",
+    historyTitle: "Название",
+    historyStartDate: "Дата начала",
+    historyCompletionDate: "Дата завершения",
+    historyWorkingDays: "Затрачено дней",
+    historyRating: "Рейтинг",
+    historyReview: "Отзыв"
 };
 
 export const ruParametrized: ParametrizedTranslations = {

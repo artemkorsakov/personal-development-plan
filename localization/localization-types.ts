@@ -219,6 +219,18 @@ export interface TranslationKeys {
     materialTypeSettings: string;
     sectionSettings: string;
     taskSettings: string;
+    
+    // History
+    noCompletedTasks: string;
+    errorLoadingHistory: string;
+    historyFileNotFound: string;
+    historyType: string;
+    historyTitle: string;
+    historyStartDate: string;
+    historyCompletionDate: string;
+    historyWorkingDays: string;
+    historyRating: string;
+    historyReview: string;
 }
 
 export interface ParametrizedTranslations {

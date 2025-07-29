@@ -147,7 +147,7 @@ export default class InProgressTab {
     }
 
     private static async saveToHistory(task: any, result: any) {
-        const historyFolder = this.settings.historyFolderPath || 'PersonalDevelopmentPlan/history';
+        const historyFolder = this.settings.historyFolderPath;
         const historyFilePath = `${historyFolder}/completed_tasks.json`;
 
         // Создаем папку для истории, если ее нет
@@ -179,7 +179,7 @@ export default class InProgressTab {
                 title: task.name,
                 startDate: task.startDate,
                 completionDate: result.completionDate,
-                workingDays: calculateDaysBetween(task.startDate, result.completionDate),
+                workingDays: calculateDaysBetween(task.startDate, result.completionDate) + 1,
                 rating: result.rating,
                 review: result.review,
                 completedAt: new Date().toISOString(),

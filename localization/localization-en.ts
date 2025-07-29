@@ -33,7 +33,7 @@ export const en: TranslationKeys = {
     statistics: '📊 Statistics',
     statisticsTooltip: 'Progress analysis by sections',
     history: '🕰️ History',
-    historyTooltip: 'Archive of completed tasks',
+    historyTooltip: 'Archive of completed tasks, sorted by completion date',
     examples: '📂 Examples',
     examplesTooltip: 'Development plans from the community',
 
@@ -220,7 +220,19 @@ export const en: TranslationKeys = {
     customFolder: 'Custom Folder',
     materialTypeSettings: 'Material Types Settings',
     sectionSettings: 'Sections Settings',
-    taskSettings: 'Tasks Settings'
+    taskSettings: 'Tasks Settings',
+
+    // History
+    noCompletedTasks: "No completed tasks found",
+    errorLoadingHistory: "Error loading history",
+    historyFileNotFound: "History file not found",
+    historyType: "Type",
+    historyTitle: "Title",
+    historyStartDate: "Start Date",
+    historyCompletionDate: "Completion Date",
+    historyWorkingDays: "Working Days",
+    historyRating: "Rating",
+    historyReview: "Review"
 };
 
 export const enParametrized: ParametrizedTranslations = {
