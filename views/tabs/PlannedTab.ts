@@ -197,7 +197,7 @@ export default class PlannedTab {
             typeSpan.textContent = task.type;
 
             // Добавляем кнопки действий
-            const actionsContainer = taskCard.createDiv({ cls: 'planned-actions' });
+            const actionsContainer = taskCard.createDiv({ cls: 'planned-actions with-gap' });
 
             // Кнопка "Взять в работу"
             const startBtn = actionsContainer.createEl('button', {

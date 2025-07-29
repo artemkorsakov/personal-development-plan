@@ -399,6 +399,13 @@
     background: var(--interactive-hover);
 }
 
+.planned-actions.with-gap {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 8px;
+}
+
 /****************************** "Knowledge base" tab ******************************/
 .knowledge-base-container {
   display: flex;
