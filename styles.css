@@ -499,6 +499,141 @@
   transition: opacity 0.2s ease;
 }
 
+/****************************** "Knowledge base" tab. Buttons ******************************/
+.knowledge-item-actions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+  padding: 8px 0;
+}
+
+.knowledge-action-btn {
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-size: var(--font-ui-smaller);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.knowledge-action-btn.plan-btn {
+  background-color: var(--interactive-accent);
+  color: var(--text-on-accent);
+}
+
+.knowledge-action-btn.plan-btn:hover {
+  background-color: var(--interactive-accent-hover);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.knowledge-action-btn.delete-btn {
+  background-color: var(--background-modifier-error);
+  color: var(--text-on-accent);
+}
+
+.knowledge-action-btn.delete-btn:hover {
+  background-color: var(--background-modifier-error-hover);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Стили для модальных окон */
+.modal-button-container {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.modal-save-btn,
+.modal-cancel-btn,
+.modal-delete-btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: var(--font-ui-small);
+  transition: all 0.2s ease;
+}
+
+.modal-save-btn {
+  background-color: var(--interactive-accent);
+  color: var(--text-on-accent);
+}
+
+.modal-save-btn:hover {
+  background-color: var(--interactive-accent-hover);
+}
+
+.modal-cancel-btn {
+  background-color: var(--background-modifier-border);
+  color: var(--text-normal);
+}
+
+.modal-cancel-btn:hover {
+  background-color: var(--background-modifier-border-hover);
+}
+
+.modal-delete-btn {
+  background-color: var(--background-modifier-error);
+  color: var(--text-on-accent);
+}
+
+.modal-delete-btn:hover {
+  background-color: var(--background-modifier-error-hover);
+}
+
+/* Стили для формы в модальном окне */
+.modal-form-group {
+  margin-bottom: 16px;
+}
+
+.modal-form-group label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: var(--font-ui-small);
+  color: var(--text-muted);
+}
+
+.modal-form-group input {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 4px;
+  background: var(--background-primary);
+  color: var(--text-normal);
+}
+
+.modal-form-group input:focus {
+  border-color: var(--interactive-accent);
+  outline: none;
+  box-shadow: 0 0 0 1px var(--interactive-accent);
+}
+
+.modal-form-group input[type="date"] {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 4px;
+    background: var(--background-primary);
+    color: var(--text-normal);
+}
+
+.modal-form-group input[type="date"]:focus {
+    border-color: var(--interactive-accent);
+    outline: none;
+    box-shadow: 0 0 0 1px var(--interactive-accent);
+}
+
+.modal-error-message {
+    color: var(--text-error);
+    margin-bottom: 1em;
+    padding: 8px;
+    background-color: var(--background-modifier-error);
+    border-radius: 4px;
+    display: none;
+}
+
 /****************************** Create task modal ******************************/
 .pdp-create-task-modal {
     padding: 20px;
@@ -567,6 +702,8 @@
     color: var(--text-accent);
     font-style: italic;
     font-size: var(--font-ui-small);
+    margin: 10px 0;
+    fontStyle: italic;
 }
 
 /****************************** "Sources" tab ******************************/

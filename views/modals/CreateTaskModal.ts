@@ -161,9 +161,6 @@ export default class CreateTaskModal extends Modal {
             const reminderContainer = this.contentEl.createDiv({ cls: 'task-reminder-container' });
             reminderContainer.createDiv({ cls: 'task-reminder' }, el => {
                 el.textContent = t('dontForgetToFillPlan');
-                el.style.color = 'var(--text-accent)';
-                el.style.margin = '10px 0';
-                el.style.fontStyle = 'italic';
             });
         }
     }

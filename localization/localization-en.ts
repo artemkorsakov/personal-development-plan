@@ -1,4 +1,4 @@
-import { TranslationKeys } from './localization-types';
+import { TranslationKeys, ParametrizedTranslations } from './localization-types';
 
 export const en: TranslationKeys = {
     // Main interface
@@ -128,6 +128,24 @@ export const en: TranslationKeys = {
     cancel: 'Cancel',
     refreshFailed: 'Refresh failed',
 
+    // New task management translations
+    actions: 'Actions',
+    addToQueue: 'Add to queue',
+    delete: 'Delete',
+    planTask: 'Task planning',
+    startTask: 'Start task',
+    taskPlannedSuccessfully: 'Task successfully planned',
+    errorPlanningTask: 'Error planning task',
+    confirmDeletion: 'Delete task',
+    confirmDeleteTask: 'Are you sure you want to delete task "{taskName}"?',
+    taskStartedSuccessfully: 'Task successfully started',
+    taskDeletedSuccessfully: 'Task successfully deleted',
+    errorStartingTask: 'Error starting task',
+    errorDeletingTask: 'Error deleting task',
+    dueDateBeforeStartError: 'Due date cannot be before start date',
+    dueDateInPastError: 'Due date cannot be in the past',
+    save: 'Save',
+
     // Filesystem errors
     fileCreationError: 'File creation error',
     fileAlreadyExists: 'File with this name already exists! Change the file name or delete the old one.',
@@ -181,4 +199,8 @@ export const en: TranslationKeys = {
     materialTypeSettings: 'Material Types Settings',
     sectionSettings: 'Sections Settings',
     taskSettings: 'Tasks Settings'
+};
+
+export const enParametrized: ParametrizedTranslations = {
+    confirmDeleteTask: (params: { taskName: string }) => `Are you sure you want to delete task "${params.taskName}"?`
 };

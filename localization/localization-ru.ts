@@ -1,4 +1,4 @@
-import { TranslationKeys } from './localization-types';
+import { TranslationKeys, ParametrizedTranslations } from './localization-types';
 
 export const ru: TranslationKeys = {
     // Main interface
@@ -128,6 +128,24 @@ export const ru: TranslationKeys = {
     cancel: 'Отмена',
     refreshFailed: 'Ошибка обновления',
 
+    // New keys for task management
+    actions: 'Действия',
+    addToQueue: 'В очередь',
+    delete: 'Удалить',
+    planTask: 'Планирование задачи',
+    startTask: 'Взять в работу',
+    taskPlannedSuccessfully: 'Задача успешно запланирована',
+    errorPlanningTask: 'Ошибка при планировании задачи',
+    confirmDeletion: 'Удалить задачу',
+    confirmDeleteTask: 'Вы уверены, что хотите удалить задачу "{taskName}"?',
+    taskStartedSuccessfully: 'Задача успешно взята в работу',
+    taskDeletedSuccessfully: 'Задача успешно удалена',
+    errorStartingTask: 'Ошибка при взятии задачи в работу',
+    errorDeletingTask: 'Ошибка при удалении задачи',
+    dueDateBeforeStartError: 'Дата завершения не может быть раньше даты начала',
+    dueDateInPastError: 'Дата завершения не может быть в прошлом',
+    save: 'Сохранить',
+
     // File system
     fileCreationError: 'Ошибка создания файла',
     fileAlreadyExists: 'Файл с таким именем уже существует! Измените название файла или удалите старый.',
@@ -181,4 +199,8 @@ export const ru: TranslationKeys = {
     materialTypeSettings: 'Настройки типов материалов',
     sectionSettings: 'Настройки разделов',
     taskSettings: 'Настройки задач'
+};
+
+export const ruParametrized: ParametrizedTranslations = {
+    confirmDeleteTask: (params: { taskName: string }) => `Вы уверены, что хотите удалить задачу "${params.taskName}"?`
 };

@@ -6,6 +6,8 @@ import { t } from '../../localization/localization';
 import { KnowledgeItem } from '../tabs-types';
 import { PersonalDevelopmentPlanSettings, Section } from '../../settings/settings-types';
 import CreateTaskModal from '../modals/CreateTaskModal';
+import { PlanTaskModal, PlanTaskModalData } from '../modals/PlanTaskModal';
+import { ConfirmDeleteModal } from '../modals/ConfirmDeleteModal';
 
 export default class KnowledgeBaseTab {
     private static currentType: string | null = null;
@@ -280,6 +282,7 @@ export default class KnowledgeBaseTab {
         headerRow.createEl('th', { text: t('knowledgeBaseName') });
         headerRow.createEl('th', { text: t('knowledgeBaseType') });
         headerRow.createEl('th', { text: t('knowledgeBaseSection') });
+        headerRow.createEl('th', { text: t('actions') }); // Новый столбец для действий
 
         filteredItems.forEach(item => {
             const row = table.createEl('tr');
@@ -297,6 +300,24 @@ export default class KnowledgeBaseTab {
 
             row.createEl('td', { text: item.type });
             row.createEl('td', { text: item.section });
+
+            // Добавляем столбец с кнопками действий
+            const actionsCell = row.createEl('td');
+            actionsCell.className = 'knowledge-item-actions';
+
+            // Кнопка "В очередь"
+            const planBtn = actionsCell.createEl('button', {
+                cls: 'knowledge-action-btn plan-btn',
+                text: t('addToQueue')
+            });
+            planBtn.addEventListener('click', () => this.handlePlanTask(item));
+
+            // Кнопка "Удалить"
+            const deleteBtn = actionsCell.createEl('button', {
+                cls: 'knowledge-action-btn delete-btn',
+                text: t('delete')
+            });
+            deleteBtn.addEventListener('click', () => this.handleDeleteTask(item));
         });
 
         container.appendChild(table);
@@ -379,6 +400,64 @@ export default class KnowledgeBaseTab {
         } catch (error) {
             console.error('Export failed:', error);
             new Notice(t('exportError'));
+        }
+    }
+
+    private static async handlePlanTask(item: KnowledgeItem) {
+        const modal = new PlanTaskModal(this.app);
+        modal.open();
+        const result = await modal.waitForClose();
+
+        if (result) {
+            try {
+                // Обновляем файл задачи
+                const file = this.app.vault.getAbstractFileByPath(item.filePath);
+                if (file) {
+                    let content = await this.app.vault.read(file);
+                    const frontmatterRegex = /^---\n([\s\S]*?)\n---/;
+                    const match = content.match(frontmatterRegex);
+
+                    if (match) {
+                        // Обновляем frontmatter
+                        let frontmatter = match[1];
+                        frontmatter = frontmatter.replace(/status:.*\n/g, '');
+                        frontmatter = frontmatter.replace(/order:.*\n/g, '');
+                        frontmatter += `\nstatus: planned\norder: ${result.order}\n`;
+
+                        content = content.replace(
+                            frontmatterRegex,
+                            `---\n${frontmatter}---`
+                        );
+
+                        await this.app.vault.modify(file, content);
+                        new Notice(t('taskPlannedSuccessfully'));
+                        await this.refreshContent();
+                    }
+                }
+            } catch (error) {
+                console.error('Error planning task:', error);
+                new Notice(t('errorPlanningTask'));
+            }
+        }
+    }
+
+    private static async handleDeleteTask(item: KnowledgeItem) {
+        const modal = new ConfirmDeleteModal(this.app, item.name);
+        modal.open();
+        const confirmed = await modal.waitForClose();
+
+        if (confirmed) {
+            try {
+                const file = this.app.vault.getAbstractFileByPath(item.filePath);
+                if (file) {
+                    await this.app.vault.delete(file);
+                    new Notice(t('taskDeletedSuccessfully'));
+                    await this.refreshContent();
+                }
+            } catch (error) {
+                console.error('Error deleting task:', error);
+                new Notice(t('errorDeletingTask'));
+            }
         }
     }
 }

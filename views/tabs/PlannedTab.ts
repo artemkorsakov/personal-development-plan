@@ -1,4 +1,4 @@
-import { Vault, TFile, Workspace } from 'obsidian';
+import { Vault, TFile, Workspace, Notice } from 'obsidian';
 import { openTaskFile } from '../../utils/fileUtils';
 import { generateProgressBar } from '../../utils/progressUtils';
 import { getPlannedTasks, getTaskTypeIcon, isTaskOverdue } from '../../utils/taskUtils';
@@ -6,6 +6,8 @@ import { t } from '../../localization/localization';
 import { PlannedTask } from '../tabs-types';
 import { PersonalDevelopmentPlanSettings, getMaterialNameById, getMaterialIdByName } from '../../settings/settings-types';
 import CreateTaskModal from '../modals/CreateTaskModal';
+import { ConfirmDeleteModal } from '../modals/ConfirmDeleteModal';
+import { StartTaskModal } from '../modals/StartTaskModal';
 
 export default class PlannedTab {
     private static currentType: string | null = null;
@@ -176,21 +178,118 @@ export default class PlannedTab {
 
         filteredTasks.forEach(task => {
             const taskCard = container.createDiv({ cls: 'planned-card' });
-            taskCard.addEventListener('click', () =>
+
+            const cardContent = taskCard.createDiv({ cls: 'planned-card-content' });
+            cardContent.addEventListener('click', () =>
                 openTaskFile(task.filePath, this.vault, this.app.workspace)
             );
 
-            const orderBadge = taskCard.createDiv({ cls: 'planned-order-badge' });
+            const orderBadge = cardContent.createDiv({ cls: 'planned-order-badge' });
             orderBadge.textContent = `#${task.order}`;
 
-            const nameSpan = taskCard.createDiv({ cls: 'planned-name' });
+            const nameSpan = cardContent.createDiv({ cls: 'planned-name' });
             nameSpan.textContent = task.name;
 
-            const sectionSpan = taskCard.createDiv({ cls: 'planned-section' });
+            const sectionSpan = cardContent.createDiv({ cls: 'planned-section' });
             sectionSpan.textContent = `[${task.section}]`;
 
-            const typeSpan = taskCard.createDiv({ cls: 'planned-type' });
+            const typeSpan = cardContent.createDiv({ cls: 'planned-type' });
             typeSpan.textContent = task.type;
+
+            // Добавляем кнопки действий
+            const actionsContainer = taskCard.createDiv({ cls: 'planned-actions' });
+
+            // Кнопка "Взять в работу"
+            const startBtn = actionsContainer.createEl('button', {
+                cls: 'knowledge-action-btn plan-btn',
+                text: t('startTask')
+            });
+            startBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.handleStartTask(task);
+            });
+
+            // Кнопка "Удалить"
+            const deleteBtn = actionsContainer.createEl('button', {
+                cls: 'knowledge-action-btn delete-btn',
+                text: t('delete')
+            });
+            deleteBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.handleDeleteTask(task);
+            });
         });
+    }
+
+    private static async handleStartTask(task: PlannedTask) {
+        const modal = new StartTaskModal(this.app);
+        modal.open();
+        const result = await modal.waitForClose();
+
+        if (result) {
+            try {
+                const file = this.app.vault.getAbstractFileByPath(task.filePath);
+                if (file) {
+                    let content = await this.app.vault.read(file);
+                    const frontmatterRegex = /^---\n([\s\S]*?)\n---/;
+                    const match = content.match(frontmatterRegex);
+
+                    if (match) {
+                        let frontmatter = match[1];
+
+                        // Удаляем старые значения
+                        frontmatter = frontmatter.replace(/status:.*\n/g, '');
+                        frontmatter = frontmatter.replace(/startDate:.*\n/g, '');
+                        frontmatter = frontmatter.replace(/dueDate:.*\n/g, '');
+                        frontmatter = frontmatter.replace(/progress:.*\n/g, '');
+
+                        // Добавляем новые значения из модального окна
+                        frontmatter += `\nstatus: in-progress\n`;
+                        frontmatter += `startDate: ${result.startDate}\n`;
+                        frontmatter += `dueDate: ${result.dueDate}\n`;
+                        frontmatter += `progress: 0\n`; // Начинаем с 0% прогресса
+
+                        // Сохраняем порядок задачи, если он был
+                        if (task.order) {
+                            frontmatter = frontmatter.replace(/order:.*\n/g, '');
+                            frontmatter += `order: ${task.order}\n`;
+                        }
+
+                        // Обновляем контент файла
+                        content = content.replace(
+                            frontmatterRegex,
+                            `---\n${frontmatter}---`
+                        );
+
+                        await this.app.vault.modify(file, content);
+                        new Notice(t('taskStartedSuccessfully'));
+                        await this.refreshContent();
+                    }
+                }
+            } catch (error) {
+                console.error('Error starting task:', error);
+                new Notice(t('errorStartingTask'));
+            }
+        }
+    }
+
+    private static async handleDeleteTask(task: PlannedTask) {
+        const modal = new ConfirmDeleteModal(this.app, task.name);
+        modal.open();
+        const confirmed = await modal.waitForClose();
+
+        if (confirmed) {
+            try {
+                const file = this.app.vault.getAbstractFileByPath(task.filePath);
+                if (file) {
+                    await this.app.vault.delete(file);
+                    new Notice(t('taskDeletedSuccessfully'));
+                    await this.refreshContent();
+                }
+            } catch (error) {
+                console.error('Error deleting task:', error);
+                new Notice(t('errorDeletingTask'));
+            }
+        }
     }
 }

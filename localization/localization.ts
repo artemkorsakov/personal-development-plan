@@ -1,11 +1,16 @@
 import { getLanguage } from 'obsidian';
-import { TranslationKeys } from './localization-types';
-import { en } from './localization-en';
-import { ru } from './localization-ru';
+import { TranslationKeys, ParametrizedTranslations } from './localization-types';
+import { en, enParametrized } from './localization-en';
+import { ru, ruParametrized } from './localization-ru';
 
 const translations: Record<string, TranslationKeys> = {
     en,
     ru
+};
+
+const parametrizedTranslations: Record<string, ParametrizedTranslations> = {
+    en: enParametrized,
+    ru: ruParametrized
 };
 
 const DEFAULT_LANGUAGE = 'en';
@@ -27,4 +32,13 @@ export function t(key: keyof TranslationKeys): string {
     } catch {
         return translations[DEFAULT_LANGUAGE][key];
     }
+}
+
+export function tParametrized<K extends keyof ParametrizedTranslations>(
+    key: K,
+    params: Parameters<ParametrizedTranslations[K]>[0]
+): string {
+    const lang = getLanguage();
+    const translator = parametrizedTranslations[lang] ?? parametrizedTranslations[DEFAULT_LANGUAGE];
+    return translator[key](params);
 }

@@ -129,6 +129,24 @@ export interface TranslationKeys {
     cancel: string;
     refreshFailed: string;
 
+    // New keys for task management
+    actions: string;
+    addToQueue: string;
+    delete: string;
+    planTask: string;
+    startTask: string;
+    taskPlannedSuccessfully: string;
+    errorPlanningTask: string;
+    confirmDeletion: string;
+    confirmDeleteTask: string;
+    taskStartedSuccessfully: string;
+    taskDeletedSuccessfully: string;
+    errorStartingTask: string;
+    errorDeletingTask: string;
+    dueDateBeforeStartError: string;
+    dueDateInPastError: string;
+    save: string;
+
     // File system
     fileCreationError: string;
     fileAlreadyExists: string;
@@ -179,4 +197,8 @@ export interface TranslationKeys {
     materialTypeSettings: string;
     sectionSettings: string;
     taskSettings: string;
+}
+
+export interface ParametrizedTranslations {
+    confirmDeleteTask: (params: { taskName: string }) => string;
 }
