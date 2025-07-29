@@ -231,8 +231,8 @@ export const ru: TranslationKeys = {
     historyStartDate: "Дата начала",
     historyCompletionDate: "Дата завершения",
     historyWorkingDays: "Затрачено дней",
-    historyRating: "Рейтинг",
-    historyReview: "Отзыв"
+    historyRating: "Оценка",
+    historyReview: "Краткое ревью"
 };
 
 export const ruParametrized: ParametrizedTranslations = {
