@@ -50,6 +50,17 @@ export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
                     await this.saveSettings();
                 }));
 
+		new Setting(containerEl)
+            .setName(t('historyFolderPath'))
+            .setDesc(t('historyFolderPathDesc'))
+            .addText(text => text
+                .setPlaceholder('PersonalDevelopmentPlan/history')
+                .setValue(this.settings.historyFolderPath)
+                .onChange(async (value) => {
+                    this.settings.historyFolderPath = value.trim();
+                    await this.saveSettings();
+                }));
+
         new Setting(containerEl)
             .setName(t('maxActiveTasks'))
             .setDesc(t('maxActiveTasksDesc'))
@@ -272,6 +283,7 @@ function getDefaultSettings(): PersonalDevelopmentPlanSettings {
         maxActiveTasks: 5,
         statsStartDate: now,
         folderPath: 'PersonalDevelopmentPlan',
+        historyFolderPath: 'PersonalDevelopmentPlan/history',
         materialTypes: [
             createMaterialType('book', 0, ['bookTask1', 'bookTask2']),
             createMaterialType('article', 1, ['articleTask1', 'articleTask2']),

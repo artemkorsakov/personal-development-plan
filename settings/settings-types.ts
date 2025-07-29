@@ -4,6 +4,7 @@ export interface PersonalDevelopmentPlanSettings {
     maxActiveTasks: number;
     statsStartDate: string;
     folderPath: string;
+    historyFolderPath: string;
     materialTypes: MaterialType[];
     sections: Section[];
     periodicTasks: PeriodicTaskSettings;

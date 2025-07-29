@@ -1,17 +1,21 @@
-import { Vault } from 'obsidian';
+import { Vault, TFile, Notice } from 'obsidian';
 import { getActiveTasks, getTaskTypeIcon, isTaskOverdue } from '../../utils/taskUtils';
-import { formatDate } from '../../utils/dateUtils';
+import { formatDate, calculateDaysBetween } from '../../utils/dateUtils';
 import { openTaskFile } from '../../utils/fileUtils';
 import { generateProgressBar } from '../../utils/progressUtils';
 import { t } from '../../localization/localization';
 import { PersonalDevelopmentPlanSettings, getMaterialNameById, getMaterialIdByName } from '../../settings/settings-types';
 import CreateTaskModal from '../modals/CreateTaskModal';
+import { ConfirmDeleteModal } from '../modals/ConfirmDeleteModal';
+import { CompleteTaskModal } from '../modals/CompleteTaskModal';
+import { PostponeTaskModal } from '../modals/PostponeTaskModal';
 
 export default class InProgressTab {
     private static app: any;
     private static settings: PersonalDevelopmentPlanSettings;
     private static vault: Vault;
     private static metadataCache: any;
+    private static container: HTMLElement;
 
     static async create(
         app: any,
@@ -24,35 +28,46 @@ export default class InProgressTab {
         this.vault = vault;
         this.metadataCache = metadataCache;
 
-        const container = document.createElement('div');
-        container.className = 'tasks-container';
+        this.container = document.createElement('div');
+        this.container.className = 'tasks-container';
 
-        // Добавляем заголовок с кнопкой создания
-        this.createHeader(container);
+        this.createHeader(this.container);
+        await this.updateTasksList();
 
-        const activeTasks = await getActiveTasks(vault, settings, metadataCache);
-        const maxTasks = settings.maxActiveTasks || 10;
+        return this.container;
+    }
+
+    private static async updateTasksList() {
+        const activeTasks = await getActiveTasks(this.vault, this.settings, this.metadataCache);
+        const maxTasks = this.settings.maxActiveTasks || 10;
+
+        // Очищаем контейнер перед обновлением
+        const contentContainer = this.container.querySelector('.tasks-content') ||
+            this.container.createDiv({ cls: 'tasks-content' });
+        contentContainer.empty();
 
         if (activeTasks.length > maxTasks) {
-            const warningDiv = container.createDiv({ cls: 'task-warning' });
+            const warningDiv = contentContainer.createDiv({ cls: 'task-warning' });
             warningDiv.textContent = `${t('maxActiveTasksWarning')} (${activeTasks.length} > ${maxTasks})`;
         }
 
         activeTasks.sort((a, b) => a.order - b.order).forEach(task => {
-            const taskCard = container.createDiv({ cls: 'task-card' });
-            taskCard.onclick = () => openTaskFile(task.filePath, vault, this.app.workspace);
+            const taskCard = contentContainer.createDiv({ cls: 'task-card' });
 
-            const orderBadge = taskCard.createDiv({ cls: 'task-order-badge', text: `#${task.order}` });
+            const cardContent = taskCard.createDiv({ cls: 'task-card-content' });
+            cardContent.onclick = () => openTaskFile(task.filePath, this.vault, this.app.workspace);
 
-            const firstLine = taskCard.createDiv({ cls: 'task-first-line' });
+            const orderBadge = cardContent.createDiv({ cls: 'task-order-badge', text: `#${task.order}` });
+
+            const firstLine = cardContent.createDiv({ cls: 'task-first-line' });
             firstLine.createSpan({
                 cls: 'task-type-icon',
-                text: getTaskTypeIcon(getMaterialIdByName(settings.materialTypes, task.type))
+                text: getTaskTypeIcon(getMaterialIdByName(this.settings.materialTypes, task.type))
             });
             firstLine.createSpan({ cls: 'task-name', text: task.name });
             firstLine.createSpan({ cls: 'task-section', text: `[${task.section}]` });
 
-            const datesDiv = taskCard.createDiv({ cls: 'task-dates' });
+            const datesDiv = cardContent.createDiv({ cls: 'task-dates' });
             datesDiv.createSpan({ text: `${t('inProgressStartDate')}: ${formatDate(task.startDate)}` });
 
             const dueDateSpan = datesDiv.createSpan({
@@ -60,19 +75,186 @@ export default class InProgressTab {
             });
 
             if (isTaskOverdue(task)) {
-                dueDateSpan.style.color = 'red';
+                dueDateSpan.style.color = 'var(--text-error)';
                 dueDateSpan.style.fontWeight = 'bold';
                 dueDateSpan.textContent += t('inProgressOverdue');
             }
 
-            const progressContainer = taskCard.createDiv({ cls: 'task-progress-line' });
+            const progressContainer = cardContent.createDiv({ cls: 'task-progress-line' });
             progressContainer.createSpan({
                 cls: 'task-progress-bar',
                 text: `${generateProgressBar(task.progress)} ${task.progress}%`
             });
-        });
 
-        return container;
+            // Добавляем кнопки действий
+            const actionsContainer = taskCard.createDiv({ cls: 'task-actions' });
+
+            // Кнопка "Выполнить"
+            const completeBtn = actionsContainer.createEl('button', {
+                cls: 'task-action-btn complete-btn',
+                text: t('completeTask')
+            });
+            completeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.handleCompleteTask(task);
+            });
+
+            // Кнопка "Отложить"
+            const postponeBtn = actionsContainer.createEl('button', {
+                cls: 'task-action-btn postpone-btn',
+                text: t('postponeTask')
+            });
+            postponeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.handlePostponeTask(task);
+            });
+
+            // Кнопка "Удалить"
+            const deleteBtn = actionsContainer.createEl('button', {
+                cls: 'task-action-btn delete-btn',
+                text: t('delete')
+            });
+            deleteBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.handleDeleteTask(task);
+            });
+        });
+    }
+
+    private static async handleCompleteTask(task: any) {
+        const modal = new CompleteTaskModal(this.app);
+        modal.open();
+        const result = await modal.waitForClose();
+
+        if (result) {
+            try {
+                // 1. Сохраняем задачу в историю
+                await this.saveToHistory(task, result);
+
+                // 2. Удаляем исходный файл задачи
+                const file = this.app.vault.getAbstractFileByPath(task.filePath);
+                if (file) {
+                    await this.app.vault.delete(file);
+                }
+
+                new Notice(t('taskCompletedSuccessfully'));
+                await this.updateTasksList();
+            } catch (error) {
+                console.error('Error completing task:', error);
+                new Notice(t('errorCompletingTask'));
+            }
+        }
+    }
+
+    private static async saveToHistory(task: any, result: any) {
+        const historyFolder = this.settings.historyFolderPath || 'PersonalDevelopmentPlan/history';
+        const historyFilePath = `${historyFolder}/completed_tasks.json`;
+
+        // Создаем папку для истории, если ее нет
+        try {
+            await this.app.vault.createFolder(historyFolder).catch(() => {});
+        } catch (e) {
+            console.log('Папка истории уже существует');
+        }
+
+        let historyData = [];
+        let historyFile = this.app.vault.getAbstractFileByPath(historyFilePath);
+
+        try {
+            if (historyFile) {
+                // Читаем существующий файл
+                const content = await this.app.vault.read(historyFile as TFile);
+                historyData = JSON.parse(content);
+            } else {
+                // Создаем новый файл с пустым массивом
+                historyFile = await this.app.vault.create(
+                    historyFilePath,
+                    JSON.stringify([], null, 2)
+                );
+            }
+
+            // Добавляем новую запись
+            const completedTask = {
+                type: task.type,
+                title: task.name,
+                startDate: task.startDate,
+                completionDate: result.completionDate,
+                workingDays: calculateDaysBetween(task.startDate, result.completionDate),
+                rating: result.rating,
+                review: result.review,
+                completedAt: new Date().toISOString(),
+                section: task.section
+            };
+
+            historyData.push(completedTask);
+
+            // Сохраняем обновленные данные
+            await this.app.vault.modify(
+                historyFile as TFile,
+                JSON.stringify(historyData, null, 2)
+            );
+
+        } catch (error) {
+            console.error('Ошибка при сохранении в историю:', error);
+            throw error;
+        }
+    }
+
+    private static async handlePostponeTask(task: any) {
+        const modal = new PostponeTaskModal(this.app);
+        modal.open();
+        const confirmed = await modal.waitForClose();
+
+        if (confirmed) {
+            try {
+                const file = this.app.vault.getAbstractFileByPath(task.filePath);
+                if (file) {
+                    let content = await this.app.vault.read(file);
+                    const frontmatterRegex = /^---\n([\s\S]*?)\n---/;
+                    const match = content.match(frontmatterRegex);
+
+                    if (match) {
+                        let frontmatter = match[1];
+                        frontmatter = frontmatter.replace(/status:.*\n/g, '');
+                        frontmatter = frontmatter.replace(/startDate:.*\n/g, '');
+                        frontmatter = frontmatter.replace(/dueDate:.*\n/g, '');
+                        frontmatter += `\nstatus: planned\n`;
+
+                        content = content.replace(
+                            frontmatterRegex,
+                            `---\n${frontmatter}---`
+                        );
+
+                        await this.app.vault.modify(file, content);
+                        new Notice(t('taskPostponedSuccessfully'));
+                        await this.updateTasksList();
+                    }
+                }
+            } catch (error) {
+                console.error('Error postponing task:', error);
+                new Notice(t('errorPostponingTask'));
+            }
+        }
+    }
+
+    private static async handleDeleteTask(task: any) {
+        const modal = new ConfirmDeleteModal(this.app, task.name);
+        modal.open();
+        const confirmed = await modal.waitForClose();
+
+        if (confirmed) {
+            try {
+                const file = this.app.vault.getAbstractFileByPath(task.filePath);
+                if (file) {
+                    await this.app.vault.delete(file);
+                    new Notice(t('taskDeletedSuccessfully'));
+                    await this.updateTasksList();
+                }
+            } catch (error) {
+                console.error('Error deleting task:', error);
+                new Notice(t('errorDeletingTask'));
+            }
+        }
     }
 
     private static createHeader(container: HTMLElement) {
@@ -87,17 +269,10 @@ export default class InProgressTab {
             const modal = new CreateTaskModal(
                 this.app,
                 this.settings,
-                'in-progress', // Устанавливаем статус для активных задач
+                'in-progress',
                 async (success) => {
                     if (success) {
-                        // Обновляем список задач после успешного создания
-                        const newContainer = await InProgressTab.create(
-                            this.app,
-                            this.settings,
-                            this.vault,
-                            this.metadataCache
-                        );
-                        container.replaceWith(newContainer);
+                        await this.updateTasksList();
                     }
                 }
             );
@@ -105,15 +280,7 @@ export default class InProgressTab {
         });
     }
 
-    static async refresh(
-        app: any,
-        settings: PersonalDevelopmentPlanSettings,
-        vault: Vault,
-        metadataCache: any,
-        container: HTMLElement
-    ): Promise<HTMLElement> {
-        const newContainer = await this.create(app, settings, vault, metadataCache);
-        container.replaceWith(newContainer);
-        return newContainer;
+    static async refresh(): Promise<void> {
+        await this.updateTasksList();
     }
 }

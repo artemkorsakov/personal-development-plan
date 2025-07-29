@@ -277,6 +277,62 @@
     font-weight: bold;
 }
 
+/* Стили для кнопок действий */
+.task-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 8px;
+}
+
+.task-action-btn {
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    font-size: var(--font-ui-smaller);
+    transition: all 0.2s ease;
+}
+
+.task-action-btn.complete-btn {
+    background-color: var(--interactive-accent);
+    color: var(--text-on-accent);
+}
+
+.task-action-btn.postpone-btn {
+    background-color: var(--interactive-normal);
+    color: var(--text-normal);
+}
+
+.task-action-btn.delete-btn {
+    background-color: var(--background-modifier-error);
+    color: var(--text-on-accent);
+}
+
+/* Стили для модального окна завершения задачи */
+.modal-form-group.full-width {
+    width: 100%;
+}
+
+.full-width-textarea {
+    width: 100%;
+    min-height: 100px;
+    resize: vertical;
+}
+
+.rating-select {
+    width: 100%;
+    padding: 6px;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 4px;
+    background-color: var(--background-primary);
+    color: var(--text-normal);
+}
+
+.rating-select option {
+    padding: 4px;
+}
+
 /****************************** "Planned" tab ******************************/
 .planned-main-container {
   display: flex;

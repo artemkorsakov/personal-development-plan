@@ -43,6 +43,8 @@ export interface TranslationKeys {
     periodicTasks: string;
     folderPath: string;
     folderPathDesc: string;
+    historyFolderPath: string;
+    historyFolderPathDesc: string;
     maxActiveTasks: string;
     maxActiveTasksDesc: string;
     statsStartDate: string;
@@ -146,6 +148,26 @@ export interface TranslationKeys {
     dueDateBeforeStartError: string;
     dueDateInPastError: string;
     save: string;
+
+    // In progress buttons
+    completeTask: string;
+    taskReview: string;
+    taskReviewPlaceholder: string;
+    taskRating: string;
+    completionDate: string;
+    complete: string;
+    ratingPoor: string;
+    ratingFair: string;
+    ratingGood: string;
+    ratingVeryGood: string;
+    ratingExcellent: string;
+    taskCompletedSuccessfully: string;
+    errorCompletingTask: string;
+    postponeTask: string;
+    confirmPostponeTask: string;
+    postpone: string;
+    taskPostponedSuccessfully: string;
+    errorPostponingTask: string;
 
     // File system
     fileCreationError: string;
