@@ -1,5 +1,5 @@
 import { App, Modal, Setting, Notice } from 'obsidian';
-import { createTaskFile } from '../../utils/fileUtils';
+import { createTaskFile, generateSafeFilename } from '../../utils/fileUtils';
 import { t } from '../../localization/localization';
 import { MaterialType, PersonalDevelopmentPlanSettings } from '../../settings/settings-types';
 import { TaskFormBuilder } from './TaskFormFactory';
@@ -78,14 +78,14 @@ export default class CreateTaskModal extends Modal {
         new Setting(actionsEl)
             .addButton(button => {
                 button
-                    .setButtonText(t('cancel'))
-                    .onClick(() => this.close());
-            })
-            .addButton(button => {
-                button
                     .setButtonText(t('create'))
                     .setCta()
                     .onClick(() => this.handleCreateTask());
+            })
+            .addButton(button => {
+                button
+                    .setButtonText(t('cancel'))
+                    .onClick(() => this.close());
             });
     }
 
@@ -165,33 +165,34 @@ export default class CreateTaskModal extends Modal {
         }
     }
 
-    private async handleCreateTask() {
-        try {
-            if (!this.formBuilder) return;
+   private async handleCreateTask() {
+       try {
+           if (!this.formBuilder) return;
 
-            const taskType = this.settings.materialTypes.find(t => t.id === this.selectedTaskType);
-            if (!taskType) throw new Error(t('invalidTaskType'));
+           const taskType = this.settings.materialTypes.find(t => t.id === this.selectedTaskType);
+           if (!taskType) throw new Error(t('invalidTaskType'));
 
-            const taskData = this.formBuilder.getTaskData();
-            taskData.filePath = `${this.settings.folderPath}/${this.formBuilder.generateTitle()}.md`;
+           const taskData = this.formBuilder.getTaskData();
+           const safeFilename = generateSafeFilename(this.formBuilder.generateTitle());
+           taskData.filePath = `${this.settings.folderPath}/${safeFilename}.md`;
 
-            if (await this.app.vault.adapter.exists(taskData.filePath)) {
-                new Notice(t('fileAlreadyExists'));
-                return;
-            }
+           if (await this.app.vault.adapter.exists(taskData.filePath)) {
+               new Notice(t('fileAlreadyExists'));
+               return;
+           }
 
-            const content = this.generateTaskContent(taskType);
-            await createTaskFile(taskData, content, this.settings, this.app.vault);
-            await new Promise(resolve => setTimeout(resolve, 200));
+           const content = this.generateTaskContent(taskType);
+           await createTaskFile(taskData, content, this.settings, this.app.vault);
+           await new Promise(resolve => setTimeout(resolve, 200));
 
-            this.close();
-            this.onSubmitCallback?.(true, taskType.id);
-        } catch (error) {
-            console.error('Error creating task:', error);
-            new Notice(t('taskCreationError') + ': ' + (error instanceof Error ? error.message : String(error)));
-            this.onSubmitCallback?.(false);
-        }
-    }
+           this.close();
+           this.onSubmitCallback?.(true, taskType.id);
+       } catch (error) {
+           console.error('Error creating task:', error);
+           new Notice(t('taskCreationError') + ': ' + (error instanceof Error ? error.message : String(error)));
+           this.onSubmitCallback?.(false);
+       }
+   }
 
     private generateTaskContent(taskType: MaterialType): string {
         return `# ${t('taskLabel')}\n\n` +

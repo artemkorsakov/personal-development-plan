@@ -3,6 +3,7 @@ import { TaskFormBuilder } from './TaskFormFactory';
 import { t } from '../../localization/localization';
 import { BookTask } from '../../settings/task-types';
 import { PersonalDevelopmentPlanSettings } from '../../settings/settings-types';
+import { generateSafeTitle } from '../../utils/taskUtils';
 
 export class BookFormBuilder extends TaskFormBuilder {
 	constructor(
@@ -59,6 +60,7 @@ export class BookFormBuilder extends TaskFormBuilder {
     }
 
     generateTitle(): string {
-        return `${this.formData.authors || 'Unknown'} - ${this.formData.name || 'Untitled Book'}`;
+        const name =  `${this.formData.authors || 'Unknown authors'} - ${this.formData.name || 'Untitled Book'}`;
+        return generateSafeTitle(name);
     }
 }

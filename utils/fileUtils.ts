@@ -68,8 +68,7 @@ export async function createTaskFile(
     settings: PersonalDevelopmentPlanSettings,
     vault: Vault
 ): Promise<TFile> {
-    const fileName = `${task.title}.md`;
-    const filePath = `${settings.folderPath}/${fileName}`;
+    const filePath = task.filePath;
 
     const { filePath: _, ...taskWithoutFilePath } = task;
 
@@ -96,4 +95,24 @@ export function getFilesInFolder(vault: Vault, folderPath: string): TFile[] {
 
 export function fileExists(vault: Vault, path: string): boolean {
     return vault.getAbstractFileByPath(path) !== null;
+}
+
+/**
+ * Генерирует безопасное имя файла, заменяя или удаляя запрещенные символы
+ * @param title Исходное название задачи
+ * @returns Безопасное имя файла
+ */
+export function generateSafeFilename(title: string): string {
+    if (!title) return 'untitled';
+
+    // Список запрещенных символов в Windows/Linux/MacOS
+    const illegalChars = /[<>:"\/\\|?*\x00-\x1F]/g;
+
+    // Замена пробелов и специальных символов
+    return title
+        .replace(illegalChars, '_')  // Заменяем запрещенные символы на подчеркивание
+        .replace(/\s+/g, '_')        // Заменяем пробелы на подчеркивание
+        .replace(/_+/g, '_')         // Убираем дублирующиеся подчеркивания
+        .replace(/^_+|_+$/g, '')     // Убираем подчеркивания в начале/конце
+        .substring(0, 255);          // Ограничиваем длину (макс. для большинства файловых систем)
 }

@@ -9,6 +9,18 @@ export function formatDate(dateStr: string): string {
 }
 
 /**
+ * Форматирует Date в строку для input[type="date"] (YYYY-MM-DD)
+ * @param date Дата
+ * @returns Строка в формате YYYY-MM-DD
+ */
+export function formatDateForInput(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+/**
  * Calculates the number of days between two dates
  * @param startDate - Start date in format YYYY-MM-DD or Date object
  * @param endDate - End date in format YYYY-MM-DD or Date object

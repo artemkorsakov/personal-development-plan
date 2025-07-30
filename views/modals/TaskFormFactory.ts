@@ -2,6 +2,7 @@ import { Setting } from 'obsidian';
 import { t } from '../../localization/localization';
 import { PersonalDevelopmentPlanSettings } from '../../settings/settings-types';
 import { getMaterialNameById } from '../../settings/settings-types';
+import { formatDateForInput } from '../../utils/dateUtils';
 
 export abstract class TaskFormBuilder {
     protected formData: Record<string, any> = {};
@@ -51,28 +52,45 @@ export abstract class TaskFormBuilder {
                 });
 
             if (status === 'in-progress') {
-                new Setting(this.container)
-                    .setName(t('inProgressStartDate'))
-                    .addText(text => {
-                        text.setPlaceholder('YYYY-MM-DD')
-                            .onChange(value => {
-                                this.formData.startDate = value;
-                            });
-                    });
-
-                new Setting(this.container)
-                    .setName(t('inProgressDueDate'))
-                    .addText(text => {
-                        text.setPlaceholder('YYYY-MM-DD')
-                            .onChange(value => {
-                                this.formData.dueDate = value;
-                            });
-                    });
+                this.addDateField(t('inProgressStartDate'), 'startDate');
+                this.addDateField(t('inProgressDueDate'), 'dueDate');
             }
         }
     }
 
+    /**
+     * Добавляет поле ввода даты с календарем
+     * @param label Подпись поля
+     * @param fieldName Имя поля в formData
+     * @param defaultValue Значение по умолчанию (Date или строка в формате YYYY-MM-DD)
+     */
+    protected addDateField(label: string, fieldName: string, defaultValue?: Date | string) {
+        const setting = new Setting(this.container)
+            .setName(label)
+            .addText(text => {
+                const inputEl = text.inputEl;
+                inputEl.type = 'date';
+                inputEl.style.width = '100%';
+
+                // Устанавливаем значение по умолчанию
+                if (defaultValue) {
+                    const dateValue = typeof defaultValue === 'string'
+                        ? defaultValue
+                        : formatDateForInput(defaultValue);
+                    inputEl.value = dateValue;
+                    this.formData[fieldName] = dateValue;
+                }
+
+                inputEl.onchange = (e) => {
+                    const value = (e.target as HTMLInputElement).value;
+                    this.formData[fieldName] = value;
+                };
+            });
+
+        return setting;
+    }
+
     protected getType() {
-		return getMaterialNameById(this.settings.materialTypes, this.taskType);
-	}
+        return getMaterialNameById(this.settings.materialTypes, this.taskType);
+    }
 }

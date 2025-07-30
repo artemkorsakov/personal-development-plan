@@ -3,6 +3,7 @@ import { TaskFormBuilder } from './TaskFormFactory';
 import { t } from '../../localization/localization';
 import { VideoTask } from '../../settings/task-types';
 import { PersonalDevelopmentPlanSettings } from '../../settings/settings-types';
+import { generateSafeTitle } from '../../utils/taskUtils';
 
 export class VideoFormBuilder extends TaskFormBuilder {
     constructor(
@@ -76,6 +77,6 @@ export class VideoFormBuilder extends TaskFormBuilder {
     }
 
     generateTitle(): string {
-        return this.formData.name || 'Untitled video';
+        return generateSafeTitle(this.formData.name);
     }
 }

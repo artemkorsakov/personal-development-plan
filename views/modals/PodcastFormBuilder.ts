@@ -3,6 +3,7 @@ import { TaskFormBuilder } from './TaskFormFactory';
 import { t } from '../../localization/localization';
 import { PodcastTask } from '../../settings/task-types';
 import { PersonalDevelopmentPlanSettings } from '../../settings/settings-types';
+import { generateSafeTitle } from '../../utils/taskUtils';
 
 export class PodcastFormBuilder extends TaskFormBuilder {
     constructor(
@@ -87,6 +88,6 @@ export class PodcastFormBuilder extends TaskFormBuilder {
     }
 
     generateTitle(): string {
-        return this.formData.name || 'Untitled podcast';
+        return generateSafeTitle(this.formData.name);
     }
 }

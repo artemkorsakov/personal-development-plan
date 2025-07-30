@@ -248,6 +248,10 @@ export function isTaskOverdue(task: TaskInProgress): boolean {
 
     const today = new Date();
     const dueDate = new Date(task.dueDate);
+
+    today.setHours(0, 0, 0, 0);
+    dueDate.setHours(0, 0, 0, 0);
+
     return today > dueDate && !isNaN(dueDate.getTime());
 }
 
@@ -262,4 +266,18 @@ const TYPE_ICONS: Record<string, string> = {
 
 export function getTaskTypeIcon(type: string): string {
     return TYPE_ICONS[type] || "✏️";
+}
+
+export function generateSafeTitle(title: string): string {
+    if (!title) return 'untitled';
+
+    // Список запрещенных символов в Windows/Linux/MacOS
+    const illegalChars = /[<>:"\/\\|?*\x00-\x1F]/g;
+
+    // Замена пробелов и специальных символов
+    return title
+        .replace(illegalChars, ' ')  // Заменяем запрещенные символы на пробел
+        .replace(/\s+/g, ' ')        // Убираем дублирующиеся пробелы
+        .replace(/^\s+|\s+$/g, '')   // Убираем пробелы в начале/конце
+        .substring(0, 255);          // Ограничиваем длину
 }

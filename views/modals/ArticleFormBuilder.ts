@@ -3,6 +3,7 @@ import { TaskFormBuilder } from './TaskFormFactory';
 import { t } from '../../localization/localization';
 import { ArticleTask } from '../../settings/task-types';
 import { PersonalDevelopmentPlanSettings } from '../../settings/settings-types';
+import { generateSafeTitle } from '../../utils/taskUtils';
 
 export class ArticleFormBuilder extends TaskFormBuilder {
 	constructor(
@@ -62,6 +63,6 @@ export class ArticleFormBuilder extends TaskFormBuilder {
     }
 
     generateTitle(): string {
-        return this.formData.name || 'Untitled article';
+        return generateSafeTitle(this.formData.name);
     }
 }
