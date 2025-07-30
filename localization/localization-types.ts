@@ -134,6 +134,8 @@ export interface TranslationKeys {
     // New keys for task management
     actions: string;
     addToQueue: string;
+    availableOrders: string;
+    noTask: string;
     delete: string;
     planTask: string;
     startTask: string;
@@ -236,4 +238,6 @@ export interface TranslationKeys {
 
 export interface ParametrizedTranslations {
     confirmDeleteTask: (params: { taskName: string }) => string;
+    freeOrderAfter: (params: { order: string; taskName: string }) => string;
+    [key: string]: (params: any) => string;
 }

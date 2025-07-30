@@ -1,6 +1,6 @@
 import { Vault, TFile, Notice } from 'obsidian';
 import { getActiveTasks, getTaskTypeIcon, isTaskOverdue } from '../../utils/taskUtils';
-import { formatDate, calculateDaysBetween } from '../../utils/dateUtils';
+import { formatDate, calculateDaysBetween, parseDateInput } from '../../utils/dateUtils';
 import { openTaskFile } from '../../utils/fileUtils';
 import { generateProgressBar } from '../../utils/progressUtils';
 import { t } from '../../localization/localization';
@@ -41,7 +41,6 @@ export default class InProgressTab {
         const activeTasks = await getActiveTasks(this.vault, this.settings, this.metadataCache);
         const maxTasks = this.settings.maxActiveTasks || 10;
 
-        // Очищаем контейнер перед обновлением
         const contentContainer = this.container.querySelector('.tasks-content') ||
             this.container.createDiv({ cls: 'tasks-content' });
         contentContainer.empty();
@@ -51,18 +50,30 @@ export default class InProgressTab {
             warningDiv.textContent = `${t('maxActiveTasksWarning')} (${activeTasks.length} > ${maxTasks})`;
         }
 
-        activeTasks.sort((a, b) => a.order - b.order).forEach(task => {
+        activeTasks.sort((a, b) => {
+            // Сначала сортируем по дате выполнения
+            const dateA = parseDateInput(a.dueDate)?.getTime() || 0;
+            const dateB = parseDateInput(b.dueDate)?.getTime() || 0;
+
+            // Если даты одинаковые, сортируем по order
+            if (dateA === dateB) {
+                return (a.order || 0) - (b.order || 0);
+            }
+
+            return dateA - dateB;
+        });
+
+        activeTasks.forEach(task => {
             const taskCard = contentContainer.createDiv({ cls: 'task-card' });
 
             const cardContent = taskCard.createDiv({ cls: 'task-card-content' });
             cardContent.onclick = () => openTaskFile(task.filePath, this.vault, this.app.workspace);
 
-            const orderBadge = cardContent.createDiv({ cls: 'task-order-badge', text: `#${task.order}` });
-
             const firstLine = cardContent.createDiv({ cls: 'task-first-line' });
+            const typeIcon = getTaskTypeIcon(getMaterialIdByName(this.settings.materialTypes, task.type))
             firstLine.createSpan({
                 cls: 'task-type-icon',
-                text: getTaskTypeIcon(getMaterialIdByName(this.settings.materialTypes, task.type))
+                text: `${typeIcon} ${task.type}:`
             });
             firstLine.createSpan({ cls: 'task-name', text: task.name });
             firstLine.createSpan({ cls: 'task-section', text: `[${task.section}]` });

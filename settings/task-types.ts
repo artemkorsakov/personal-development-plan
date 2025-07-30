@@ -28,7 +28,6 @@ export interface VideoTask extends BaseTypeTask {
 }
 
 export interface PodcastTask extends BaseTypeTask {
-	author: string;
 	platform: string;
     link: string;
     episodes: number;

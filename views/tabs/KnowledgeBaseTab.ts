@@ -404,7 +404,7 @@ export default class KnowledgeBaseTab {
     }
 
     private static async handlePlanTask(item: KnowledgeItem) {
-        const modal = new PlanTaskModal(this.app);
+        const modal = new PlanTaskModal(this.app, this.settings, item.type);
         modal.open();
         const result = await modal.waitForClose();
 

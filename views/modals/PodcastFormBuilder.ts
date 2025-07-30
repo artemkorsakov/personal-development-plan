@@ -26,13 +26,6 @@ export class PodcastFormBuilder extends TaskFormBuilder {
             });
 
         new Setting(this.container)
-            .setName(t('author'))
-            .addText(text => {
-                text.setPlaceholder(t('authorPlaceholder'))
-                    .onChange(value => this.formData.author = value);
-            });
-
-        new Setting(this.container)
             .setName(t('platform'))
             .addText(text => {
                 text.setPlaceholder('Spotify, Apple Podcasts etc.')
@@ -75,7 +68,6 @@ export class PodcastFormBuilder extends TaskFormBuilder {
             type: this.getType(),
             section: this.settings.sections.find(s => s.id === this.formData.sectionId)?.name || '',
             title: this.generateTitle(),
-            author: this.formData.author || '',
             platform: this.formData.platform || '',
             link: this.formData.link || '',
             episodes: this.formData.episodes || 0,

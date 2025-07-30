@@ -21,6 +21,17 @@ export function formatDateForInput(date: Date): string {
 }
 
 /**
+ * Преобразует строку даты в Date объект
+ * @param dateString Строка в формате YYYY-MM-DD
+ * @returns Date объект или undefined если дата невалидна
+ */
+export function parseDateInput(dateString: string): Date | undefined {
+    if (!dateString) return undefined;
+    const date = new Date(dateString);
+    return isNaN(date.getTime()) ? undefined : date;
+}
+
+/**
  * Calculates the number of days between two dates
  * @param startDate - Start date in format YYYY-MM-DD or Date object
  * @param endDate - End date in format YYYY-MM-DD or Date object

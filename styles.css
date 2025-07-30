@@ -755,10 +755,11 @@
 }
 
 .task-reminder-container {
-    margin: 15px 0;
-    padding: 10px;
+    margin: 1em 0;
+    padding: 0.8em;
     background-color: var(--background-secondary);
     border-radius: 4px;
+    font-size: 0.9em;
 }
 
 .task-reminder {
@@ -767,6 +768,49 @@
     font-size: var(--font-ui-small);
     margin: 10px 0;
     fontStyle: italic;
+}
+
+/* Контейнер свободных номеров */
+.free-orders-container {
+    margin-bottom: 1em;
+    padding: 0.8em;
+    background-color: var(--background-secondary);
+    border-radius: 4px;
+}
+
+.free-orders-container h4 {
+    margin-top: 0;
+    margin-bottom: 0.5em;
+    font-size: 0.95em;
+    color: var(--text-accent);
+}
+
+.free-order-item {
+    padding: 0.3em 0;
+    font-size: 0.85em;
+    border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.free-order-item:last-child {
+    border-bottom: none;
+}
+
+/* Поле ввода порядка */
+.order-input-container {
+    margin: 1em 0;
+}
+
+.order-input-container label {
+    display: block;
+    margin-bottom: 0.3em;
+    font-weight: 500;
+}
+
+.order-input-container input {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 4px;
 }
 
 /****************************** "Sources" tab ******************************/

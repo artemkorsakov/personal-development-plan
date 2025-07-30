@@ -40,5 +40,5 @@ export function tParametrized<K extends keyof ParametrizedTranslations>(
 ): string {
     const lang = getLanguage();
     const translator = parametrizedTranslations[lang] ?? parametrizedTranslations[DEFAULT_LANGUAGE];
-    return translator[key](params);
+    return translator[key](params as any);
 }

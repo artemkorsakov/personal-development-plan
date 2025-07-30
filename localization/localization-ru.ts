@@ -5,7 +5,7 @@ export const ru: TranslationKeys = {
     plan: 'План развития',
     openPlan: 'Открыть план развития',
     inProgress: '🛠️ В работе',
-    inProgressTooltip: 'Текущие задачи в работе',
+    inProgressTooltip: 'Текущие задачи в работе, отсортированные по дате завершения',
     maxActiveTasksWarning: 'Слишком много задач в работе, верните часть из них в Очередь',
     inProgressStartDate: 'Дата начала',
     inProgressDueDate: 'Завершить до',
@@ -133,6 +133,8 @@ export const ru: TranslationKeys = {
     // New keys for task management
     actions: 'Действия',
     addToQueue: 'В очередь',
+    availableOrders: 'Доступные номера порядка выполнения',
+    noTask: 'Предыдущая задача отсутствует',
     delete: 'Удалить',
     planTask: 'Планирование задачи',
     startTask: 'Взять в работу',
@@ -237,5 +239,6 @@ export const ru: TranslationKeys = {
 };
 
 export const ruParametrized: ParametrizedTranslations = {
-    confirmDeleteTask: (params: { taskName: string }) => `Вы уверены, что хотите удалить задачу "${params.taskName}"?`
+    confirmDeleteTask: (params: { taskName: string }) => `Вы уверены, что хотите удалить задачу "${params.taskName}"?`,
+    freeOrderAfter: (params: { order: string, taskName: string }) => `Cвободный номер ${params.order}, предыдущая задача: \"${params.taskName}\"`
 };

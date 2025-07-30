@@ -5,7 +5,7 @@ export const en: TranslationKeys = {
     plan: 'Development Plan',
     openPlan: 'Open Development Plan',
     inProgress: '🛠️ In Progress',
-    inProgressTooltip: 'Current tasks in progress',
+    inProgressTooltip: 'Current tasks in progress, sorted by due date',
     maxActiveTasksWarning: 'Too many tasks in progress, return some to Planned',
     inProgressStartDate: 'Start Date',
     inProgressDueDate: 'Due Date',
@@ -133,6 +133,8 @@ export const en: TranslationKeys = {
     // New task management translations
     actions: 'Actions',
     addToQueue: 'Add to queue',
+    availableOrders: "Available order numbers:",
+    noTask: "No task",
     delete: 'Delete',
     planTask: 'Task planning',
     startTask: 'Start task',
@@ -237,5 +239,6 @@ export const en: TranslationKeys = {
 };
 
 export const enParametrized: ParametrizedTranslations = {
-    confirmDeleteTask: (params: { taskName: string }) => `Are you sure you want to delete task "${params.taskName}"?`
+    confirmDeleteTask: (params: { taskName: string }) => `Are you sure you want to delete task "${params.taskName}"?`,
+    freeOrderAfter: (params: { order: string, taskName: string }) => `Free order ${params.order}, after task: \"${params.taskName}\"`
 };
