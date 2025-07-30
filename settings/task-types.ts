@@ -17,7 +17,7 @@ export interface BookTask extends BaseTypeTask {
 
 export interface ArticleTask extends BaseTypeTask {
     link: string;
-    laborInputInHours: number;
+    durationInMinutes: number;
 }
 
 export interface VideoTask extends BaseTypeTask {
@@ -31,6 +31,7 @@ export interface PodcastTask extends BaseTypeTask {
 	author: string;
 	platform: string;
     link: string;
+    episodes: number;
     durationInMinutes: number;
 }
 

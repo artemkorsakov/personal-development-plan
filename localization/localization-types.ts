@@ -201,6 +201,7 @@ export interface TranslationKeys {
     platform: string;
     platformPlaceholder: string;
     durationInMinutes: string;
+    episodes: string;
     notes: string;
     addYourThoughts: string;
 

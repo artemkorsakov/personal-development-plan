@@ -34,12 +34,12 @@ export class ArticleFormBuilder extends TaskFormBuilder {
             });
 
         new Setting(this.container)
-            .setName(t('laborInputInHours'))
+            .setName(t('durationInMinutes'))
             .addText(text => {
                 text.setPlaceholder('2')
                     .inputEl.type = 'number';
                 text.onChange(value => {
-                    this.formData.laborInputInHours = parseFloat(value) || 0;
+                    this.formData.durationInMinutes = parseFloat(value) || 0;
                 });
             });
 
@@ -53,7 +53,7 @@ export class ArticleFormBuilder extends TaskFormBuilder {
             section: this.settings.sections.find(s => s.id === this.formData.sectionId)?.name || '',
             title: this.generateTitle(),
             link: this.formData.link || '',
-            laborInputInHours: this.formData.laborInputInHours || 0,
+            durationInMinutes: this.formData.durationInMinutes || 0,
             order: this.formData.order || 999,
             startDate: this.formData.startDate || '',
             dueDate: this.formData.dueDate || '',

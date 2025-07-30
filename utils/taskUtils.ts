@@ -1,6 +1,6 @@
 import { Vault, TFile, MetadataCache } from 'obsidian';
 import { KnowledgeItem, PlannedTask, TaskInProgress } from '../views/tabs-types';
-import { PersonalDevelopmentPlanSettings } from '../settings/settings-types';
+import { PersonalDevelopmentPlanSettings, getMaterialIdByName } from '../settings/settings-types';
 import { calculateTaskProgress } from './progressUtils';
 import { getFilesInFolder } from './fileUtils';
 
@@ -76,13 +76,46 @@ export async function getActiveTasks(
             needsContent: true,
             transform: (file, frontmatter, content) => {
                 const commonFields = getCommonFields(file, frontmatter);
-                return {
+                const transformedTask: TaskInProgress = {
                     ...commonFields,
                     startDate: typeof frontmatter?.startDate === 'string' ? frontmatter.startDate : "???",
                     dueDate: typeof frontmatter?.dueDate === 'string' ? frontmatter.dueDate : "???",
                     progress: calculateTaskProgress(content || ''),
-                    order: typeof frontmatter?.order === 'number' ? frontmatter.order : 0
+                    order: typeof frontmatter?.order === 'number' ? frontmatter.order : 0,
                 };
+
+                // Добавляем специфичные поля только если они существуют
+                const taskId = getMaterialIdByName(settings.materialTypes, transformedTask.type);
+
+                switch (taskId) {
+                    case 'book':
+                        if (typeof frontmatter?.pages === 'number') {
+                            transformedTask.pages = frontmatter.pages;
+                        }
+                        break;
+
+                    case 'article':
+                    case 'video':
+                    case 'course':
+                        if (typeof frontmatter?.durationInMinutes === 'number') {
+                            transformedTask.durationInMinutes = frontmatter.durationInMinutes;
+                        }
+                        break;
+
+                    case 'podcast':
+                        const duration = typeof frontmatter?.durationInMinutes === 'number' ? frontmatter.durationInMinutes : 0;
+                        const episodes = typeof frontmatter?.episodes === 'number' ? frontmatter.episodes : 1;
+                        transformedTask.durationInMinutes = duration * episodes;
+                        break;
+
+                    default:
+                        if (typeof frontmatter?.laborInputInHours === 'number') {
+                            transformedTask.laborInputInHours = frontmatter.laborInputInHours;
+                        }
+                        break;
+                }
+
+                return transformedTask;
             }
         };
 

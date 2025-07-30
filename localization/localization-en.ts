@@ -203,6 +203,7 @@ export const en: TranslationKeys = {
     platform: 'Platform',
     platformPlaceholder: 'Enter platform',
     durationInMinutes: "Duration (minutes)",
+    episodes: "Count of episodes",
     notes: 'Notes',
     addYourThoughts: 'Add your thoughts',
 

@@ -154,7 +154,6 @@ export default class InProgressTab {
         try {
             await this.app.vault.createFolder(historyFolder).catch(() => {});
         } catch (e) {
-            console.log('Папка истории уже существует');
         }
 
         let historyData = [];
@@ -162,19 +161,16 @@ export default class InProgressTab {
 
         try {
             if (historyFile) {
-                // Читаем существующий файл
                 const content = await this.app.vault.read(historyFile as TFile);
                 historyData = JSON.parse(content);
             } else {
-                // Создаем новый файл с пустым массивом
                 historyFile = await this.app.vault.create(
                     historyFilePath,
                     JSON.stringify([], null, 2)
                 );
             }
 
-            // Добавляем новую запись
-            const completedTask = {
+            const completedTask: any = {
                 type: task.type,
                 title: task.name,
                 startDate: task.startDate,
@@ -183,19 +179,21 @@ export default class InProgressTab {
                 rating: result.rating,
                 review: result.review,
                 completedAt: new Date().toISOString(),
-                section: task.section
+                section: task.section,
+                pages: task.pages,
+                laborInputInHours: task.laborInputInHours,
+                durationInMinutes: task.durationInMinutes
             };
 
             historyData.push(completedTask);
 
-            // Сохраняем обновленные данные
             await this.app.vault.modify(
                 historyFile as TFile,
                 JSON.stringify(historyData, null, 2)
             );
 
         } catch (error) {
-            console.error('Ошибка при сохранении в историю:', error);
+            console.error(t('errorLoadingHistory'), error);
             throw error;
         }
     }

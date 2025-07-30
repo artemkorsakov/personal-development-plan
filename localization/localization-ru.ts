@@ -203,6 +203,7 @@ export const ru: TranslationKeys = {
     platform: "Платформа",
     platformPlaceholder: "Введите платформу",
     durationInMinutes: "Длительность (минуты)",
+    episodes: "Количество эпизодов",
     notes: 'Заметки',
     addYourThoughts: 'Добавьте ваши мысли',
 

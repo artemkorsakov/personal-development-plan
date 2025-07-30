@@ -64,6 +64,9 @@ export interface TaskInProgress extends BaseTask {
     startDate: string;
     dueDate: string;
     progress: number;
+    pages?: number;
+    laborInputInHours?: number;
+    durationInMinutes?: number;
 }
 
 export interface PlannedTask extends BaseTask {}

@@ -12,6 +12,9 @@ interface CompletedTask {
     review: string;
     completedAt: string;
     section: string;
+    pages?: number;
+    laborInputInHours?: number;
+    durationInMinutes?: number;
 }
 
 export class HistoryTab {
