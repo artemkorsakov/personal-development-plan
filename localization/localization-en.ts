@@ -248,10 +248,10 @@ export const en: TranslationKeys = {
     forecastStartDate: 'Countdown start date (from setting)',
     booksForecastFormula: 'For books: Forecast in days = Remaining pages / Speed in days. Speed in days = Read pages from history / Days passed since start date.',
     otherTypesForecastFormula: 'For other types: Forecast in days = Remaining hours / Speed in days. Speed in days = Completed hours from history / Days passed since start date.',
-    optimistic: 'Optimistic forecast in days (+15%)',
+    optimistic: 'Optimistic forecast in days (-15%)',
     baseForecast: 'Base forecast in days',
     formula: 'Formula',
-    pessimistic: 'Pessimistic forecast in days (-15%)',
+    pessimistic: 'Pessimistic forecast in days (+15%)',
 
     // History
     noCompletedTasks: "No completed tasks found",
