@@ -136,13 +136,9 @@ export async function getPlannedTasks(
     metadataCache: MetadataCache
 ): Promise<PlannedTask[]> {
     try {
-        // 1. Пауза для возможного обновления кэша
         await new Promise(resolve => setTimeout(resolve, 50));
-
-        // 2. Получаем файлы с повторными попытками
         const files = await getFilesInFolderWithRetry(vault, settings.folderPath);
 
-        // 3. Процессор с улучшенной проверкой данных
         const processor: FileProcessor<PlannedTask> = {
             filter: (frontmatter) => {
                 const status = frontmatter?.status;
@@ -151,18 +147,51 @@ export async function getPlannedTasks(
             },
             needsContent: false,
             transform: (file, frontmatter) => {
-                return {
-                    ...getCommonFields(file, frontmatter),
+                const commonFields = getCommonFields(file, frontmatter);
+                const task: PlannedTask = {
+                    ...commonFields,
                     order: typeof frontmatter?.order === 'number' ? frontmatter.order : 0
                 };
+
+                // Добавляем специфичные поля
+                const taskId = getMaterialIdByName(settings.materialTypes, task.type);
+
+                switch (taskId) {
+                    case 'book':
+                        if (typeof frontmatter?.pages === 'number') {
+                            task.pages = frontmatter.pages;
+                        }
+                        break;
+
+                    case 'article':
+                    case 'video':
+                    case 'course':
+                        if (typeof frontmatter?.durationInMinutes === 'number') {
+                            task.durationInMinutes = frontmatter.durationInMinutes;
+                        }
+                        break;
+
+                    case 'podcast':
+                        const duration = typeof frontmatter?.durationInMinutes === 'number' ? frontmatter.durationInMinutes : 0;
+                        const episodes = typeof frontmatter?.episodes === 'number' ? frontmatter.episodes : 1;
+                        task.durationInMinutes = duration * episodes;
+                        break;
+
+                    default:
+                        if (typeof frontmatter?.laborInputInHours === 'number') {
+                            task.laborInputInHours = frontmatter.laborInputInHours;
+                        }
+                        break;
+                }
+
+                return task;
             }
         };
 
-        // 4. Обработка с повторными попытками
         return await processFilesWithRetry(vault, files, metadataCache, processor);
     } catch (error) {
         console.error('Failed to get planned tasks:', error);
-        return []; // Возвращаем пустой массив вместо ошибки
+        return [];
     }
 }
 
@@ -172,32 +201,62 @@ export async function getKnowledgeItems(
     metadataCache: MetadataCache
 ): Promise<KnowledgeItem[]> {
     try {
-        // 1. Явная пауза для возможного обновления кэша
         await new Promise(resolve => setTimeout(resolve, 50));
-
-        // 2. Получаем файлы с дополнительными проверками
         const files = await getFilesInFolderWithRetry(vault, settings.folderPath);
 
-        // 3. Процессор для преобразования данных
         const processor: FileProcessor<KnowledgeItem> = {
             filter: (frontmatter) => {
-                // Более надежная проверка статуса
                 const status = frontmatter?.status;
                 return typeof status === 'string' &&
                        status.toLowerCase() === 'knowledge-base';
             },
             needsContent: false,
-            transform: (file, frontmatter) => ({
-                ...getCommonFields(file, frontmatter),
-                order: typeof frontmatter?.order === 'number' ? frontmatter.order : 0
-            })
+            transform: (file, frontmatter) => {
+                const commonFields = getCommonFields(file, frontmatter);
+                const item: KnowledgeItem = {
+                    ...commonFields,
+                    order: typeof frontmatter?.order === 'number' ? frontmatter.order : 0
+                };
+
+                // Добавляем специфичные поля
+                const taskId = getMaterialIdByName(settings.materialTypes, item.type);
+
+                switch (taskId) {
+                    case 'book':
+                        if (typeof frontmatter?.pages === 'number') {
+                            item.pages = frontmatter.pages;
+                        }
+                        break;
+
+                    case 'article':
+                    case 'video':
+                    case 'course':
+                        if (typeof frontmatter?.durationInMinutes === 'number') {
+                            item.durationInMinutes = frontmatter.durationInMinutes;
+                        }
+                        break;
+
+                    case 'podcast':
+                        const duration = typeof frontmatter?.durationInMinutes === 'number' ? frontmatter.durationInMinutes : 0;
+                        const episodes = typeof frontmatter?.episodes === 'number' ? frontmatter.episodes : 1;
+                        item.durationInMinutes = duration * episodes;
+                        break;
+
+                    default:
+                        if (typeof frontmatter?.laborInputInHours === 'number') {
+                            item.laborInputInHours = frontmatter.laborInputInHours;
+                        }
+                        break;
+                }
+
+                return item;
+            }
         };
 
-        // 4. Обработка файлов с повторными попытками
         return await processFilesWithRetry(vault, files, metadataCache, processor);
     } catch (error) {
         console.error('Failed to get knowledge items:', error);
-        return []; // Возвращаем пустой массив вместо ошибки
+        return [];
     }
 }
 

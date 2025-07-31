@@ -225,6 +225,33 @@ export const ru: TranslationKeys = {
     sectionSettings: 'Настройки разделов',
     taskSettings: 'Настройки задач',
 
+    // Statistics
+    errorLoadingStatistics: 'Ошибка загрузки статистики',
+    generalStatistics: 'Общая статистика',
+    totalTasksInPlan: 'Всего задач в плане',
+    contentTypeStatistics: 'Статистика по типам материалов',
+    type: 'Тип задачи',
+    totalInPlan: 'Всего в плане (В работе + Запланировано + База знаний)',
+    completed: 'Завершено (в Истории)',
+    completedCount: 'Завершено',
+    completedTotal: 'Завершено в сумме',
+    remaining: 'Осталось в сумме',
+    remainingPages: 'страниц(-а,-ы)',
+    remainingHours: 'час(-а,-ов)',
+    sectionStatistics: 'Статистика по разделам',
+
+    // Forecast
+    forecastTitle: 'Прогноз завершения',
+    forecastMethodology: 'Методология расчета',
+    forecastVisualisation: 'Визуализация прогноза',
+    forecastCompletion: 'Прогноз завершения (в днях)',
+    forecastStartDate: 'Дата начала отсчета (из настройки)',
+    booksForecastFormula: 'Для книг: Прогноз в днях = Оставшиеся страницы / Скорость в днях. Скорость в днях = Прочитано страниц из истории / Прошло дней с даты начала.',
+    otherTypesForecastFormula: 'Для остальных типов: Прогноз в днях = Оставшиеся часы / Скорость в днях. Скорость в днях = Завершено часов из истории / Прошло дней с даты начала.',
+    optimistic: 'Оптимистичный прогноз в днях (+15%)',
+    base: 'Базовый прогноз в днях: по текущей скорости',
+    pessimistic: 'Пессимистичный прогноз в днях (-15%)',
+
     // History
     noCompletedTasks: "Выполненных задач не найдено",
     errorLoadingHistory: "Ошибка загрузки истории",

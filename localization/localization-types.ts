@@ -222,7 +222,34 @@ export interface TranslationKeys {
     materialTypeSettings: string;
     sectionSettings: string;
     taskSettings: string;
-    
+
+    // Statistics
+    errorLoadingStatistics: string;
+    generalStatistics: string;
+    totalTasksInPlan: string;
+    contentTypeStatistics: string;
+    type: string;
+    totalInPlan: string;
+    completed: string;
+    completedCount: string;
+    completedTotal: string;
+    remaining: string;
+    remainingPages: string;
+    remainingHours: string;
+    sectionStatistics: string;
+
+    // Forecast
+    forecastTitle: string;
+    forecastMethodology: string;
+    forecastVisualisation: string;
+    forecastCompletion: string;
+    forecastStartDate: string;
+    booksForecastFormula: string;
+    otherTypesForecastFormula: string;
+    optimistic: string;
+    base: string;
+    pessimistic: string;
+
     // History
     noCompletedTasks: string;
     errorLoadingHistory: string;

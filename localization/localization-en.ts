@@ -225,6 +225,33 @@ export const en: TranslationKeys = {
     sectionSettings: 'Sections Settings',
     taskSettings: 'Tasks Settings',
 
+    // Statistics
+    errorLoadingStatistics: 'Error loading statistics',
+    generalStatistics: 'General Statistics',
+    totalTasksInPlan: 'Total Tasks',
+    contentTypeStatistics: 'Content Type Statistics',
+    type: 'Type',
+    totalInPlan: 'Total',
+    completed: 'Completed',
+    completedCount: 'Completed',
+    completedTotal: 'Completed total',
+    remaining: 'Remaining',
+    remainingPages: 'pages',
+    remainingHours: 'hours',
+    sectionStatistics: 'Section Statistics',
+
+    // Forecast
+    forecastTitle: 'Forecast completion',
+    forecastMethodology: 'Calculation methodology',
+    forecastVisualisation: 'Forecast visualisation',
+    forecastCompletion: 'Forecast completion (in days)',
+    forecastStartDate: 'Countdown start date (from setting)',
+    booksForecastFormula: 'For books: Forecast in days = Remaining pages / Speed in days. Speed in days = Read pages from history / Days passed since start date.',
+    otherTypesForecastFormula: 'For other types: Forecast in days = Remaining hours / Speed in days. Speed in days = Completed hours from history / Days passed since start date.',
+    optimistic: 'Optimistic forecast in days (+15%)',
+    base: 'Base forecast in days: at current speed',
+    pessimistic: 'Pessimistic forecast in days (-15%)',
+
     // History
     noCompletedTasks: "No completed tasks found",
     errorLoadingHistory: "Error loading history",

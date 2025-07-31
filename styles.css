@@ -880,6 +880,142 @@
   transform: scale(0.98);
 }
 
+/****************************** "Statistics" tab ******************************/
+.statistics-tab-container {
+  padding: 16px;
+  overflow-y: auto;
+  height: 100%;
+}
+
+.stats-section {
+  margin-bottom: 30px;
+}
+
+.stats-section h2 {
+  color: var(--text-normal);
+  font-size: var(--font-ui-medium);
+  margin-bottom: 16px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.stats-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  font-size: var(--font-ui-small);
+  margin-bottom: 16px;
+}
+
+.stats-table th {
+  background-color: var(--background-secondary-alt);
+  color: var(--text-normal);
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 2px solid var(--background-modifier-border);
+}
+
+.stats-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--background-modifier-border);
+  vertical-align: middle;
+}
+
+.stats-table tr:hover {
+  background-color: var(--background-secondary);
+}
+
+.stats-table th:nth-child(3),
+.stats-table td:nth-child(3) {
+    text-align: right;
+    padding-right: 16px;
+}
+
+.stat-value {
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.stats-table-divider {
+  height: 20px;
+}
+
+/* Адаптация для мобильных устройств */
+@media (max-width: 600px) {
+  .stats-table {
+    display: block;
+    overflow-x: auto;
+  }
+}
+
+.bar-chart-container {
+    width: 100%;
+    margin-top: 16px;
+}
+
+.bar-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    gap: 8px;
+}
+
+.bar-label {
+    width: 150px;
+    font-size: var(--font-ui-small);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.bar {
+    flex-grow: 1;
+    height: 20px;
+    background: var(--background-secondary-alt);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    background: var(--interactive-accent);
+    transition: width 0.5s ease;
+}
+
+.bar-value {
+    width: 80px;
+    text-align: right;
+    font-size: var(--font-ui-smaller);
+    color: var(--text-muted);
+    font-feature-settings: "tnum";
+    font-variant-numeric: tabular-nums;
+}
+
+/****************************** Forecast Section ******************************/
+.forecast-section {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid var(--background-modifier-border);
+}
+
+.forecast-methodology {
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+  margin-bottom: 16px;
+}
+
+.forecast-type {
+  font-weight: 500;
+}
+
+.forecast-base {
+    white-space: nowrap;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 /****************************** "History" tab ******************************/
 .history-tab-container {
   padding: 16px;

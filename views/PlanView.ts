@@ -7,6 +7,7 @@ import PlannedTab from './tabs/PlannedTab';
 import KnowledgeBaseTab from './tabs/KnowledgeBaseTab';
 import SourcesTab from './tabs/SourcesTab';
 import { HistoryTab } from './tabs/HistoryTab';
+import { StatisticsTab } from './tabs/StatisticsTab';
 
 export default class PlanView extends ItemView {
     private plugin: PersonalDevelopmentPlanPlugin;
@@ -120,11 +121,15 @@ export default class PlanView extends ItemView {
                     app.workspace
                 ));
                 break;
+            case 'statistics':
+                tabContent.appendChild(await StatisticsTab.create(app, settings, app.vault, app.metadataCache));
+                break;
             case 'history':
                 tabContent.appendChild(await HistoryTab.create(app, settings, app.vault));
                 break;
-            default:
+            case 'examples':
                 tabContent.createEl('p', { text: `Content for "${tabId}" section` });
+                break;
         }
     }
 

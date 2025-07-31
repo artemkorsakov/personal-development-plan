@@ -1,21 +1,7 @@
-import { Vault, TFile, Notice } from 'obsidian';
+import { Vault } from 'obsidian';
 import { PersonalDevelopmentPlanSettings } from '../../settings/settings-types';
 import { t } from '../../localization/localization';
-
-interface CompletedTask {
-    type: string;
-    title: string;
-    startDate: string;
-    completionDate: string;
-    workingDays: number;
-    rating: number;
-    review: string;
-    completedAt: string;
-    section: string;
-    pages?: number;
-    laborInputInHours?: number;
-    durationInMinutes?: number;
-}
+import { CompletedTask, loadCompletedTasks } from './historyUtils';
 
 export class HistoryTab {
     private static settings: PersonalDevelopmentPlanSettings;
@@ -33,7 +19,7 @@ export class HistoryTab {
         container.addClass('history-tab-container');
 
         try {
-            const completedTasks = await this.loadCompletedTasks();
+            const completedTasks = await loadCompletedTasks(vault, settings);
 
             completedTasks.sort((a: CompletedTask, b: CompletedTask) =>
                 new Date(b.completionDate).getTime() - new Date(a.completionDate).getTime()
@@ -95,24 +81,5 @@ export class HistoryTab {
         }
 
         return container;
-    }
-
-    private static async loadCompletedTasks(): Promise<CompletedTask[]> {
-        try {
-            const historyFilePath = `${this.settings.historyFolderPath}/completed_tasks.json`;
-            const file = this.vault.getAbstractFileByPath(historyFilePath);
-
-            if (!file || !(file instanceof TFile)) {
-                throw new Error(t('historyFileNotFound'));
-            }
-
-            const content = await this.vault.read(file);
-            const tasks: CompletedTask[] = JSON.parse(content);
-
-            return tasks;
-        } catch (error) {
-            console.error('Error loading completed tasks:', error);
-            return [];
-        }
     }
 }
