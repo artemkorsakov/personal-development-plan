@@ -236,8 +236,8 @@ export const ru: TranslationKeys = {
     completedCount: 'Завершено',
     completedTotal: 'Завершено в сумме',
     remaining: 'Осталось в сумме',
-    remainingPages: 'страниц(-а,-ы)',
-    remainingHours: 'час(-а,-ов)',
+    remainingPages: 'стр.',
+    remainingHours: 'ч.',
     sectionStatistics: 'Статистика по разделам',
 
     // Forecast
@@ -249,7 +249,8 @@ export const ru: TranslationKeys = {
     booksForecastFormula: 'Для книг: Прогноз в днях = Оставшиеся страницы / Скорость в днях. Скорость в днях = Прочитано страниц из истории / Прошло дней с даты начала.',
     otherTypesForecastFormula: 'Для остальных типов: Прогноз в днях = Оставшиеся часы / Скорость в днях. Скорость в днях = Завершено часов из истории / Прошло дней с даты начала.',
     optimistic: 'Оптимистичный прогноз в днях (+15%)',
-    base: 'Базовый прогноз в днях: по текущей скорости',
+    baseForecast: 'Базовый прогноз в днях',
+    formula: 'Формула',
     pessimistic: 'Пессимистичный прогноз в днях (-15%)',
 
     // History

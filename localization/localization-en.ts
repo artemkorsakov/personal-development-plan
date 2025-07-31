@@ -249,7 +249,8 @@ export const en: TranslationKeys = {
     booksForecastFormula: 'For books: Forecast in days = Remaining pages / Speed in days. Speed in days = Read pages from history / Days passed since start date.',
     otherTypesForecastFormula: 'For other types: Forecast in days = Remaining hours / Speed in days. Speed in days = Completed hours from history / Days passed since start date.',
     optimistic: 'Optimistic forecast in days (+15%)',
-    base: 'Base forecast in days: at current speed',
+    baseForecast: 'Base forecast in days',
+    formula: 'Formula',
     pessimistic: 'Pessimistic forecast in days (-15%)',
 
     // History

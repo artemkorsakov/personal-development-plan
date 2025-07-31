@@ -247,7 +247,8 @@ export interface TranslationKeys {
     booksForecastFormula: string;
     otherTypesForecastFormula: string;
     optimistic: string;
-    base: string;
+    baseForecast: string;
+    formula: string;
     pessimistic: string;
 
     // History

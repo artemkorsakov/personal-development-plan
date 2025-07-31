@@ -1016,6 +1016,16 @@
     text-overflow: ellipsis;
 }
 
+.forecast-formula {
+    font-family: var(--font-monospace);
+    font-size: var(--font-ui-smaller);
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+}
+
 /****************************** "History" tab ******************************/
 .history-tab-container {
   padding: 16px;
