@@ -333,6 +333,24 @@
     padding: 4px;
 }
 
+/* Стили для периодических задач */
+.periodic-card {
+    border-left: 4px solid var(--color-orange);
+    background-color: var(--background-secondary-alt);
+}
+
+.periodic-card:hover {
+    background-color: var(--background-secondary);
+}
+
+.periodic-icon {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    font-size: 1.5em;
+    opacity: 0.6;
+}
+
 /****************************** "Planned" tab ******************************/
 .planned-main-container {
   display: flex;

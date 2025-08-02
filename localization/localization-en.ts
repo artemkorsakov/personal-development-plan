@@ -78,6 +78,17 @@ export const en: TranslationKeys = {
     monthlyTask: 'Monthly Task (example)',
     quarterlyTask: 'Quarterly Task (example)',
     yearlyTask: 'Yearly Task (example)',
+    errorCreatingPeriodicFile: 'Error creating periodic task file',
+    oneTimeTasks: 'One-time Tasks',
+    dailyTasks: 'Daily Tasks',
+    weeklyTasks: 'Weekly Tasks',
+    monthlyTasks: 'Monthly Tasks',
+    quarterlyTasks: 'Quarterly Tasks',
+    yearlyTasks: 'Yearly Tasks',
+    week: 'Week',
+    month: 'Month',
+    quarter: 'Quarter',
+    year: 'Year',
 
     // Default material types
     all: 'All',

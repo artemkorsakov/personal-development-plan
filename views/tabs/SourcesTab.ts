@@ -49,7 +49,7 @@ export default class SourcesTab {
         const name = card.createSpan({ cls: 'source-name' });
         name.textContent = type.name;
 
-        card.dataset.filePath = `${folderPath}/Sources/${type.id}.md`;
+        card.dataset.filePath = this.getSourceFilePath(folderPath, type);
 
         return card;
     }
@@ -59,7 +59,7 @@ export default class SourcesTab {
         folderPath: string,
         vault: Vault
     ) {
-        const filePath = `${folderPath}/Sources/${type.id}.md`;
+        const filePath = this.getSourceFilePath(folderPath, type);
         const content = this.generateSourceContent(type);
 
         try {
@@ -82,6 +82,10 @@ export default class SourcesTab {
                `## ${t('personalNotes')}\n\n` +
                `- [ ] ${t('addYourThoughts')}`;
     }
+
+    private static getSourceFilePath(folderPath: string, type: MaterialType): string {
+		return `${folderPath}/Sources/${type.id}.md`;
+	}
 
     static async refresh(
         container: HTMLElement,

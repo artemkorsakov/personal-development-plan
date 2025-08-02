@@ -40,7 +40,6 @@ export interface TranslationKeys {
     generalSettings: string;
     materialTypes: string;
     sectionsCategories: string;
-    periodicTasks: string;
     folderPath: string;
     folderPathDesc: string;
     historyFolderPath: string;
@@ -76,6 +75,18 @@ export interface TranslationKeys {
     monthlyTask: string;
     quarterlyTask: string;
     yearlyTask: string;
+    periodicTasks: string;
+    errorCreatingPeriodicFile: string;
+    oneTimeTasks: string;
+    dailyTasks: string;
+    weeklyTasks: string;
+    monthlyTasks: string;
+    quarterlyTasks: string;
+    yearlyTasks: string;
+    week: string;
+    month: string;
+    quarter: string;
+    year: string;
 
     // Default material types
     all: string;

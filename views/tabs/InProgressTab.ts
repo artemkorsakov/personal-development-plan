@@ -1,14 +1,15 @@
 import { Vault, TFile, Notice } from 'obsidian';
 import { getActiveTasks, getTaskTypeIcon, isTaskOverdue } from '../../utils/taskUtils';
 import { formatDate, calculateDaysBetween, parseDateInput } from '../../utils/dateUtils';
-import { openTaskFile } from '../../utils/fileUtils';
-import { generateProgressBar } from '../../utils/progressUtils';
+import { openTaskFile, openOrCreateSourceFile } from '../../utils/fileUtils';
+import { generateProgressBar, calculateTaskProgress } from '../../utils/progressUtils';
 import { t } from '../../localization/localization';
-import { PersonalDevelopmentPlanSettings, getMaterialNameById, getMaterialIdByName } from '../../settings/settings-types';
+import { PersonalDevelopmentPlanSettings, getMaterialIdByName } from '../../settings/settings-types';
 import CreateTaskModal from '../modals/CreateTaskModal';
 import { ConfirmDeleteModal } from '../modals/ConfirmDeleteModal';
 import { CompleteTaskModal } from '../modals/CompleteTaskModal';
 import { PostponeTaskModal } from '../modals/PostponeTaskModal';
+import { PeriodicTasks } from './PeriodicTasks';
 
 export default class InProgressTab {
     private static app: any;
@@ -41,7 +42,7 @@ export default class InProgressTab {
         const activeTasks = await getActiveTasks(this.vault, this.settings, this.metadataCache);
         const maxTasks = this.settings.maxActiveTasks || 10;
 
-        const contentContainer = this.container.querySelector('.tasks-content') ||
+        const contentContainer = this.container.querySelector('.tasks-content') as HTMLElement ||
             this.container.createDiv({ cls: 'tasks-content' });
         contentContainer.empty();
 
@@ -51,84 +52,94 @@ export default class InProgressTab {
         }
 
         activeTasks.sort((a, b) => {
-            // Сначала сортируем по дате выполнения
             const dateA = parseDateInput(a.dueDate)?.getTime() || 0;
             const dateB = parseDateInput(b.dueDate)?.getTime() || 0;
-
-            // Если даты одинаковые, сортируем по order
-            if (dateA === dateB) {
-                return (a.order || 0) - (b.order || 0);
-            }
-
-            return dateA - dateB;
+            return dateA === dateB ? (a.order || 0) - (b.order || 0) : dateA - dateB;
         });
 
-        activeTasks.forEach(task => {
-            const taskCard = contentContainer.createDiv({ cls: 'task-card' });
+        // Рендер обычных задач
+        activeTasks.forEach(task => this.createTaskCard(contentContainer, task));
 
-            const cardContent = taskCard.createDiv({ cls: 'task-card-content' });
-            cardContent.onclick = () => openTaskFile(task.filePath, this.vault, this.app.workspace);
+        // Добавляем карточку периодических задач
+        this.createPeriodicTasksCard(contentContainer);
+    }
 
-            const firstLine = cardContent.createDiv({ cls: 'task-first-line' });
-            const typeIcon = getTaskTypeIcon(getMaterialIdByName(this.settings.materialTypes, task.type))
-            firstLine.createSpan({
-                cls: 'task-type-icon',
-                text: `${typeIcon} ${task.type}:`
-            });
-            firstLine.createSpan({ cls: 'task-name', text: task.name });
-            firstLine.createSpan({ cls: 'task-section', text: `[${task.section}]` });
+    private static createTaskCard(container: HTMLElement, task: any) {
+        const taskCard = container.createDiv({ cls: 'task-card' });
+        const cardContent = taskCard.createDiv({ cls: 'task-card-content' });
+        cardContent.onclick = () => openTaskFile(task.filePath, this.vault, this.app.workspace);
 
-            const datesDiv = cardContent.createDiv({ cls: 'task-dates' });
-            datesDiv.createSpan({ text: `${t('inProgressStartDate')}: ${formatDate(task.startDate)}` });
+        // Заголовок и тип задачи
+        const firstLine = cardContent.createDiv({ cls: 'task-first-line' });
+        const typeIcon = getTaskTypeIcon(getMaterialIdByName(this.settings.materialTypes, task.type))
+        firstLine.createSpan({
+            cls: 'task-type-icon',
+            text: `${typeIcon} ${task.type}:`
+        });
+        firstLine.createSpan({ cls: 'task-name', text: task.name });
+        firstLine.createSpan({ cls: 'task-section', text: `[${task.section}]` });
 
-            const dueDateSpan = datesDiv.createSpan({
-                text: `${t('inProgressDueDate')}: ${formatDate(task.dueDate)}`
-            });
+        // Даты
+        const datesDiv = cardContent.createDiv({ cls: 'task-dates' });
+        datesDiv.createSpan({ text: `${t('inProgressStartDate')}: ${formatDate(task.startDate)}` });
 
-            if (isTaskOverdue(task)) {
-                dueDateSpan.style.color = 'var(--text-error)';
-                dueDateSpan.style.fontWeight = 'bold';
-                dueDateSpan.textContent += t('inProgressOverdue');
-            }
+        const dueDateSpan = datesDiv.createSpan({
+            text: `${t('inProgressDueDate')}: ${formatDate(task.dueDate)}`
+        });
 
-            const progressContainer = cardContent.createDiv({ cls: 'task-progress-line' });
-            progressContainer.createSpan({
-                cls: 'task-progress-bar',
-                text: `${generateProgressBar(task.progress)} ${task.progress}%`
-            });
+        if (isTaskOverdue(task)) {
+            dueDateSpan.style.color = 'var(--text-error)';
+            dueDateSpan.style.fontWeight = 'bold';
+            dueDateSpan.textContent += t('inProgressOverdue');
+        }
 
-            // Добавляем кнопки действий
-            const actionsContainer = taskCard.createDiv({ cls: 'task-actions' });
+        // Прогресс
+        const progressContainer = cardContent.createDiv({ cls: 'task-progress-line' });
+        progressContainer.createSpan({
+            cls: 'task-progress-bar',
+            text: `${generateProgressBar(task.progress)} ${task.progress}%`
+        });
 
-            // Кнопка "Выполнить"
-            const completeBtn = actionsContainer.createEl('button', {
-                cls: 'task-action-btn complete-btn',
-                text: t('completeTask')
-            });
-            completeBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                this.handleCompleteTask(task);
-            });
+        // Кнопки действий
+        this.createActionButtons(taskCard, task);
+    }
 
-            // Кнопка "Отложить"
-            const postponeBtn = actionsContainer.createEl('button', {
-                cls: 'task-action-btn postpone-btn',
-                text: t('postponeTask')
-            });
-            postponeBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                this.handlePostponeTask(task);
-            });
+    private static createPeriodicTasksCard(container: HTMLElement) {
+        PeriodicTasks.initialize(this.app, this.settings, this.vault);
+        PeriodicTasks.createPeriodicTasksCard(container);
+    }
 
-            // Кнопка "Удалить"
-            const deleteBtn = actionsContainer.createEl('button', {
-                cls: 'task-action-btn delete-btn',
-                text: t('delete')
-            });
-            deleteBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                this.handleDeleteTask(task);
-            });
+    private static createActionButtons(container: HTMLElement, task: any) {
+        const actionsContainer = container.createDiv({ cls: 'task-actions' });
+
+        // Кнопка "Выполнить"
+        const completeBtn = actionsContainer.createEl('button', {
+            cls: 'task-action-btn complete-btn',
+            text: t('completeTask')
+        });
+        completeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.handleCompleteTask(task);
+        });
+
+        // Кнопка "Отложить"
+        const postponeBtn = actionsContainer.createEl('button', {
+            cls: 'task-action-btn postpone-btn',
+            text: t('postponeTask')
+        });
+        postponeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.handlePostponeTask(task);
+        });
+
+        // Кнопка "Удалить"
+        const deleteBtn = actionsContainer.createEl('button', {
+            cls: 'task-action-btn delete-btn',
+            text: t('delete')
+        });
+        deleteBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.handleDeleteTask(task);
         });
     }
 
@@ -139,15 +150,11 @@ export default class InProgressTab {
 
         if (result) {
             try {
-                // 1. Сохраняем задачу в историю
                 await this.saveToHistory(task, result);
-
-                // 2. Удаляем исходный файл задачи
                 const file = this.app.vault.getAbstractFileByPath(task.filePath);
                 if (file) {
                     await this.app.vault.delete(file);
                 }
-
                 new Notice(t('taskCompletedSuccessfully'));
                 await this.updateTasksList();
             } catch (error) {
@@ -161,11 +168,9 @@ export default class InProgressTab {
         const historyFolder = this.settings.historyFolderPath;
         const historyFilePath = `${historyFolder}/completed_tasks.json`;
 
-        // Создаем папку для истории, если ее нет
         try {
             await this.app.vault.createFolder(historyFolder).catch(() => {});
-        } catch (e) {
-        }
+        } catch (e) {}
 
         let historyData = [];
         let historyFile = this.app.vault.getAbstractFileByPath(historyFilePath);
@@ -197,12 +202,7 @@ export default class InProgressTab {
             };
 
             historyData.push(completedTask);
-
-            await this.app.vault.modify(
-                historyFile as TFile,
-                JSON.stringify(historyData, null, 2)
-            );
-
+            await this.app.vault.modify(historyFile as TFile, JSON.stringify(historyData, null, 2));
         } catch (error) {
             console.error(t('errorLoadingHistory'), error);
             throw error;
@@ -229,11 +229,7 @@ export default class InProgressTab {
                         frontmatter = frontmatter.replace(/dueDate:.*\n/g, '');
                         frontmatter += `\nstatus: planned\n`;
 
-                        content = content.replace(
-                            frontmatterRegex,
-                            `---\n${frontmatter}---`
-                        );
-
+                        content = content.replace(frontmatterRegex, `---\n${frontmatter}---`);
                         await this.app.vault.modify(file, content);
                         new Notice(t('taskPostponedSuccessfully'));
                         await this.updateTasksList();
