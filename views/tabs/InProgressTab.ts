@@ -83,6 +83,10 @@ export default class InProgressTab {
 
     private static createTaskCard(container: HTMLElement, task: any) {
         const taskCard = container.createDiv({ cls: 'task-card' });
+        if (isTaskOverdue(task)) {
+            taskCard.addClass('task-overdue');
+        }
+
         const cardContent = taskCard.createDiv({ cls: 'task-card-content' });
         cardContent.onclick = () => openTaskFile(task.filePath, this.vault, this.app.workspace);
 
@@ -98,17 +102,12 @@ export default class InProgressTab {
 
         // Даты
         const datesDiv = cardContent.createDiv({ cls: 'task-dates' });
-        datesDiv.createSpan({ text: `${t('inProgressStartDate')}: ${formatDate(task.startDate)}` });
+        datesDiv.createSpan({ cls: 'task-date', text: `${t('inProgressStartDate')}: ${formatDate(task.startDate)}` });
 
         const dueDateSpan = datesDiv.createSpan({
-            text: `${t('inProgressDueDate')}: ${formatDate(task.dueDate)}`
+            cls: isTaskOverdue(task) ? 'task-date overdue' : 'task-date',
+            text: `${t('inProgressDueDate')}: ${formatDate(task.dueDate)}${isTaskOverdue(task) ? t('inProgressOverdue') : ''}`
         });
-
-        if (isTaskOverdue(task)) {
-            dueDateSpan.style.color = 'var(--text-error)';
-            dueDateSpan.style.fontWeight = 'bold';
-            dueDateSpan.textContent += t('inProgressOverdue');
-        }
 
         // Прогресс
         const progressContainer = cardContent.createDiv({ cls: 'task-progress-line' });

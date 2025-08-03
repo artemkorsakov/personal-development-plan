@@ -16,8 +16,9 @@ export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
     display(): void {
         const { containerEl } = this;
         containerEl.empty();
+        containerEl.addClass('pdp-settings-container');
 
-        containerEl.createEl('h1', { text: t('settingsTitle') });
+        containerEl.createEl('h1', { text: t('settingsTitle'), cls: 'pdp-settings-title' });
 
         [
             this.addGeneralSettings,
@@ -37,93 +38,126 @@ export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
 
     private addGeneralSettings(): void {
         const { containerEl } = this;
-        containerEl.createEl('h2', { text: t('generalSettings') });
+        const section = containerEl.createDiv({ cls: 'pdp-settings-section' });
+        section.createEl('h2', { text: t('generalSettings'), cls: 'pdp-settings-subtitle' });
 
-        new Setting(containerEl)
+        new Setting(section)
             .setName(t('folderPath'))
             .setDesc(t('folderPathDesc'))
-            .addText(text => text
-                .setPlaceholder('PersonalDevelopmentPlan')
-                .setValue(this.settings.folderPath)
-                .onChange(async (value) => {
-                    this.settings.folderPath = value.trim();
-                    await this.saveSettings();
-                }));
+            .addText(text => {
+                text.inputEl.addClass('pdp-settings-input');
+                text
+                    .setPlaceholder('PersonalDevelopmentPlan')
+                    .setValue(this.settings.folderPath)
+                    .onChange(async (value) => {
+                        this.settings.folderPath = value.trim();
+                        await this.saveSettings();
+                    });
+            });
 
-		new Setting(containerEl)
+        new Setting(section)
             .setName(t('historyFolderPath'))
             .setDesc(t('historyFolderPathDesc'))
-            .addText(text => text
-                .setPlaceholder('PersonalDevelopmentPlan/history')
-                .setValue(this.settings.historyFolderPath)
-                .onChange(async (value) => {
-                    this.settings.historyFolderPath = value.trim();
-                    await this.saveSettings();
-                }));
+            .addText(text => {
+                text.inputEl.addClass('pdp-settings-input');
+                text
+                    .setPlaceholder('PersonalDevelopmentPlan/history')
+                    .setValue(this.settings.historyFolderPath)
+                    .onChange(async (value) => {
+                        this.settings.historyFolderPath = value.trim();
+                        await this.saveSettings();
+                    });
+            });
 
-        new Setting(containerEl)
+        new Setting(section)
             .setName(t('maxActiveTasks'))
             .setDesc(t('maxActiveTasksDesc'))
-            .addSlider(slider => slider
-                .setLimits(1, 10, 1)
-                .setValue(this.settings.maxActiveTasks)
-                .setDynamicTooltip()
-                .onChange(async (value) => {
-                    this.settings.maxActiveTasks = value;
-                    await this.saveSettings();
-                }));
+            .addSlider(slider => {
+                slider.sliderEl.addClass('pdp-settings-slider');
+                slider
+                    .setLimits(1, 10, 1)
+                    .setValue(this.settings.maxActiveTasks)
+                    .setDynamicTooltip()
+                    .onChange(async (value) => {
+                        this.settings.maxActiveTasks = value;
+                        await this.saveSettings();
+                    });
+            });
 
-        new Setting(containerEl)
+        new Setting(section)
             .setName(t('statsStartDate'))
             .setDesc(t('statsStartDateDesc'))
-            .addText(text => text
-                .setPlaceholder('YYYY-MM-DD')
-                .setValue(this.settings.statsStartDate)
-                .onChange(async (value) => {
-                    this.settings.statsStartDate = value;
-                    await this.saveSettings();
-                }));
+            .addText(text => {
+                text.inputEl.addClass('pdp-settings-input');
+                text
+                    .setPlaceholder('YYYY-MM-DD')
+                    .setValue(this.settings.statsStartDate)
+                    .onChange(async (value) => {
+                        this.settings.statsStartDate = value;
+                        await this.saveSettings();
+                    });
+            });
     }
 
     private addMaterialTypesSettings(): void {
         const { containerEl } = this;
-        containerEl.createEl('h2', { text: t('materialTypes') });
+        const section = containerEl.createDiv({ cls: 'pdp-settings-section' });
+        section.createEl('h2', { text: t('materialTypes'), cls: 'pdp-settings-subtitle' });
 
         this.settings.materialTypes.forEach((material, index) => {
-            const setting = new Setting(containerEl)
+            const setting = new Setting(section)
                 .setName(material.name)
-                .addToggle(toggle => toggle
-                    .setValue(material.enabled)
-                    .onChange(async (value) => {
-                        material.enabled = value;
-                        await this.saveSettings();
-                    }))
-                .addText(text => text
-                    .setPlaceholder(t('typeName'))
-                    .setValue(material.name)
-                    .onChange(async (value) => {
-                        material.name = value;
-                        await this.saveSettings();
-                    }))
-                .addButton(button => button
-                    .setButtonText('↑')
-                    .onClick(async () => this.moveMaterialType(index, 'up')))
-                .addButton(button => button
-                    .setButtonText('↓')
-                    .onClick(async () => this.moveMaterialType(index, 'down')));
+                .addToggle(toggle => {
+                    toggle.toggleEl.addClass('pdp-settings-toggle');
+                    toggle
+                        .setValue(material.enabled)
+                        .onChange(async (value) => {
+                            material.enabled = value;
+                            await this.saveSettings();
+                        });
+                })
+                .addText(text => {
+                    text.inputEl.addClass('pdp-settings-input');
+                    text
+                        .setPlaceholder(t('typeName'))
+                        .setValue(material.name)
+                        .onChange(async (value) => {
+                            material.name = value;
+                            await this.saveSettings();
+                        });
+                })
+                .addButton(button => {
+                    button.buttonEl.addClass('pdp-settings-button');
+                    button.buttonEl.addClass('pdp-settings-button-up');
+                    button
+                        .setButtonText('↑')
+                        .onClick(async () => this.moveMaterialType(index, 'up'));
+                })
+                .addButton(button => {
+                    button.buttonEl.addClass('pdp-settings-button');
+                    button.buttonEl.addClass('pdp-settings-button-down');
+                    button
+                        .setButtonText('↓')
+                        .onClick(async () => this.moveMaterialType(index, 'down'));
+                });
 
-            setting.addButton(button => button
-                .setButtonText(t('addItem'))
-                .onClick(async () => {
-                    material.checklistItems.push('');
-                    await this.saveSettings();
-                    this.display();
-                }));
+            setting.addButton(button => {
+                button.buttonEl.addClass('pdp-settings-button');
+                button.buttonEl.addClass('pdp-settings-button-add');
+                button
+                    .setButtonText(t('addItem'))
+                    .onClick(async () => {
+                        material.checklistItems.push('');
+                        await this.saveSettings();
+                        this.display();
+                    });
+            });
 
             material.checklistItems.forEach((item, itemIndex) => {
-                new Setting(containerEl)
+                new Setting(section)
                     .addText(text => {
-                        text.inputEl.style.width = "100%";
+                        text.inputEl.addClass('pdp-settings-input');
+                        text.inputEl.addClass('pdp-settings-checklist-input');
                         text
                             .setPlaceholder(t('checklistItem'))
                             .setValue(item)
@@ -132,30 +166,38 @@ export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
                                 await this.saveSettings();
                             });
                     })
-                    .addButton(button => button
-                        .setButtonText('×')
-                        .onClick(async () => {
-                            material.checklistItems.splice(itemIndex, 1);
-                            await this.saveSettings();
-                            this.display();
-                        }));
+                    .addButton(button => {
+                        button.buttonEl.addClass('pdp-settings-button');
+                        button.buttonEl.addClass('pdp-settings-button-remove');
+                        button
+                            .setButtonText('×')
+                            .onClick(async () => {
+                                material.checklistItems.splice(itemIndex, 1);
+                                await this.saveSettings();
+                                this.display();
+                            });
+                    });
             });
         });
 
-        new Setting(containerEl)
-            .addButton(button => button
-                .setButtonText(t('addNewType'))
-                .onClick(async () => {
-                    this.settings.materialTypes.push({
-                        id: `custom-${Date.now()}`,
-                        name: t('newType'),
-                        enabled: true,
-                        order: this.settings.materialTypes.length,
-                        checklistItems: []
+        new Setting(section)
+            .addButton(button => {
+                button.buttonEl.addClass('pdp-settings-button');
+                button.buttonEl.addClass('pdp-settings-button-primary');
+                button
+                    .setButtonText(t('addNewType'))
+                    .onClick(async () => {
+                        this.settings.materialTypes.push({
+                            id: `custom-${Date.now()}`,
+                            name: t('newType'),
+                            enabled: true,
+                            order: this.settings.materialTypes.length,
+                            checklistItems: []
+                        });
+                        await this.saveSettings();
+                        this.display();
                     });
-                    await this.saveSettings();
-                    this.display();
-                }));
+            });
     }
 
     private async moveMaterialType(index: number, direction: 'up' | 'down'): Promise<void> {
@@ -172,38 +214,54 @@ export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
 
     private addSectionsSettings(): void {
         const { containerEl } = this;
-        containerEl.createEl('h2', { text: t('sectionsCategories') });
+        const sectionContainer = containerEl.createDiv({ cls: 'pdp-settings-section' });
+        sectionContainer.createEl('h2', { text: t('sectionsCategories'), cls: 'pdp-settings-subtitle' });
 
         this.settings.sections.forEach((section, index) => {
-            const setting = new Setting(containerEl)
+            const setting = new Setting(sectionContainer)
                 .setName(section.name)
-                .addText(text => text
-                    .setPlaceholder(t('sectionName'))
-                    .setValue(section.name)
-                    .onChange(async (value) => {
-                        section.name = value;
-                        await this.saveSettings();
-                    }))
-                .addButton(button => button
-                    .setButtonText('↑')
-                    .onClick(async () => this.moveSection(index, 'up')))
-                .addButton(button => button
-                    .setButtonText('↓')
-                    .onClick(async () => this.moveSection(index, 'down')));
+                .addText(text => {
+                    text.inputEl.addClass('pdp-settings-input');
+                    text
+                        .setPlaceholder(t('sectionName'))
+                        .setValue(section.name)
+                        .onChange(async (value) => {
+                            section.name = value;
+                            await this.saveSettings();
+                        });
+                })
+                .addButton(button => {
+					button.buttonEl.addClass('pdp-settings-button');
+                    button.buttonEl.addClass('pdp-settings-button-up');
+                    button
+                        .setButtonText('↑')
+                        .onClick(async () => this.moveSection(index, 'up'));
+                })
+                .addButton(button => {
+					button.buttonEl.addClass('pdp-settings-button');
+                    button.buttonEl.addClass('pdp-settings-button-down');
+                    button
+                        .setButtonText('↓')
+                        .onClick(async () => this.moveSection(index, 'down'));
+                });
         });
 
-        new Setting(containerEl)
-            .addButton(button => button
-                .setButtonText(t('addNewSection'))
-                .onClick(async () => {
-                    this.settings.sections.push({
-                        id: `section-${Date.now()}`,
-                        name: t('newSection'),
-                        order: this.settings.sections.length
+        new Setting(sectionContainer)
+            .addButton(button => {
+				button.buttonEl.addClass('pdp-settings-button');
+                button.buttonEl.addClass('pdp-settings-button-primary');
+                button
+                    .setButtonText(t('addNewSection'))
+                    .onClick(async () => {
+                        this.settings.sections.push({
+                            id: `section-${Date.now()}`,
+                            name: t('newSection'),
+                            order: this.settings.sections.length
+                        });
+                        await this.saveSettings();
+                        this.display();
                     });
-                    await this.saveSettings();
-                    this.display();
-                }));
+            });
     }
 
     private async moveSection(index: number, direction: 'up' | 'down'): Promise<void> {
@@ -220,57 +278,66 @@ export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
 
     private addPeriodicTasksSettings(): void {
         const { containerEl } = this;
-        containerEl.createEl('h2', { text: t('periodicTasks') });
+        const sectionContainer = containerEl.createDiv({ cls: 'pdp-settings-section' });
+        sectionContainer.createEl('h2', { text: t('periodicTasks'), cls: 'pdp-settings-subtitle' });
 
         (['daily', 'weekly', 'monthly', 'quarterly', 'yearly'] as const).forEach(taskType => {
-            this.createTaskSection(taskType);
-        });
-    }
+            const taskSection = sectionContainer.createDiv({ cls: 'pdp-task-type-section' });
+            const taskConfig = this.settings.periodicTasks[taskType];
+            const taskName = t(taskType);
+            const taskPlaceholder = t(`${taskType}Task` as keyof TranslationKeys) || t(taskType);
 
-    private createTaskSection(taskType: 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'yearly'): void {
-        const { containerEl } = this;
-        const taskConfig = this.settings.periodicTasks[taskType];
-        const taskName = t(taskType);
-        const taskPlaceholder = t(`${taskType}Task` as keyof TranslationKeys) || t(taskType);
-
-        new Setting(containerEl)
-            .setName(taskName)
-            .addToggle(toggle => toggle
-                .setValue(taskConfig.enabled)
-                .onChange(async (value) => {
-                    taskConfig.enabled = value;
-                    await this.saveSettings();
-                }));
-
-        taskConfig.tasks.forEach((task, index) => {
-            new Setting(containerEl)
-                .addText(text => {
-                    text.inputEl.style.width = "100%";
-                    text
-                        .setPlaceholder(taskPlaceholder)
-                        .setValue(task)
+            new Setting(taskSection)
+                .setName(taskName)
+                .addToggle(toggle => {
+                    toggle.toggleEl.addClass('pdp-settings-toggle');
+                    toggle
+                        .setValue(taskConfig.enabled)
                         .onChange(async (value) => {
-                            taskConfig.tasks[index] = value;
+                            taskConfig.enabled = value;
                             await this.saveSettings();
                         });
-                })
-                .addButton(button => button
-                    .setButtonText('×')
-                    .onClick(async () => {
-                        taskConfig.tasks.splice(index, 1);
-                        await this.saveSettings();
-                        this.display();
-                    }));
-        });
+                });
 
-        new Setting(containerEl)
-            .addButton(button => button
-                .setButtonText(t('addTask'))
-                .onClick(async () => {
-                    taskConfig.tasks.push('');
-                    await this.saveSettings();
-                    this.display();
-                }));
+            taskConfig.tasks.forEach((task, index) => {
+                new Setting(taskSection)
+                    .addText(text => {
+                        text.inputEl.addClass('pdp-settings-input');
+                        text.inputEl.addClass('pdp-settings-task-input');
+                        text
+                            .setPlaceholder(taskPlaceholder)
+                            .setValue(task)
+                            .onChange(async (value) => {
+                                taskConfig.tasks[index] = value;
+                                await this.saveSettings();
+                            });
+                    })
+                    .addButton(button => {
+						button.buttonEl.addClass('pdp-settings-button');
+                        button.buttonEl.addClass('pdp-settings-button-remove');
+                        button
+                            .setButtonText('×')
+                            .onClick(async () => {
+                                taskConfig.tasks.splice(index, 1);
+                                await this.saveSettings();
+                                this.display();
+                            });
+                    });
+            });
+
+            new Setting(taskSection)
+                .addButton(button => {
+					button.buttonEl.addClass('pdp-settings-button');
+                    button.buttonEl.addClass('pdp-settings-button-primary');
+                    button
+                        .setButtonText(t('addTask'))
+                        .onClick(async () => {
+                            taskConfig.tasks.push('');
+                            await this.saveSettings();
+                            this.display();
+                        });
+                });
+        });
     }
 }
 
