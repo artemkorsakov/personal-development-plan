@@ -268,6 +268,7 @@ export const en: TranslationKeys = {
     baseForecast: 'Base forecast in days',
     formula: 'Formula',
     pessimistic: 'Pessimistic forecast in days (+15%)',
+    noForecast: 'No enough data to calculate forecast',
 
     // History
     noCompletedTasks: "No completed tasks found",

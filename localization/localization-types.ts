@@ -266,6 +266,7 @@ export interface TranslationKeys {
     baseForecast: string;
     formula: string;
     pessimistic: string;
+    noForecast: string;
 
     // History
     noCompletedTasks: string;

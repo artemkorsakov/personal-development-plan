@@ -20,11 +20,13 @@ export class StartTaskModal extends Modal {
         });
 
         this.titleEl.setText(t('startTask'));
+        this.titleEl.addClass('modal-title');
     }
 
     onOpen() {
         const { contentEl } = this;
         contentEl.empty();
+        contentEl.addClass('modal-content');
 
         // Форматируем текущую дату для input[type="date"]
         const today = new Date();
@@ -35,21 +37,20 @@ export class StartTaskModal extends Modal {
             return date.toISOString().split('T')[0];
         };
 
-        const form = contentEl.createEl('form');
+        const form = contentEl.createEl('form', { cls: 'modal-form' });
 
         // Элемент для отображения ошибок
-        this.errorEl = contentEl.createDiv({
-            cls: 'modal-error-message',
-            attr: { style: 'color: var(--text-error); margin-bottom: 1em; display: none;' }
-        });
+        this.errorEl = contentEl.createDiv({ cls: 'modal-error-message' });
 
         // Поле для даты начала
         const startDateGroup = form.createDiv({ cls: 'modal-form-group' });
         startDateGroup.createEl('label', {
             text: t('inProgressStartDate'),
-            attr: { for: 'start-date' }
+            attr: { for: 'start-date' },
+            cls: 'modal-form-label'
         });
         this.startDateInput = startDateGroup.createEl('input', {
+            cls: 'modal-form-input',
             attr: {
                 type: 'date',
                 id: 'start-date',
@@ -62,9 +63,11 @@ export class StartTaskModal extends Modal {
         const dueDateGroup = form.createDiv({ cls: 'modal-form-group' });
         dueDateGroup.createEl('label', {
             text: t('inProgressDueDate'),
-            attr: { for: 'due-date' }
+            attr: { for: 'due-date' },
+            cls: 'modal-form-label'
         });
         this.dueDateInput = dueDateGroup.createEl('input', {
+            cls: 'modal-form-input',
             attr: {
                 type: 'date',
                 id: 'due-date',
@@ -85,13 +88,13 @@ export class StartTaskModal extends Modal {
         const buttonContainer = form.createDiv({ cls: 'modal-button-container' });
         const saveBtn = buttonContainer.createEl('button', {
             text: t('save'),
-            cls: 'modal-save-btn',
+            cls: 'modal-button modal-save-button',
             type: 'submit'
         });
 
         const cancelBtn = buttonContainer.createEl('button', {
             text: t('cancel'),
-            cls: 'modal-cancel-btn',
+            cls: 'modal-button modal-cancel-button',
             type: 'button'
         });
         cancelBtn.addEventListener('click', () => {
@@ -126,9 +129,9 @@ export class StartTaskModal extends Modal {
 
     private showError(message: string) {
         this.errorEl.textContent = message;
-        this.errorEl.style.display = 'block';
+        this.errorEl.addClass('modal-error-message-visible');
         setTimeout(() => {
-            this.errorEl.style.display = 'none';
+            this.errorEl.removeClass('modal-error-message-visible');
         }, 5000);
     }
 

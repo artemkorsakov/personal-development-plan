@@ -70,7 +70,6 @@ export abstract class TaskFormBuilder {
             .addText(text => {
                 const inputEl = text.inputEl;
                 inputEl.type = 'date';
-                inputEl.style.width = '100%';
 
                 // Устанавливаем значение по умолчанию
                 if (defaultValue) {

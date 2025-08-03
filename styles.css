@@ -419,11 +419,6 @@
     color: var(--text-on-accent);
 }
 
-/* Стили для модального окна завершения задачи */
-.modal-form-group.full-width {
-    width: 100%;
-}
-
 .full-width-textarea {
     width: 100%;
     min-height: 100px;
@@ -728,43 +723,144 @@
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-/* Стили для модальных окон */
+/* ==================== */
+/* MODAL BASE STYLES */
+/* ==================== */
+.modal {
+  --modal-border-radius: 6px;
+  --modal-padding: 16px;
+  --modal-gap: 16px;
+  --modal-button-padding: 6px 12px;
+  --modal-transition: all 0.2s ease;
+}
+
+/* ==================== */
+/* MODAL STRUCTURE */
+/* ==================== */
+.modal-content {
+  padding: var(--modal-padding);
+}
+
+.modal-title {
+  font-size: 1.2em;
+  font-weight: 600;
+  color: var(--text-normal);
+  margin-bottom: var(--modal-gap);
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--modal-gap);
+}
+
+/* ==================== */
+/* FORM ELEMENTS */
+/* ==================== */
+.modal-form-group {
+  margin-bottom: var(--modal-gap);
+}
+
+.modal-form-group.full-width {
+  width: 100%;
+}
+
+.modal-form-label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: var(--font-ui-small);
+  color: var(--text-muted);
+}
+
+.modal-form-input {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 4px;
+  background: var(--background-primary);
+  color: var(--text-normal);
+  transition: var(--modal-transition);
+}
+
+.modal-form-input:focus {
+  border-color: var(--interactive-accent);
+  outline: none;
+  box-shadow: 0 0 0 1px var(--interactive-accent);
+}
+
+/* ==================== */
+/* ERROR MESSAGES */
+/* ==================== */
+.modal-error-message {
+  color: var(--text-error);
+  margin-bottom: 1em;
+  padding: 8px;
+  background-color: var(--background-modifier-error);
+  border-radius: 4px;
+  display: none;
+  font-size: var(--font-ui-small);
+}
+
+.modal-error-message-visible {
+  display: block;
+}
+
+/* ==================== */
+/* BUTTONS & ACTIONS */
+/* ==================== */
+.modal-actions,
 .modal-button-container {
   display: flex;
   justify-content: flex-end;
-  gap: 8px;
-  margin-top: 16px;
+  gap: 10px;
+  margin-top: var(--modal-gap);
+  padding-top: var(--modal-gap);
+  border-top: 1px solid var(--background-modifier-border);
 }
 
-.modal-save-btn,
-.modal-cancel-btn,
-.modal-delete-btn {
-  padding: 6px 12px;
+.modal-button {
+  padding: var(--modal-button-padding);
   border: none;
   border-radius: 4px;
   cursor: pointer;
   font-size: var(--font-ui-small);
-  transition: all 0.2s ease;
+  transition: var(--modal-transition);
 }
 
-.modal-save-btn {
+.modal-button:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.modal-button:active {
+  transform: translateY(0);
+}
+
+/* Primary Action Button */
+.modal-save-btn,
+.modal-save-button {
   background-color: var(--interactive-accent);
   color: var(--text-on-accent);
 }
 
-.modal-save-btn:hover {
+.modal-save-btn:hover,
+.modal-save-button:hover {
   background-color: var(--interactive-accent-hover);
 }
 
-.modal-cancel-btn {
-  background-color: var(--background-modifier-border);
+/* Secondary Action Button */
+.modal-cancel-btn,
+.modal-cancel-button {
+  background-color: var(--background-secondary);
   color: var(--text-normal);
 }
 
-.modal-cancel-btn:hover {
+.modal-cancel-btn:hover,
+.modal-cancel-button:hover {
   background-color: var(--background-modifier-border-hover);
 }
 
+/* Destructive Action Button */
 .modal-delete-btn {
   background-color: var(--background-modifier-error);
   color: var(--text-on-accent);
@@ -772,57 +868,6 @@
 
 .modal-delete-btn:hover {
   background-color: var(--background-modifier-error-hover);
-}
-
-/* Стили для формы в модальном окне */
-.modal-form-group {
-  margin-bottom: 16px;
-}
-
-.modal-form-group label {
-  display: block;
-  margin-bottom: 4px;
-  font-size: var(--font-ui-small);
-  color: var(--text-muted);
-}
-
-.modal-form-group input {
-  width: 100%;
-  padding: 6px 8px;
-  border: 1px solid var(--background-modifier-border);
-  border-radius: 4px;
-  background: var(--background-primary);
-  color: var(--text-normal);
-}
-
-.modal-form-group input:focus {
-  border-color: var(--interactive-accent);
-  outline: none;
-  box-shadow: 0 0 0 1px var(--interactive-accent);
-}
-
-.modal-form-group input[type="date"] {
-    width: 100%;
-    padding: 6px 8px;
-    border: 1px solid var(--background-modifier-border);
-    border-radius: 4px;
-    background: var(--background-primary);
-    color: var(--text-normal);
-}
-
-.modal-form-group input[type="date"]:focus {
-    border-color: var(--interactive-accent);
-    outline: none;
-    box-shadow: 0 0 0 1px var(--interactive-accent);
-}
-
-.modal-error-message {
-    color: var(--text-error);
-    margin-bottom: 1em;
-    padding: 8px;
-    background-color: var(--background-modifier-error);
-    border-radius: 4px;
-    display: none;
 }
 
 /****************************** Create task modal ******************************/
@@ -871,15 +916,6 @@
     margin-top: 10px;
     border-top: 1px solid var(--background-modifier-border);
     padding-top: 10px;
-}
-
-.modal-actions {
-    border-top: 1px solid var(--background-modifier-border);
-    padding-top: 15px;
-    margin-top: 15px;
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
 }
 
 .task-reminder-container {

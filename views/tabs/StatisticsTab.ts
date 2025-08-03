@@ -294,7 +294,39 @@ export class StatisticsTab {
                     text: `${Math.round(data.baseDays * 1.15)}`,
                     cls: 'stat-value forecast-pessimistic'
                 });
-            }
+            } else {
+                const row = tbody.createEl('tr');
+
+                // Тип
+                row.createEl('td', {
+                    text: type,
+                    cls: 'forecast-type'
+                });
+
+                // Базовый прогноз
+                row.createEl('td', {
+                    text: t('noForecast'),
+                    cls: 'stat-value forecast-base'
+                });
+
+                // Формула
+                row.createEl('td', {
+                    text: '-',
+                    cls: 'forecast-formula'
+                });
+
+                // Оптимистичный прогноз (-15%)
+                row.createEl('td', {
+                    text: '-',
+                    cls: 'stat-value forecast-optimistic'
+                });
+
+                // Пессимистичный прогноз (+15%)
+                row.createEl('td', {
+                    text: '-',
+                    cls: 'stat-value forecast-pessimistic'
+                });
+			}
         });
     }
 

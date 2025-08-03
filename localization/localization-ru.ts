@@ -268,6 +268,7 @@ export const ru: TranslationKeys = {
     baseForecast: 'Базовый прогноз в днях',
     formula: 'Формула',
     pessimistic: 'Пессимистичный прогноз в днях (+15%)',
+    noForecast: 'Недостаточно данных для расчета прогноза',
 
     // History
     noCompletedTasks: "Выполненных задач не найдено",
