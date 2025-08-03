@@ -1,8 +1,8 @@
-import { Vault, Notice, TFile, TAbstractFile, moment } from 'obsidian';
+import { Vault, Notice, TFile, moment } from 'obsidian';
 import { t } from '../../localization/localization';
 import { PersonalDevelopmentPlanSettings } from '../../settings/settings-types';
 import { generateProgressBar, calculateTaskProgress } from '../../utils/progressUtils';
-import { openOrCreateSourceFile } from '../../utils/fileUtils';
+import { openTaskFile } from '../../utils/fileUtils';
 import { getTaskTypeIcon } from '../../utils/taskUtils';
 
 type CompletedTasks = {
@@ -13,43 +13,55 @@ type CompletedTasks = {
     yearly: string[];
 };
 
-export class PeriodicTasks {
-    private static app: any;
-    private static settings: PersonalDevelopmentPlanSettings;
-    private static vault: Vault;
-    private static taskType: string = 'periodic';
-    private static startDate: moment.Moment;
+type PeriodType = keyof CompletedTasks;
 
-    static initialize(app: any, settings: PersonalDevelopmentPlanSettings, vault: Vault) {
+export class PeriodicTasks {
+    private app: any;
+    private settings: PersonalDevelopmentPlanSettings;
+    private vault: Vault;
+    private taskType: string = 'periodic';
+    private startDate: moment.Moment;
+
+    constructor(app: any, settings: PersonalDevelopmentPlanSettings, vault: Vault) {
         this.app = app;
         this.settings = settings;
         this.vault = vault;
         this.startDate = moment(settings.statsStartDate);
     }
 
-    private static getPeriodicPath(): string {
+    public updateSettings(settings: PersonalDevelopmentPlanSettings) {
+        this.settings = settings;
+        this.startDate = moment(settings.statsStartDate);
+    }
+
+    private getPeriodicPath(): string {
+        if (!this.settings?.folderPath) {
+            throw new Error('Folder path is not defined in settings');
+        }
         return `${this.settings.folderPath}/Periodic/Periodic.md`;
     }
 
-    private static getCompletedPeriodicPath(): string {
+    private getCompletedPeriodicPath(): string {
         return `${this.settings.folderPath}/Periodic/completed_tasks.json`;
     }
 
-    private static async loadCompletedTasks(): Promise<CompletedTasks> {
+    private async loadCompletedTasks(): Promise<CompletedTasks> {
         const path = this.getCompletedPeriodicPath();
         try {
+            await this.vault.adapter.mkdir(`${this.settings.folderPath}/Periodic`);
             const file = this.vault.getAbstractFileByPath(path);
             if (file && file instanceof TFile) {
                 const content = await this.vault.cachedRead(file);
                 return JSON.parse(content) || this.getDefaultCompletedTasks();
             }
+            return this.getDefaultCompletedTasks();
         } catch (error) {
             console.error('Error loading completed tasks:', error);
+            return this.getDefaultCompletedTasks();
         }
-        return this.getDefaultCompletedTasks();
     }
 
-    private static getDefaultCompletedTasks(): CompletedTasks {
+    private getDefaultCompletedTasks(): CompletedTasks {
         return {
             daily: [],
             weekly: [],
@@ -59,10 +71,9 @@ export class PeriodicTasks {
         };
     }
 
-    private static async saveCompletedTasks(tasks: CompletedTasks): Promise<void> {
+    private async saveCompletedTasks(tasks: CompletedTasks): Promise<void> {
         const path = this.getCompletedPeriodicPath();
         try {
-            await this.vault.adapter.mkdir(`${this.settings.folderPath}/Periodic`);
             await this.vault.adapter.write(path, JSON.stringify(tasks, null, 2));
         } catch (error) {
             console.error('Error saving completed tasks:', error);
@@ -70,240 +81,191 @@ export class PeriodicTasks {
         }
     }
 
-    private static async updateCompletedTasks(newTasks: {
-        daily?: string[],
-        weekly?: string[],
-        monthly?: string[],
-        quarterly?: string[],
-        yearly?: string[]
-    }): Promise<void> {
+    private async updateCompletedTasks(newTasks: Partial<CompletedTasks>): Promise<void> {
         const completedTasks = await this.loadCompletedTasks();
-
-        if (newTasks.daily) {
-            completedTasks.daily = [...new Set([...completedTasks.daily, ...newTasks.daily])];
+        for (const type in newTasks) {
+            if (newTasks.hasOwnProperty(type)) {
+                const periods = newTasks[type as PeriodType];
+                if (periods) {
+                    completedTasks[type as PeriodType] = [
+                        ...new Set([...completedTasks[type as PeriodType], ...periods])
+                    ];
+                }
+            }
         }
-        if (newTasks.weekly) {
-            completedTasks.weekly = [...new Set([...completedTasks.weekly, ...newTasks.weekly])];
-        }
-        if (newTasks.monthly) {
-            completedTasks.monthly = [...new Set([...completedTasks.monthly, ...newTasks.monthly])];
-        }
-        if (newTasks.quarterly) {
-            completedTasks.quarterly = [...new Set([...completedTasks.quarterly, ...newTasks.quarterly])];
-        }
-        if (newTasks.yearly) {
-            completedTasks.yearly = [...new Set([...completedTasks.yearly, ...newTasks.yearly])];
-        }
-
         await this.saveCompletedTasks(completedTasks);
     }
 
-    private static async generateDailyTasks(): Promise<{content: string, newTasks: string[]}> {
-        if (!this.settings.periodicTasks?.daily?.enabled) return {content: '', newTasks: []};
-
-        const tasks = this.settings.periodicTasks.daily.tasks || [];
-        if (tasks.length === 0) return {content: '', newTasks: []};
-
-        const completedTasks = await this.loadCompletedTasks();
-        let content = `## ${t('dailyTasks')}\n\n`;
-        const today = moment();
-        let currentDate = this.startDate.clone();
-        const newTasks: string[] = [];
-
-        while (currentDate.isSameOrBefore(today)) {
-            const dateStr = currentDate.format('YYYY-MM-DD');
-            if (!completedTasks.daily.includes(dateStr)) {
-                content += `#### ${dateStr}\n\n`;
-                tasks.forEach(task => content += `- [ ] ${task}\n`);
-                content += '\n';
-                newTasks.push(dateStr);
-            }
-            currentDate.add(1, 'day');
-        }
-
-        return {content, newTasks};
-    }
-
-    private static async generateWeeklyTasks(): Promise<{content: string, newTasks: string[]}> {
-        if (!this.settings.periodicTasks?.weekly?.enabled) return {content: '', newTasks: []};
-
-        const tasks = this.settings.periodicTasks.weekly.tasks || [];
-        if (tasks.length === 0) return {content: '', newTasks: []};
-
-        const completedTasks = await this.loadCompletedTasks();
-        let content = `## ${t('weeklyTasks')}\n\n`;
-        const today = moment();
-        let currentDate = this.startDate.clone().startOf('week');
-        const newTasks: string[] = [];
-
-        while (currentDate.isSameOrBefore(today, 'week')) {
-            const weekStr = currentDate.format('YYYY-[W]WW');
-            if (!completedTasks.weekly.includes(weekStr)) {
-                content += `#### ${t('week')} ${weekStr}\n\n`;
-                tasks.forEach(task => content += `- [ ] ${task}\n`);
-                content += '\n';
-                newTasks.push(weekStr);
-            }
-            currentDate.add(1, 'week');
-        }
-
-        return {content, newTasks};
-    }
-
-    private static async generateMonthlyTasks(): Promise<{content: string, newTasks: string[]}> {
-        if (!this.settings.periodicTasks?.monthly?.enabled) return {content: '', newTasks: []};
-
-        const tasks = this.settings.periodicTasks.monthly.tasks || [];
-        if (tasks.length === 0) return {content: '', newTasks: []};
-
-        const completedTasks = await this.loadCompletedTasks();
-        let content = `## ${t('monthlyTasks')}\n\n`;
-        const today = moment();
-        let currentDate = this.startDate.clone().startOf('month');
-        const newTasks: string[] = [];
-
-        while (currentDate.isSameOrBefore(today, 'month')) {
-            const monthStr = currentDate.format('YYYY-MM');
-            if (!completedTasks.monthly.includes(monthStr)) {
-                content += `#### ${t('month')} ${monthStr}\n\n`;
-                tasks.forEach(task => content += `- [ ] ${task}\n`);
-                content += '\n';
-                newTasks.push(monthStr);
-            }
-            currentDate.add(1, 'month');
-        }
-
-        return {content, newTasks};
-    }
-
-    private static async generateQuarterlyTasks(): Promise<{content: string, newTasks: string[]}> {
-        if (!this.settings.periodicTasks?.quarterly?.enabled) return {content: '', newTasks: []};
-
-        const tasks = this.settings.periodicTasks.quarterly.tasks || [];
-        if (tasks.length === 0) return {content: '', newTasks: []};
-
-        const completedTasks = await this.loadCompletedTasks();
-        let content = `## ${t('quarterlyTasks')}\n\n`;
-        const today = moment();
-        let currentDate = this.startDate.clone().startOf('quarter');
-        const newTasks: string[] = [];
-
-        while (currentDate.isSameOrBefore(today, 'quarter')) {
-            const quarterStr = currentDate.format('YYYY-[Q]Q');
-            if (!completedTasks.quarterly.includes(quarterStr)) {
-                content += `#### ${t('quarter')} ${quarterStr}\n\n`;
-                tasks.forEach(task => content += `- [ ] ${task}\n`);
-                content += '\n';
-                newTasks.push(quarterStr);
-            }
-            currentDate.add(1, 'quarter');
-        }
-
-        return {content, newTasks};
-    }
-
-    private static async generateYearlyTasks(): Promise<{content: string, newTasks: string[]}> {
-        if (!this.settings.periodicTasks?.yearly?.enabled) return {content: '', newTasks: []};
-
-        const tasks = this.settings.periodicTasks.yearly.tasks || [];
-        if (tasks.length === 0) return {content: '', newTasks: []};
-
-        const completedTasks = await this.loadCompletedTasks();
-        let content = `## ${t('yearlyTasks')}\n\n`;
-        const today = moment();
-        let currentDate = this.startDate.clone().startOf('year');
-        const newTasks: string[] = [];
-
-        while (currentDate.isSameOrBefore(today, 'year')) {
-            const yearStr = currentDate.format('YYYY');
-            if (!completedTasks.yearly.includes(yearStr)) {
-                content += `#### ${t('year')} ${yearStr}\n\n`;
-                tasks.forEach(task => content += `- [ ] ${task}\n`);
-                content += '\n';
-                newTasks.push(yearStr);
-            }
-            currentDate.add(1, 'year');
-        }
-
-        return {content, newTasks};
-    }
-
-    private static async generateAllTasks(): Promise<string> {
-        const [
-            dailyResult,
-            weeklyResult,
-            monthlyResult,
-            quarterlyResult,
-            yearlyResult
-        ] = await Promise.all([
-            this.generateDailyTasks(),
-            this.generateWeeklyTasks(),
-            this.generateMonthlyTasks(),
-            this.generateQuarterlyTasks(),
-            this.generateYearlyTasks()
-        ]);
-
-        // Сохраняем все новые задачи одним запросом
-        await this.updateCompletedTasks({
-            daily: dailyResult.newTasks,
-            weekly: weeklyResult.newTasks,
-            monthly: monthlyResult.newTasks,
-            quarterly: quarterlyResult.newTasks,
-            yearly: yearlyResult.newTasks
-        });
-
-        return this.getPeriodicFileContent() +
-            dailyResult.content +
-            weeklyResult.content +
-            monthlyResult.content +
-            quarterlyResult.content +
-            yearlyResult.content;
-    }
-
-    static async createPeriodicTasksCard(container: HTMLElement) {
+    public async createPeriodicTasksCard(container: HTMLElement) {
         const periodicCard = container.createDiv({ cls: 'task-card periodic-card' });
         const cardContent = periodicCard.createDiv({ cls: 'task-card-content' });
 
-        cardContent.onclick = async () => {
-            const filePath = this.getPeriodicPath();
-            const content = await this.generateAllTasks();
-            openOrCreateSourceFile(filePath, this.vault, this.app.workspace, content);
+        const handleClick = async () => {
+            try {
+                const filePath = this.getPeriodicPath();
+                const fileExists = await this.vault.adapter.exists(filePath);
+
+                // 1. Генерируем новые периоды
+                const { newPeriods, contentToAdd } = await this.generateNewPeriods();
+
+                // 2. Обновляем файл
+                if (fileExists) {
+                    await this.appendToExistingFile(filePath, contentToAdd);
+                } else {
+                    await this.createNewFile(filePath, contentToAdd);
+                }
+
+                // 3. Обновляем completed_tasks.json
+                if (newPeriods.length > 0) {
+                    const updatedTasks: Partial<CompletedTasks> = {};
+                    newPeriods.forEach(({type, period}) => {
+                        if (!updatedTasks[type]) {
+                            updatedTasks[type] = [];
+                        }
+                        updatedTasks[type]!.push(period);
+                    });
+                    await this.updateCompletedTasks(updatedTasks);
+                }
+
+                // 4. Открываем файл
+                await openTaskFile(filePath, this.vault, this.app.workspace);
+
+            } catch (error) {
+                console.error('Error handling periodic tasks:', error);
+                new Notice(t('errorCreatingPeriodicFile'));
+            }
         };
+
+        cardContent.onclick = handleClick.bind(this);
 
         const firstLine = cardContent.createDiv({ cls: 'task-first-line' });
         firstLine.createSpan({
             cls: 'task-type-icon',
-            text: `${getTaskTypeIcon(this.taskType)} ${t('periodicTasks')}:`
+            text: `${getTaskTypeIcon(this.taskType)} ${t('periodicTasks')}`
         });
 
-        const content = await this.getCurrentPeriodicContent();
-        const progress = calculateTaskProgress(content);
-        const progressContainer = cardContent.createDiv({ cls: 'task-progress-line' });
-        progressContainer.createSpan({
-            cls: 'task-progress-bar',
-            text: `${generateProgressBar(progress)} ${progress}%`
-        });
+        // Отображение прогресса
+        try {
+            const content = await this.getCurrentPeriodicContent();
+            const progress = calculateTaskProgress(content);
+            const progressContainer = cardContent.createDiv({ cls: 'task-progress-line' });
+            progressContainer.createSpan({
+                cls: 'task-progress-bar',
+                text: `${generateProgressBar(progress)} ${progress}%`
+            });
+        } catch (error) {
+            console.error('Error updating progress:', error);
+        }
     }
 
-    private static async getCurrentPeriodicContent(): Promise<string> {
+    private formatPeriodHeader(type: PeriodType, date: moment.Moment): string {
+        switch (type) {
+            case 'daily':
+                return `${date.format('YYYY-MM-DD')} (${date.format('dddd')})`;
+
+            case 'weekly':
+                const weekStart = date.clone().startOf('week');
+                const weekEnd = date.clone().endOf('week');
+                return `${t('week')} ${date.format('W')} (${weekStart.format('YYYY-MM-DD')} — ${weekEnd.format('YYYY-MM-DD')})`;
+
+            case 'monthly':
+                return `${date.format('MMMM YYYY')}`;
+
+            case 'quarterly':
+                const quarter = Math.ceil((date.month() + 1) / 3);
+                const quarterMonths = [
+                    t('quarter1'),
+                    t('quarter2'),
+                    t('quarter3'),
+                    t('quarter4')
+                ];
+                return `${quarter}${t('quarter')} ${date.format('YYYY')} (${quarterMonths[quarter - 1]})`;
+
+            case 'yearly':
+                return `${date.format('YYYY')} ${t('year')}`;
+
+            default:
+                return date.format('YYYY-MM-DD');
+        }
+    }
+
+    private async generateNewPeriods(): Promise<{
+        newPeriods: Array<{type: PeriodType, period: string}>,
+        contentToAdd: string
+    }> {
+        const completedTasks = await this.loadCompletedTasks();
+        const today = moment();
+        let contentToAdd = '';
+        const newPeriods: Array<{type: PeriodType, period: string}> = [];
+
+        const processPeriod = async (
+            type: PeriodType,
+            dateFormat: string,
+            unit: 'day' | 'week' | 'month' | 'quarter' | 'year'
+        ) => {
+            if (!this.settings.periodicTasks?.[type]?.enabled) return;
+
+            const tasks = this.settings.periodicTasks[type]?.tasks || [];
+            if (tasks.length === 0) return;
+
+            let currentDate = this.startDate.clone().startOf(unit);
+            let sectionContent = '';
+
+            while (currentDate.isSameOrBefore(today, unit)) {
+                const periodStr = currentDate.format(dateFormat);
+                if (!completedTasks[type].includes(periodStr)) {
+					const formattedHeader = this.formatPeriodHeader(type, currentDate);
+                    sectionContent += `#### ${formattedHeader}\n\n`;
+                    tasks.forEach(task => sectionContent += `- [ ] ${task}\n`);
+                    sectionContent += '\n';
+                    newPeriods.push({type, period: periodStr});
+                }
+                currentDate.add(1, unit);
+            }
+
+            if (sectionContent) {
+                contentToAdd += sectionContent;
+            }
+        };
+
+        await Promise.all([
+            processPeriod('daily', 'YYYY-MM-DD', 'day'),
+            processPeriod('weekly', 'YYYY-[W]WW', 'week'),
+            processPeriod('monthly', 'YYYY-MM', 'month'),
+            processPeriod('quarterly', 'YYYY-[Q]Q', 'quarter'),
+            processPeriod('yearly', 'YYYY', 'year')
+        ]);
+
+        return { newPeriods, contentToAdd };
+    }
+
+    private async createNewFile(filePath: string, content: string): Promise<void> {
+        const header = `---\ntitle: ${t('periodicTasks')}\ntype: ${this.taskType}\n---\n\n# ${t('oneTimeTasks')}\n\n- [ ] ${t('oneTimeTasksExample')}\n\n# ${t('periodicTasks')}\n\n`;
+        await this.vault.create(filePath, header + content);
+    }
+
+    private async appendToExistingFile(filePath: string, contentToAdd: string): Promise<void> {
+        const file = this.vault.getAbstractFileByPath(filePath) as TFile;
+        if (!file) return;
+
+        let currentContent = await this.vault.read(file);
+
+        // Добавляем новые периоды в конец файла
+        const updatedContent = currentContent + contentToAdd;
+        await this.vault.modify(file, updatedContent);
+    }
+
+    private async getCurrentPeriodicContent(): Promise<string> {
         const filePath = this.getPeriodicPath();
         try {
             const file = this.vault.getAbstractFileByPath(filePath);
             if (file && file instanceof TFile) {
                 return await this.vault.cachedRead(file);
             }
-            return this.getPeriodicFileContent();
+            return '';
         } catch (error) {
             console.error('Error reading periodic file:', error);
-            return this.getPeriodicFileContent();
+            return '';
         }
-    }
-
-    private static getPeriodicFileContent(): string {
-        return `---\n` +
-               `title: ${t('periodicTasks')}\n` +
-               `type: ${this.taskType}\n` +
-               `---\n\n` +
-               `## ${t('oneTimeTasks')}\n\n`;
     }
 }

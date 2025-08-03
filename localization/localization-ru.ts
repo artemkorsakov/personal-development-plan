@@ -80,6 +80,7 @@ export const ru: TranslationKeys = {
     yearlyTask: 'Ежегодная задача (пример)',
     errorCreatingPeriodicFile: 'Ошибка создания файла с периодическими задачами',
     oneTimeTasks: 'Разовые задачи',
+    oneTimeTasksExample: 'Пример разовой задачи',
     dailyTasks: 'Ежедневные задачи',
     weeklyTasks: 'Еженедельные задачи',
     monthlyTasks: 'Ежемесячные задачи',
@@ -87,8 +88,12 @@ export const ru: TranslationKeys = {
     yearlyTasks: 'Ежегодные задачи',
     week: 'Неделя',
     month: 'Месяц',
-    quarter: 'Квартал',
-    year: 'Год',
+    quarter: '-й квартал',
+    quarter1: 'Январь—Март',
+    quarter2: 'Апрель—Июнь',
+    quarter3: 'Июль—Сентябрь',
+    quarter4: 'Октябрь—Декабрь',
+    year: 'год',
 
     // Default material types
     all: 'Все',

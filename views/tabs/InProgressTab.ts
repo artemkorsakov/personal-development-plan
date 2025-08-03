@@ -17,6 +17,7 @@ export default class InProgressTab {
     private static vault: Vault;
     private static metadataCache: any;
     private static container: HTMLElement;
+    private static periodicTasksInstance: PeriodicTasks;
 
     static async create(
         app: any,
@@ -64,6 +65,22 @@ export default class InProgressTab {
         this.createPeriodicTasksCard(contentContainer);
     }
 
+    private static createPeriodicTasksCard(container: HTMLElement) {
+        try {
+            if (!this.periodicTasksInstance) {
+                this.periodicTasksInstance = new PeriodicTasks(this.app, this.settings, this.vault);
+            } else {
+                this.periodicTasksInstance.updateSettings(this.settings);
+            }
+
+            this.periodicTasksInstance.createPeriodicTasksCard(container);
+        } catch (error) {
+            console.error('Error creating periodic tasks card:', error);
+            const errorCard = container.createDiv({ cls: 'task-card error-card' });
+            errorCard.createSpan({ text: t('errorCreatingPeriodicFile') });
+        }
+    }
+
     private static createTaskCard(container: HTMLElement, task: any) {
         const taskCard = container.createDiv({ cls: 'task-card' });
         const cardContent = taskCard.createDiv({ cls: 'task-card-content' });
@@ -102,11 +119,6 @@ export default class InProgressTab {
 
         // Кнопки действий
         this.createActionButtons(taskCard, task);
-    }
-
-    private static createPeriodicTasksCard(container: HTMLElement) {
-        PeriodicTasks.initialize(this.app, this.settings, this.vault);
-        PeriodicTasks.createPeriodicTasksCard(container);
     }
 
     private static createActionButtons(container: HTMLElement, task: any) {

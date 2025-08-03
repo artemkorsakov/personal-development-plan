@@ -78,6 +78,7 @@ export interface TranslationKeys {
     periodicTasks: string;
     errorCreatingPeriodicFile: string;
     oneTimeTasks: string;
+    oneTimeTasksExample: string;
     dailyTasks: string;
     weeklyTasks: string;
     monthlyTasks: string;
@@ -86,6 +87,10 @@ export interface TranslationKeys {
     week: string;
     month: string;
     quarter: string;
+    quarter1: string;
+    quarter2: string;
+    quarter3: string;
+    quarter4: string;
     year: string;
 
     // Default material types
