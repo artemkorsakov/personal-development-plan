@@ -3,6 +3,7 @@ import { KnowledgeItem, PlannedTask, TaskInProgress } from '../views/tabs-types'
 import { PersonalDevelopmentPlanSettings, getMaterialIdByName } from '../settings/settings-types';
 import { calculateTaskProgress } from './progressUtils';
 import { getFilesInFolder } from './fileUtils';
+import { ArticleTask, BookTask, CourseTask, PodcastTask, UserTypeTask, VideoTask } from '../settings/task-types';
 
 type TaskCommonFields = {
     name: string;
@@ -257,6 +258,145 @@ export async function getKnowledgeItems(
     } catch (error) {
         console.error('Failed to get knowledge items:', error);
         return [];
+    }
+}
+
+export async function getItems(
+    vault: Vault,
+    settings: PersonalDevelopmentPlanSettings,
+    metadataCache: MetadataCache
+): Promise<{
+    articles: ArticleTask[];
+    books: BookTask[];
+    courses: CourseTask[];
+    podcasts: PodcastTask[];
+    userTypes: UserTypeTask[];
+    videos: VideoTask[];
+}> {
+    try {
+        await new Promise(resolve => setTimeout(resolve, 50));
+        const files = await getFilesInFolderWithRetry(vault, settings.folderPath);
+
+        const result = {
+            articles: [] as ArticleTask[],
+            books: [] as BookTask[],
+            courses: [] as CourseTask[],
+            podcasts: [] as PodcastTask[],
+            userTypes: [] as UserTypeTask[],
+            videos: [] as VideoTask[],
+        };
+
+        await Promise.all(files.map(async (file) => {
+            try {
+                const frontmatter = metadataCache.getFileCache(file)?.frontmatter;
+                if (!frontmatter) return;
+
+                const status = frontmatter?.status;
+                if (typeof status !== 'string' || status.toLowerCase() !== 'knowledge-base') {
+                    return;
+                }
+
+                const fileName = file.path.startsWith(settings.folderPath)
+                    ? file.path.slice(settings.folderPath.length + 1)
+                    : file.path;
+
+                const commonFields = {
+                    status: frontmatter?.status || "???",
+                    title: frontmatter?.title || file.basename || "???",
+                    type: frontmatter?.type || "???",
+                    section: frontmatter?.section || "???",
+                    order: frontmatter?.order ?? 100,
+                    startDate: frontmatter?.startDate || "",
+                    dueDate: frontmatter?.dueDate || "",
+                    filePath: fileName,
+                };
+
+                const taskId = getMaterialIdByName(settings.materialTypes, commonFields.type);
+
+                switch (taskId) {
+                    case 'book': {
+                        const bookTask: BookTask = {
+                            ...commonFields,
+                            authors: frontmatter?.authors || "???",
+                            name: frontmatter?.name || "???",
+                            pages: frontmatter?.pages ?? 0,
+                        };
+                        result.books.push(bookTask);
+                        break;
+                    }
+                    case 'article': {
+                        const articleTask: ArticleTask = {
+                            ...commonFields,
+                            link: frontmatter?.link || "???",
+                            durationInMinutes: frontmatter?.durationInMinutes ?? 0,
+                        };
+                        result.articles.push(articleTask);
+                        break;
+                    }
+                    case 'video': {
+                        const videoTask: VideoTask = {
+                            ...commonFields,
+                            author: frontmatter?.author || "???",
+                            platform: frontmatter?.platform || "???",
+                            link: frontmatter?.link || "???",
+                            durationInMinutes: frontmatter?.durationInMinutes ?? 0,
+                        };
+                        result.videos.push(videoTask);
+                        break;
+                    }
+                    case 'podcast': {
+                        const podcastTask: PodcastTask = {
+                            ...commonFields,
+                            platform: frontmatter?.platform || "???",
+                            link: frontmatter?.link || "???",
+                            episodes: frontmatter?.episodes ?? 1,
+                            durationInMinutes: frontmatter?.durationInMinutes ?? 0,
+                        };
+                        result.podcasts.push(podcastTask);
+                        break;
+                    }
+                    case 'course': {
+                        const courseTask: CourseTask = {
+                            ...commonFields,
+                            platform: frontmatter?.platform || "???",
+                            link: frontmatter?.link || "???",
+                            durationInMinutes: frontmatter?.durationInMinutes ?? 0,
+                        };
+                        result.courses.push(courseTask);
+                        break;
+                    }
+                    default: {
+                        const userTypeTask: UserTypeTask = {
+                            ...commonFields,
+                            laborInputInHours: frontmatter?.laborInputInHours ?? 0,
+                        };
+                        result.userTypes.push(userTypeTask);
+                        break;
+                    }
+                }
+            } catch (error) {
+                console.error(`Error processing file ${file.path}:`, error);
+            }
+        }));
+
+        result.articles.sort((a, b) => a.order - b.order);
+        result.books.sort((a, b) => a.order - b.order);
+        result.courses.sort((a, b) => a.order - b.order);
+        result.podcasts.sort((a, b) => a.order - b.order);
+        result.userTypes.sort((a, b) => a.order - b.order);
+        result.videos.sort((a, b) => a.order - b.order);
+
+        return result;
+    } catch (error) {
+        console.error('Failed to get items:', error);
+        return {
+            articles: [],
+            books: [],
+            courses: [],
+            podcasts: [],
+            userTypes: [],
+            videos: [],
+        };
     }
 }
 

@@ -1,6 +1,6 @@
 import { Notice, Vault } from 'obsidian';
 import { openTaskFile } from '../../utils/fileUtils';
-import { getKnowledgeItems, getTaskTypeIcon } from '../../utils/taskUtils';
+import { getKnowledgeItems, getTaskTypeIcon, getItems } from '../../utils/taskUtils';
 import { exportToJSON } from '../../utils/exportUtils';
 import { t } from '../../localization/localization';
 import { KnowledgeItem } from '../tabs-types';
@@ -394,8 +394,15 @@ export default class KnowledgeBaseTab {
 
     private static async handleExport() {
         try {
-            const items = await getKnowledgeItems(this.vault, this.settings, this.metadataCache);
-            await exportToJSON(items);
+			const {
+                articles,
+                books,
+                courses,
+                podcasts,
+                userTypes,
+                videos
+            } = await getItems(this.vault, this.settings, this.metadataCache);
+            await exportToJSON(articles, books, courses, podcasts, userTypes, videos);
             new Notice(t('exportSuccess'));
         } catch (error) {
             console.error('Export failed:', error);
