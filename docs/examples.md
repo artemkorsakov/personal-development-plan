@@ -21,23 +21,24 @@
 
 ```json
 {
-  "articles": [
-    {
-      "title": "Functional Programming Principles",
-      "type": "Статья",
-      "section": "Функциональное программирование",
-      ... // остальные поля
-    }
-  ],
-  "books": [
-    {
-      "title": "Programming in Scala",
-      "authors": "Martin Odersky",
-      "type": "Книга",
-      "pages": 852,
-	  ... // остальные поля
-	}
-  ]
+	"articles":
+	[
+		{
+			"title": "Functional Programming Principles",
+			"type": "Статья",
+			"section": "Функциональное программирование",
+			"link": "https://example.com/fp-principles"
+		}
+	],
+	"books":
+	[
+		{
+			"title": "Programming in Scala",
+			"authors": "Martin Odersky",
+			"type": "Книга",
+			"pages": 852
+		}
+	]
 }
 ```
 
