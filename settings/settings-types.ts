@@ -28,6 +28,15 @@ export function getMaterialNameById(materialTypes: MaterialType[], id: string): 
     return foundType?.name || `${t('unknownType')}: ${id}`;
 }
 
+export function generateTaskContent(taskType: MaterialType): string {
+    return `# ${t('taskLabel')}\n\n` +
+           `${t('taskDefaultDescription')}\n\n` +
+           `## ${t('checklist')}\n\n` +
+           taskType.checklistItems.map(item => `- [ ] ${item}`).join('\n') + '\n\n' +
+           `## ${t('notes')}\n\n` +
+           `${t('addYourThoughts')}`;
+}
+
 export interface Section {
     id: string;
     name: string;

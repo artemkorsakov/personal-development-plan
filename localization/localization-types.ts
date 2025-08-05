@@ -279,6 +279,14 @@ export interface TranslationKeys {
     historyWorkingDays: string;
     historyRating: string;
     historyReview: string;
+
+    // Export
+    noExamplePlansAvailable: string;
+    planName: string;
+    description: string;
+    import: string;
+    exampleImportedSuccessfully: string;
+    errorImportingExample: string;
 }
 
 export interface ParametrizedTranslations {

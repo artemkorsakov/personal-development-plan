@@ -35,7 +35,7 @@ export const en: TranslationKeys = {
     history: '🕰️ History',
     historyTooltip: 'Archive of completed tasks, sorted by completion date',
     examples: '📂 Examples',
-    examplesTooltip: 'Development plans from the community',
+    examplesTooltip: 'Development plans that can be used as a basis for your own plan. When imported, new tasks will be added to the existing tasks in the Knowledge Base',
 
     // Settings
     settingsTitle: 'System Settings',
@@ -280,7 +280,15 @@ export const en: TranslationKeys = {
     historyCompletionDate: "Completion Date",
     historyWorkingDays: "Working Days",
     historyRating: "Rating",
-    historyReview: "Review"
+    historyReview: "Review",
+
+    // Export
+    noExamplePlansAvailable: 'No example plans available',
+    planName: 'Plan Name',
+    description: 'Description',
+    import: 'Import',
+    exampleImportedSuccessfully: 'Example imported successfully',
+    errorImportingExample: 'Error importing example'
 };
 
 export const enParametrized: ParametrizedTranslations = {

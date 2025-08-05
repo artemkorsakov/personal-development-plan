@@ -1,7 +1,7 @@
 import { App, Modal, Setting, Notice } from 'obsidian';
 import { createTaskFile, generateSafeFilename } from '../../utils/fileUtils';
 import { t } from '../../localization/localization';
-import { MaterialType, PersonalDevelopmentPlanSettings } from '../../settings/settings-types';
+import { MaterialType, PersonalDevelopmentPlanSettings, generateTaskContent } from '../../settings/settings-types';
 import { TaskFormBuilder } from './TaskFormFactory';
 import { ArticleFormBuilder } from './ArticleFormBuilder';
 import { BookFormBuilder } from './BookFormBuilder';
@@ -181,7 +181,7 @@ export default class CreateTaskModal extends Modal {
                return;
            }
 
-           const content = this.generateTaskContent(taskType);
+           const content = generateTaskContent(taskType);
            await createTaskFile(taskData, content, this.settings, this.app.vault);
            await new Promise(resolve => setTimeout(resolve, 200));
 
@@ -193,15 +193,6 @@ export default class CreateTaskModal extends Modal {
            this.onSubmitCallback?.(false);
        }
    }
-
-    private generateTaskContent(taskType: MaterialType): string {
-        return `# ${t('taskLabel')}\n\n` +
-               `${t('taskDefaultDescription')}\n\n` +
-               `## ${t('checklist')}\n\n` +
-               taskType.checklistItems.map(item => `- [ ] ${item}`).join('\n') + '\n\n' +
-               `## ${t('notes')}\n\n` +
-               `${t('addYourThoughts')}`;
-    }
 
     onClose() {
         this.contentEl.empty();
