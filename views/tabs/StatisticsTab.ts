@@ -217,7 +217,7 @@ export class StatisticsTab {
     }
 
     private static addBarRow(container: HTMLElement, label: string, value: number, total: number) {
-        const percentage = Math.round((value / total) * 100);
+        const percentage = Math.round((value / total) * 100) || 0;
         const barContainer = container.createDiv({ cls: 'bar-row' });
 
         barContainer.createDiv({ cls: 'bar-label', text: label });

@@ -4,7 +4,7 @@ export function calculateTaskProgress(content: string): number {
     if (checkboxes.length === 0) return 100;
 
     const completed = checkboxes.filter(cb => cb === '- [x]').length;
-    return Math.round((completed / checkboxes.length) * 100);
+    return Math.round((completed / checkboxes.length) * 100) || 0;
 }
 
 export function generateProgressBar(progress: number): string {
