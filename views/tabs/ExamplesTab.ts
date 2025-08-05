@@ -1,8 +1,8 @@
-// ExamplesTab.ts
-import { Notice, Vault } from 'obsidian';
+import { Notice, Vault, Modal } from 'obsidian';
 import { t } from '../../localization/localization';
 import { PersonalDevelopmentPlanSettings, generateTaskContent } from '../../settings/settings-types';
 import { EXAMPLE_PLANS } from '../../examples/examplePlans';
+import { ImportErrorModal } from '../modals/ImportErrorModal';
 
 export default class ExamplesTab {
     private static app: any;
@@ -29,7 +29,6 @@ export default class ExamplesTab {
             return mainContainer;
         }
 
-        // Создаем таблицу с примерами
         const table = content.createEl('table', { cls: 'knowledge-items-table' });
         const headerRow = table.createEl('tr');
         headerRow.createEl('th', { text: t('planName') });
@@ -39,19 +38,16 @@ export default class ExamplesTab {
         EXAMPLE_PLANS.forEach(example => {
             const row = table.createEl('tr');
             row.className = 'knowledge-item-row';
-            
-            // Название плана
+
             const nameCell = row.createEl('td');
             nameCell.createEl('strong', { text: example.name });
-            
-            // Описание
+
             const descCell = row.createEl('td');
             descCell.textContent = example.description;
-            
-            // Кнопка импорта
+
             const actionsCell = row.createEl('td');
             actionsCell.className = 'knowledge-item-actions';
-            
+
             const importBtn = actionsCell.createEl('button', {
                 cls: 'knowledge-action-btn plan-btn',
                 text: t('import')
@@ -65,8 +61,40 @@ export default class ExamplesTab {
     private static async importExamplePlan(example: typeof EXAMPLE_PLANS[0]) {
         try {
             const data = JSON.parse(example.data);
-            
-            // Импортируем задачи каждого типа
+
+            const allTasks = [
+                ...(data.articles || []),
+                ...(data.books || []),
+                ...(data.courses || []),
+                ...(data.podcasts || []),
+                ...(data.userTypes || []),
+                ...(data.videos || [])
+            ];
+
+            const missingTypes = new Set<string>();
+            const missingSections = new Set<string>();
+
+            allTasks.forEach(task => {
+                const taskType = this.settings.materialTypes.find(t => t.name === task.type);
+                if (!taskType) {
+                    missingTypes.add(task.type);
+                }
+
+                const section = this.settings.sections.find(s => s.name === task.section);
+                if (!section) {
+                    missingSections.add(task.section);
+                }
+            });
+
+            if (missingTypes.size > 0 || missingSections.size > 0) {
+                new ImportErrorModal(
+                    this.app,
+                    Array.from(missingTypes),
+                    Array.from(missingSections)
+                ).open();
+                return;
+            }
+
             await Promise.all([
                 this.importTasks(data.articles || []),
                 this.importTasks(data.books || []),
@@ -88,12 +116,12 @@ export default class ExamplesTab {
             try {
                 const filePath = `${this.settings.folderPath}/${task.filePath}`;
                 const content = this.createTaskContent(task);
-                
+
                 if (await this.vault.adapter.exists(filePath)) {
                     new Notice(`${t('errorImportingExample')}: File ${filePath} already exists`);
                 } else {
-					await this.vault.create(filePath, content);
-				}
+                    await this.vault.create(filePath, content);
+                }
             } catch (error) {
                 console.error(`Error importing task ${task.filePath}:`, error);
             }
@@ -111,7 +139,6 @@ export default class ExamplesTab {
         if (task.startDate) frontmatter += `startDate: ${task.startDate}\n`;
         if (task.dueDate) frontmatter += `dueDate: ${task.dueDate}\n`;
 
-        // Специфичные поля для разных типов задач
         if (task.authors) frontmatter += `authors: ${task.authors}\n`;
         if (task.author) frontmatter += `author: ${task.author}\n`;
         if (task.name) frontmatter += `name: ${task.name}\n`;

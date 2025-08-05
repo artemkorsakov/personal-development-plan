@@ -32,6 +32,17 @@ export const EXAMPLE_PLANS: ExamplePlan[] = [
                     "authors": "Лев Толстой",
                     "name": "Анна Каренина",
                     "pages": 650
+                },
+                {
+                    "status": "knowledge-base",
+                    "title": "Лев Толстой - Анна Каренина",
+                    "type": "Книга",
+                    "section": "Обучение",
+                    "order": 999,
+                    "filePath": "Лев_Толстой_-_Анна_Каренина2.md",
+                    "authors": "Лев Толстой",
+                    "name": "Анна Каренина",
+                    "pages": 650
                 }
             ]
         }`
