@@ -1,176 +1,176 @@
-# 📌 Жизненный цикл задач в плагине
+# 📌 Lifecycle of tasks in the plugin
 
-## 🔄 Полный цикл выполнения задачи
+## 🔄 Full cycle of task execution
 
 ```
-База знаний --> Запланировано --> В работе --> Выполнено ("История")
+Knowledge Base --> Planned --> In Progress --> Completed ("History")
 ```
 
-1. **База знаний** - Исходное хранилище материалов
-2. **Запланировано** - Задачи, добавленные в очередь выполнения
-3. **В работе** - Активно выполняемые задачи
-4. **История** - Завершенные задачи
+1. **Knowledge Base** - Source repository of materials
+2. **Planned** - Tasks added to the execution queue
+3. **In Progress** - Actively executed tasks
+4. **History** - Completed tasks
 
 ---
 
-## Кнопки управления задачами
+## Task management buttons
 
-### Кнопка "Создать задачу"
+### "Create task" button
 
-Все разделы ("База знаний", "Запланировано", "В работе")
+All sections ("Knowledge Base", "Planned", "In Progress")
 
-![Создать задачу из Запланировано](images/createTaskKnowledgeBase.png)
+![Create task from Planned](images/createTaskKnowledgeBase.png)
 
-#### Общие поля:
+#### Common fields:
 
-| Поле       | Описание                   |
-|------------|----------------------------|
-| Тип задачи | Выбор из настроенных типов |
-| Раздел     | Тематическая категория     |
+| Field     | Description                  |
+|-----------|------------------------------|
+| Task type | Choose from configured types |
+| Section   | Subject category             |
 
-#### Дополнительные поля по типам:
+#### Additional fields by type:
 
-| Тип задачи          | Дополнительные поля                             |
-|---------------------|-------------------------------------------------|
-| 📚 Книга            | Автор, Название, Страницы                       |
-| 📄 Статья           | Ссылка, Трудоемкость (часы)                     |
-| ▶ Видео             | Автор, Платформа, Ссылка, Длительность (минуты) |
-| 🎧 Подкаст          | Автор, Платформа, Ссылка, Длительность (минуты) |
-| 🎓 Курс             | Платформа, Ссылка, Длительность (минуты)        |
-| ✏️ Пользовательский | Трудоемкость (часы)                             |
+| Task type  | Additional fields                          |
+|------------|--------------------------------------------|
+| 📚 Book    | Author, Title, Pages                       |
+| 📄 Article | Link, Effort (hours)                       |
+| ▶ Video    | Author, Platform, Link, Duration (minutes) |
+| 🎧 Podcast | Author, Platform, Link, Duration (minutes) |
+| 🎓 Course  | Platform, Link, Duration (minutes)         |
+| ✏️ Custom  | Effort (hours)                             |
 
-#### Пример файла задачи (Книга):
+#### Example of a task file (Book):
 
 ````markdown
 ---
 status: in-progress
-type: Книга
-section: Литература
-authors: Толстой Л.Н.
-name: Война и мир
-title: Толстой Л.Н. - Война и мир
+type: Book
+section: Literature
+authors: Tolstoy L.N.
+name: War and Peace
+title: Tolstoy L.N. - War and Peace
 pages: 1274
 order: 3
 startDate: 2025-05-31
 dueDate: 2025-12-31
 ---
 
-## План выполнения
+## Execution plan
 
-- [ ] Прочитать том 1
-- [ ] Прочитать том 2
-- [ ] Прочитать том 3
-- [ ] Прочитать том 4
+- [ ] Read volume 1
+- [ ] Read volume 2
+- [ ] Read volume 3
+- [ ] Read volume 4
 ````
 
 ---
 
-### Кнопка "Поставить в очередь" (только из "Базы знаний")
+### "Add to queue" button (from "Knowledge Base" only)
 
-![Кнопка "Поставить в очередь"](images/planTask.png)
+!["Add to queue" button](images/planTask.png)
 
-1. Заполнение порядка выполнения: для удобства выводятся первые свободные порядки задач того же типа, что и ставится в очередь.
-2. Напоминание о необходимости добавления плана выполнения.
-
----
-
-### Кнопка "Взять в работу" (только из "Запланировано")
-
-**Заполняемые поля:**
-
-- Дата начала (автоподстановка текущей даты)
-    - Дата взятия задачи в работу не может быть раньше текущей даты
-- Планируемая дата завершения
-    - Планируемая дата завершения не может быть раньше даты начала
-
-![Кнопка "Взять в работу"](images/workTask.png)
+1. Filling in the execution order: the first free task orders of the same type as those being added to the queue are displayed.
+2. Reminder about the need to add an execution plan.
 
 ---
 
-### Кнопка "Выполнить" (только из "В работы")
+### "Take into work" button (only from "Planned")
 
-**Заполняемые поля:**
+**Filled-in fields:**
 
-1. Краткое ревью задачи
-2. Оценка (⭐️1-5)
-3. Фактическая дата завершения
+- Start date (automatically inserts the current date)
+- The date of taking the task into work cannot be earlier than the current date
+- Planned completion date
+- The planned completion date cannot be earlier than the start date
 
-![Кнопка "Выполнить"](images/completedTask.png)
-
-**Результат:** Перенос задачи в [Историю](history.md)
-
----
-
-### Кнопка "Отложить" (только из "В работе")
-
-Возврат в "Запланировано" с очисткой дат начала и окончания
+!["Take into work" button](images/workTask.png)
 
 ---
 
-### Кнопка "Удаление задачи"
+### "Complete" button (only from "In work")
 
-**Безвозвратное удаление задачи!**  
+**Filled-in fields:**
 
----
+1. Brief task review
+2. Estimate (⭐️1-5)
+3. Actual completion date
 
-## 📂 Типы задач и их структура
+!["Complete" button](images/completedTask.png)
 
-### Общие поля для всех типов
-
-- **Статус** (`status`): текущий статус задачи: 
-    - "В работе" (`in-progress`), 
-    - "Запланировано" (`planned`), 
-    - "База знаний" (`knowledge-base`)
-- **Тип** (`type`): тип задачи: Книга, Подкаст, Курс и т.д.
-- **Раздел** (`section`): раздел задачи
-- **Название** (`title`): название задачи
-- **Приоритет** (`order`): порядок выполнения
-- **Дата начала** (`startDate`): дата начала работы над задачей
-- **Дата окончания** (`dueDate`): планируемая дата выполнения
-
-### Дополнительные поля
-
-#### Книга
-
-- **Автор(-ы)** (`authors`): ФИО автора или список авторов
-- **Наименование** (`name`): Наименование книги
-- **Страниц** (`pages`): Общее количество страниц
-
-> Название задачи для книг заполняется значением "Автор - Наименование"
-
-#### Статья
-
-- **Источник** (`link`): Ссылка на публикацию
-- **Продолжительность** (`durationInMinutes`): Длительность в минутах
-
-#### Видео
-
-- **Автор/Канал** (`author`): Создатель контента
-- **Платформа** (`platform`): YouTube/Coursera и т.д.
-- **Ссылка** (`link`): URL видео
-- **Продолжительность** (`durationInMinutes`): Длительность в минутах
-
-#### Подкаст
-
-- **Платформа** (`platform`): YouTube/Coursera и т.д.
-- **Ссылка** (`link`): ссылка на подкаст
-- **Эпизодов** (`episodes`): количество эпизодов в подкасте
-- **Продолжительность одного эпизода** (`durationInMinutes`): Длительность в минутах
-
-#### Курс
-
-- **Платформа** (`platform`): Платформа курса
-- **Ссылка** (`link`): ссылка на курс
-- **Продолжительность** (`durationInMinutes`): Длительность в минутах
-
-#### Пользовательский тип
-
-- **Трудозатратность** (`laborInputInHours`): в часах
+**Result:** Transferring the task to [History](history.md)
 
 ---
 
-## 💡 Рекомендации по работе
+### "Postpone" button (only from "In work")
 
-1. Для сложных задач используйте детализированные планы выполнения
-2. Регулярно проверяйте раздел "Запланировано" для актуализации приоритетов
-3. Используйте историю выполненных задач для анализа продуктивности
+Return to "Planned" with cleared start and end dates
+
+---
+
+### "Delete task" button
+
+**Irreversibly deletes the task!**
+
+---
+
+## 📂 Task types and their structure
+
+### Common fields for all types
+
+- **Status** (`status`): current task status:
+    - "In-progress" (`in-progress`),
+    - "Planned" (`planned`),
+    - "Knowledge base" (`knowledge-base`)
+- **Type** (`type`): task type: Book, Podcast, Course, etc.
+- **Section** (`section`): task section
+- **Title** (`title`): task name
+- **Priority** (`order`): order of execution
+- **StartDate** (`startDate`): task start date
+- **DueDate** (`dueDate`): planned completion date
+
+### Additional fields
+
+#### Book
+
+- **Author(s)** (`authors`): author's full name or list of authors
+- **Title** (`name`): book name
+- **Pages** (`pages`): total number of pages
+
+> Task name for books is filled with the value "Author - Title"
+
+#### Article
+
+- **Source** (`link`): publication link
+- **Duration** (`durationInMinutes`): duration in minutes
+
+#### Video
+
+- **Author/Channel** (`author`): Content creator
+- **Platform** (`platform`): YouTube/Coursera etc.
+- **Link** (`link`): Video URL
+- **Duration** (`durationInMinutes`): Duration in minutes
+
+#### Podcast
+
+- **Platform** (`platform`): YouTube/Coursera etc.
+- **Link** (`link`): link to the podcast
+- **Episodes** (`episodes`): number of episodes in the podcast
+- **Duration of one episode** (`durationInMinutes`): duration in minutes
+
+#### Course
+
+- **Platform** (`platform`): course platform
+- **Link** (`link`): link to the course
+- **Duration** (`durationInMinutes`): duration in minutes
+
+#### Custom type
+
+- **Labor Input** (`laborInputInHours`): in hours
+
+---
+
+## 💡 Recommendations for work
+
+1. For complex tasks, use detailed execution plans
+2. Regularly check the "Planned" section to update priorities
+3. Use the history of completed tasks to analyze productivity

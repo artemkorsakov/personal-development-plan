@@ -1,176 +1,177 @@
-# Система периодических задач
+# Recurring Task System
 
-## Основная концепция
+## Basic Concept
 
-Периодические задачи - это автоматизированная система для управления повторяющимися действиями в вашем личном плане развития. 
-В отличие от разовых задач, которые создаются и завершаются вручную, 
-периодические задачи генерируются автоматически по заданному расписанию.
+Recurring tasks are an automated system for managing recurring actions in your personal development plan.
 
-### Зачем это нужно?
+Unlike one-time tasks, which are created and completed manually,
+recurring tasks are generated automatically according to a set schedule.
 
-1. **Автоматизация рутины** - избавляет от необходимости вручную создавать одни и те же задачи
-2. **Контроль регулярности** - помогает не пропускать важные повторяющиеся действия
-3. **Снижение когнитивной нагрузки** - не нужно держать в голове список повторяющихся дел
+### Why is this necessary?
 
-## Механизм работы
+1. **Routine automation** - eliminates the need to manually create the same tasks
+2. **Regularity control** - helps not to miss important repetitive actions
+3. **Reducing cognitive load** - no need to keep a list of repetitive tasks in your head
 
-### Карточка периодических задач
+## Mechanism of operation
 
-![Периодические задачи](images/periodicTask.png)
+### Periodic task card
 
-### Генерация задач
+![Periodic tasks](images/periodicTask.png)
 
-При клике на карточку система:
+### Task generation
 
-1. Проверяет все периоды от даты начала статистики до текущей даты
-2. Для каждого периода создает задачи, если:
-    - Тип задач включен в [настройках](settings.md)
-    - Задачи для этого периода еще не создавались
-3. Добавляет новые задачи в конец файла
+When you click on the card, the system:
 
-Пример структуры файла:
+1. Checks all periods from the statistics start date to the current date
+2. For each period, creates tasks if:
+   - The task type is enabled in [settings](settings.md)
+   - Tasks for this period have not yet been created
+3. Adds new tasks to the end of the file
+
+Example file structure:
 
 ```markdown
-# Разовые задачи
+# One-time tasks
 
-- [ ] Написать статью о кортежах в Scala
-- [ ] Подготовить презентацию для митапа
+- [ ] Write an article about tuples in Scala
+- [ ] Prepare a presentation for meetup
 
-# Периодические задачи
+# Periodic tasks
 
-#### 2025-08-01 (Пятница)
+#### 2025-08-01 (Friday)
 
-- [ ] Утренний обзор почты
-- [ ] Прочитать главу из книги
-- [ ] Физическая активность 30 мин
+- [ ] Morning email review
+- [ ] Read a chapter from a book
+- [ ] Physical activity for 30 min
 
-#### Неделя 31 (2025-07-28 — 2025-08-03)
+#### Week 31 (2025-07-28 — 2025-08-03)
 
-- [ ] Решить задачу на Project Euler
-- [ ] Прослушать подкаст Culips
+- [ ] Solve a problem on Project Euler
+- [ ] Listen to the Culips podcast
 
-#### Август 2025
+#### August 2025
 
-- [ ] Посмотреть видео с доклада ScalaConf
+- [ ] Watch a video from a ScalaConf talk
 
-#### 3-й квартал 2025 (Июль—Сентябрь)
+#### Q3 2025 (July—September)
 
-- [ ] Обновить резюме
-- [ ] Провести аудит навыков
+- [ ] Update your resume
+- [ ] Conduct a skills audit
 
-#### 2025 год
+#### 2025
 
-- [ ] Актуализировать индивидуальный план развития: удалить устаревшие задачи, детализировать текущие
+- [ ] Update your individual development plan: delete outdated tasks, detail current ones
 ```
 
-Карточка содержит два основных раздела:
+The card contains two main section:
 
-1. **Разовые задачи** - создаются и управляются вручную
-2. **Периодические задачи** - генерируются автоматически
+1. **One-time tasks** - created and managed manually
+2. **Recurring tasks** - generated automatically
 
-## Типы периодичностей и примеры использования
+## Types of recurrences and examples of use
 
-### Ежедневные задачи
+### Daily tasks
 
-**Формат:** "2025-08-01 (Пятница)"
+**Format:** "2025-08-01 (Friday)"
 
-**Примеры задач:**
+**Task examples:**
 
-- Планирование дня
-- Вечерний обзор выполненных задач
-- Чтение профессиональной литературы (30 мин)
-- Физические упражнения
+- Planning the day
+- Evening review of completed tasks
+- Reading professional literature (30 min)
+- Physical exercise
 
-**Зачем:** Формирование полезных привычек и ежедневных практик
+**Why:** Forming healthy habits and daily practices
 
-### Еженедельные задачи
+### Weekly tasks
 
-**Формат:** "Неделя 31 (2025-07-28 — 2025-08-03)"
+**Format:** "Week 31 (2025-07-28 — 2025-08-03)"
 
-**Примеры задач:**
+**Task examples:**
 
-- Подведение итогов недели
-- Изучение нового технологического стека (2 часа)
-- Уборка рабочего пространства
+- Summarizing the week
+- Learning a new tech stack (2 hours)
+- Cleaning the workspace
 
-**Зачем:** Регулярный контроль прогресса и поддержание порядка
+**Why:** Regularly monitoring progress and maintaining order
 
-### Ежемесячные задачи
+### Monthly tasks
 
-**Формат:** "Август 2025"
+**Format:** "August 2025"
 
-**Примеры задач:**
+**Task examples:**
 
-- Анализ достижений за месяц
-- Планирование обучения на следующий месяц
-- Проверка и обновление резервных копий
+- Analysis of monthly achievements
+- Planning training for the next month
+- Checking and updating backups
 
-**Зачем:** Стратегическое планирование и контроль ключевых показателей
+**Why:** Strategic planning and monitoring of key indicators
 
-### Ежеквартальные задачи
+### Quarterly tasks
 
-**Формат:** "3-й квартал 2025 (Июль—Сентябрь)"
+**Format:** "3rd quarter 2025 (July-September)"
 
-**Примеры задач:**
+**Task examples:**
 
-- Аудит профессиональных навыков
-- Обновление карьрного плана
-- Проверка и обновление оборудования
-- Участие в профессиональном мероприятии
+- Audit of professional skills
+- Update career plan
+- Checking and updating equipment
+- Participation in professional event
 
-**Зачем:** Корректировка долгосрочных планов и стратегий развития
+**Why:** Adjustment of long-term plans and development strategies
 
-### Ежегодные задачи
+### Annual tasks
 
-**Формат:** "2025 год"
+**Format:** "2025"
 
-**Примеры задач:**
+**Task examples:**
 
-- Постановка годовых целей
-- Годовой отчет о профессиональном росте
-- Обновление портфолио
-- Планирование отпуска
+- Setting annual goals
+- Annual report on professional growth
+- Portfolio update
+- Vacation planning
 
-**Зачем:** Глобальное планирование и рефлексия
+**Why:** Global planning and reflection
 
-## Настройка системы
+## System setup
 
-### Конфигурация задач
+### Task configuration
 
-[Настройки периодических задач](settings.md)
+[Recurring task settings](settings.md)
 
-Для каждого типа задач можно:
+For each task type, you can:
 
-1. Включить/отключить генерацию
-2. Задать список задач (поддерживается Markdown)
+1. Enable/disable generation
+2. Set a task list (Markdown is supported)
 
-### Рекомендации по настройке
+### Configuration recommendations
 
-1. Начинайте с малого - добавьте 2-3 ежедневные задачи
-2. Регулярно, раз в месяц, пересматривайте список задач
-3. Используйте четкие и измеримые формулировки
+1. Start small - add 2-3 daily tasks
+2. Review the task list regularly, once a month
+3. Use clear and measurable wording
 
-## Лучшие практики
+## Best practices
 
-### Для ежедневных задач:
+### For daily tasks:
 
-- Группируйте мелкие рутинные действия
-- Оставляйте место для гибкости (например, "30 мин на выбор: чтение/просмотр лекции")
-- Включайте задачи для здоровья и отдыха
+- Group small routine actions
+- Leave room for flexibility (e.g. "30 min to choose from: reading/watching a lecture")
+- Include tasks for health and rest
 
-### Для недельных/месячных задач:
+### For weekly/monthly tasks:
 
-- Добавляйте задачи для рефлексии и анализа
-- Включайте творческие и развивающие активности
-- Планируйте время для "технического долга"
+- Add tasks for reflection and analysis
+- Include creative and developmental activities
+- Plan time for "technical debt"
 
-### Для квартальных/годовых задач:
+### For quarterly/annual tasks:
 
-- Фокусируйтесь на стратегических целях
-- Включайте задачи по профессиональному развитию
-- Не забывайте про личные и семейные аспекты
+- Focus on strategic goals
+- Include tasks for professional development
+- Don't forget about personal and family aspects
 
-## Заключение
+## Conclusion
 
-Система периодических задач поможет вам автоматизировать рутинные задачи 
-и сосредоточиться на действительно важных аспектах вашего развития!
+A periodic task system will help you automate routine tasks
+and focus on the really important aspects of your development!

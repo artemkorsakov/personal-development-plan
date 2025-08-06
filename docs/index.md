@@ -1,174 +1,174 @@
 # Personal Development Plan
 
-**Personal Development Plan** — это [Obsidian](https://obsidian.md/) плагин для системы управления знаниями,
-предназначенный для планирования и отслеживания личного и профессионального развития.
+**Personal Development Plan** is an [Obsidian](https://obsidian.md/) knowledge management system plugin,
+designed for planning and tracking personal and professional development.
 
-![Главный интерфейс](images/main_interface.png)
+![Main interface](images/main_interface.png)
 
-Плагин имеет 7 основных вкладок, расположенных в верхней части интерфейса:
+The plugin has 7 main tabs located at the top of the interface:
 
-1. **🛠️ В работе** - Активные задачи в процессе выполнения
-2. **⏳ Запланировано** - Материалы, запланированные к изучению
-3. **📚 База знаний** - Не детализированные учебные материалы
-4. **🔍 Источник** - Внешние ресурсы для пополнения базы знаний
-5. **📊 Статистика** - Анализ прогресса развития
-6. **🕰️ История** - Архив завершенных задач
-7. **📂 Примеры** - Готовые шаблоны Баз знаний
+1. **🛠️ In Progress** - Active tasks in progress
+2. **⏳ Planned** - Materials planned for study
+3. **📚 Knowledge Base** - Non-detailed training materials
+4. **🔍 Source** - External resources for replenishing the knowledge base
+5. **📊 Statistics** - Analysis of development progress
+6. **🕰️ History** - Archive of completed tasks
+7. **📂 Examples** - Ready-made Knowledge Base templates
 
 ---
 
-## Вкладка "🛠️ В работе"
+## "🛠️ In Progress" Tab
 
-Отображает все активные задачи, 
-над которыми пользователь работает в текущий момент.
+Displays all active tasks that the user is currently working on.
 
-![В работе](images/inProgress.png)
+![In Progress](images/inProgress.png)
 
-Каждая задача представлена в виде карточки со следующей структурой:
+Each task is presented as a card with the following structure:
 
 ```
-📚 Чистый код                              [Программирование]  
+📚 Clean Code [Programming]
+
 ▲
-|  Дата начала: 2023-10-01
-|  Завершить до: 2023-12-15 (Просрочено!)
+| Start Date: 2023-10-01
+| Due: 2023-12-15 (Overdue!)
 |
-|  Прогресс: ██████████░░░░░░ 62%
+| Progress: ███████████░░░░░ 62%
 ▼
 ```
 
-Где:
+Where:
 
-- `📚` - Тип материала (иконка)
-- `Чистый код` - Название задачи
-- `[Программирование]` - Раздел
-- `Дата начала` - дата взятия задачи в работу
-- `Завершить до` - планируемая дата завершения
-- `Прогресс` - процент выполненных подпунктов
+- `📚` - Material type (icon)
+- `Clean code` - Task name
+- `[Programming]` - Section
+- `Start date` - date the task was accepted for work
+- `Complete by` - planned completion date
+- `Progress` - percentage of completed sub-items
 
-**Клик по карточке** открывает Markdown-файл задачи.
+**Clicking on the card** opens the task Markdown file.
 
-Задачи отсортированы по планируемой дате завершения.
+Tasks are sorted by planned completion date.
 
-#### Система уведомлений
+#### Notification system
 
-- **Превышение лимита задач**:
-  Если количество задач "В работе" превышает заданный в настройках лимит, то выдается предупреждение
-  `⚠️ Слишком много задач в работе, верните часть из них в Очередь (5/3)`.
-  Предупреждение позволяет контролировать количество одновременно выполняемых задач
-  и не допускать перегруза в плане обучения.
-- **Просроченные задачи**:
-  Если задача вышла за рамки запланированного периода, то выдается предупреждение `Завершить до: 2023-12-15 (Просрочено!)`.
-  Сообщение обращает внимание на задачи, которые, возможно, стоит дополнительно разбить на подзадачи и 
-  распланировать более детально.
-
----
-
-### Вкладка "⏳ Запланировано"
-
-Хранилище для задач, которые поставлены в очередь на выполнение.
-
-![Запланировано](images/planned.png)
-
-Материалы группируются по типам (в скобках количество задач заданного типа):
-
-- 🗂️ Все (51)
-- 📚 Книга (12)
-- 🎓 Курс (5)
-- 📄 Статья (23)
-- ▶️ Видео (7)
-- 🎧️ Подкаст (3)
-- ✏️ Пользовательский тип (1)
-
-Задачи сортируются по полю `order`, задаваемому при [создании задачи](lifecycle.md).
+- **Task limit exceeded**:
+  If the number of "In progress" tasks exceeds the limit set in the settings, a warning is issued
+  `⚠️ Too many tasks in progress, return some of them to the Queue (5/3)`.
+  The warning allows you to control the number of simultaneously running tasks
+  and prevent overload in the training plan.
+- **Overdue tasks**:
+  If a task has gone beyond the planned period, a warning is issued `Complete by: 2023-12-15 (Overdue!)`.
+  The message draws attention to tasks that may need to be further divided into subtasks and
+  planned in more detail.
 
 ---
 
-### Вкладка "📚 База знаний"
+### "⏳ Planned" tab
 
-Список задач, по которым пока ещё не сформирован детализированный план выполнения.
+Storage for tasks that are queued for execution.
 
-![База знаний](images/knowledgeBase.png)
+![Planned](images/planned.png)
 
-Задачи из "Базы знаний" отличаются от задач в "Запланировано" тем, что у запланированных задач уже есть
-детализированный план выполнения и их можно сразу брать в работу.
+Materials are grouped by type (number of tasks of a given type in brackets):
+
+- 🗂️ All (51)
+- 📚 Book (12)
+- 🎓 Course (5)
+- 📄 Article (23)
+- ▶️ Video (7)
+- 🎧️ Podcast (3)
+- ✏️ Custom type (1)
+
+Tasks are sorted by the `order` field, specified when [creating a task](lifecycle.md).
 
 ---
 
-## **Закладка "Источник"**
+### Tab "📚 Knowledge Base"
 
-Карточки ресурсов различных типов задач.
+List of tasks for which a detailed execution plan has not yet been generated.
 
-![Пример интерфейса вкладки "Источник"](images/sources.png)
+![Knowledge Base](images/knowledgeBase.png)
 
-### Типы материалов
+Tasks from the "Knowledge Base" differ from tasks in "Scheduled" in that scheduled tasks already have a
+detailed execution plan and can be immediately taken into work.
 
-| Иконка | Тип материала          | Описание                         |
-|--------|------------------------|----------------------------------|
-| 📚     | Книги                  | Литература по теме               |
-| 📄     | Статьи                 | Научные и технические публикации |
-| 🎓     | Курсы                  | Обучающие программы и материалы  |
-| ▶️     | Видео                  | Обучающие ролики и лекции        |
-| 🎧     | Подкасты               | Аудиоматериалы и интервью        |
-| ✏️     | Пользовательский тип 1 | Настраиваемый тип (из настроек)  |
-| ✏️     | Пользовательский тип 2 | Настраиваемый тип (из настроек)  |
+---
 
-При клике на карточку открывается файл ресурсов заданного типа.
+## **"Source" tab**
 
-### Пример содержимого файла источника
+Resource cards of different task types.
+
+![Example of the "Source" tab interface](images/sources.png)
+
+### Material types
+
+| Icon | Material type | Description                           |
+|------|---------------|---------------------------------------|
+| 📚   | Books         | Literature on the topic               |
+| 📄   | Articles      | Scientific and technical publications |
+| 🎓   | Courses       | Training programs and materials       |
+| ▶️   | Videos        | Training videos and lectures          |
+| 🎧   | Podcasts      | Audio and interviews                  |
+| ✏️   | Custom type 1 | Custom type (from settings)           |
+| ✏️   | Custom type 2 | Custom type (from settings)           |
+
+Clicking on the card opens a resource file of the specified type.
+
+### Sample source file content
 
 ```markdown
-# 🔍 Источник: Курс 
+# 🔍 Source: Course
 
-## Рекомендуемые ресурсы
+## Recommended resources
 
 - [ ] https://www.coursera.org/
 - [ ] https://www.udemy.com/
 
-## Личные заметки
+## Personal notes
 
-- [ ] Добавьте ваши мысли
+- [ ] Add your thoughts
 ```
 
 ---
 
-# Более подробная информация
+# More information
 
-- [Жизненный цикл задач](lifecycle.md)
-- [Система статистики и прогнозирования](stats.md)
-- [История выполнения задач](history.md)
-- [Система периодических задач](periodic.md)
-- [Настройки](settings.md)
-- [Экспорт Базы знаний и Примеры базы знаний](examples.md)
-
----
-
-# Установка
-
-1. **Установите плагин**:
-	- Откройте Obsidian.
-	- Перейдите **Settings** → **Community plugins**.
-	- Кникните **Browse** и найдите "Personal Development Plan".
-	- Установите и включите плагин.
-
-2. [**Настройте Personal Development Plan**](settings.md).
+- [Task lifecycle](lifecycle.md)
+- [Statistics and forecasting system](stats.md)
+- [Task execution history](history.md)
+- [Periodic task system](periodic.md)
+- [Settings](settings.md)
+- [Knowledge base export and Knowledge base examples](examples.md)
 
 ---
 
-# Заключение
+# Installation
 
-Плагин **Personal Development Plan** помогает систематизировать обучение, избегать перегрузки и отслеживать прогресс.
+1. **Install the plugin**:
+    - Open Obsidian.
+    - Go to **Settings** → **Community plugins**.
+    - Click **Browse** and find "Personal Development Plan".
+    - Install and enable the plugin.
+
+2. [**Configure Personal Development Plan**](settings.md).
 
 ---
 
-# Поддержка
+# Conclusion
 
-Любая обратная связь приветствуется.
+The **Personal Development Plan** plugin helps you organize your learning, avoid overload, and track your progress.
 
-1. **Сообщения об ошибках и новые фичи**  
-   Если вы нашли баг или хотите предложить новую функцию, создайте issue в [GitHub репозитории][github-issues].
+---
 
-2. **Вопросы и обсуждения**  
-   Для общих вопросов и обсуждений используйте [GitHub Discussions][github-discussions].
+# Support
+
+Any feedback is welcome.
+
+1. **Bug Reports and New Features**
+   If you find a bug or want to suggest a new feature, create an issue in the [GitHub repository][github-issues].
+
+2. **Questions and Discussions**
+   For general questions and discussions, use the [GitHub Discussions][github-discussions].
 
 [github-issues]: https://github.com/artemkorsakov/personal-development-plan/issues
 [github-discussions]: https://github.com/artemkorsakov/personal-development-plan/discussions

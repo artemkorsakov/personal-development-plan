@@ -1,23 +1,23 @@
-# Примеры планов развития
+# Development plan examples
 
-## Назначение функциональности
+## Purpose of functionality
 
-Функционал примеров планов позволяет:
+The functionality of the plan examples allows you to:
 
-1. **Обмениваться готовыми планами развития** внутри сообщества
-2. **Быстро стартовать** в новых направлениях обучения
-3. **Стандартизировать подход** к личностному развитию
-4. **Экономить время** на составлении планов с нуля
+1. **Exchange ready-made development plans** within the community
+2. **Get a quick start** in new areas of study
+3. **Standardize the approach** to personal development
+4. **Save time** on creating plans from scratch
 
-> 💡 Пример использования: Вы хотите изучить Scala. 
-> Вместо самостоятельного поиска материалов можно импортировать готовый план "Изучение Scala", 
-> содержащий проверенные ресурсы и оптимальную последовательность изучения.
+> 💡 Example of use: You want to learn Scala.
+> Instead of searching for materials yourself, you can import a ready-made plan "Learn Scala",
+> containing proven resources and the optimal sequence of study.
 
-## Как экспортировать свой собственный план
+## How to export your own plan
 
-1. Перейдите на вкладку "База знаний"
-2. Нажмите кнопку "Экспорт в JSON"
-3. Система создаст файл в формате:
+1. Go to the "Knowledge Base" tab
+2. Click the "Export to JSON" button
+3. The system will create a file in the format:
 
 ```json
 {
@@ -25,8 +25,8 @@
   [
     {
       "title": "Functional Programming Principles",
-      "type": "Статья",
-      "section": "Функциональное программирование",
+      "type": "Article",
+      "section": "Functional Programming",
       "link": "https://example.com/fp-principles"
     }
   ],
@@ -35,56 +35,56 @@
     {
       "title": "Programming in Scala",
       "authors": "Martin Odersky",
-      "type": "Книга",
+      "type": "Book",
       "pages": 852
     }
   ]
 }
 ```
 
-> ⚠️ Экспортируются только задачи из "Базы знаний", так как:
+> ⚠️ Only tasks from the "Knowledge Base" are exported, because:
 >
-> - Планирование ("Запланировано") индивидуально
-> - Прогресс выполнения ("В работе") зависит от личных обстоятельств
+> - Planning ("Planned") is individual
+> - Progress ("In progress") depends on personal circumstances
 
-## Как добавить план в сообщество
+## How to add a plan to the community
 
-1. Экспортируйте свой план
-2. Создайте [Merge Request в репозитории плагина](https://github.com/artemkorsakov/personal-development-plan/blob/master/examples/examplePlans.ts)
-3. Добавьте план в файл `examplePlans.ts`:
+1. Export your plan
+2. Create a [Merge Request in the plugin repository](https://github.com/artemkorsakov/personal-development-plan/blob/master/examples/examplePlans.ts)
+3. Add the plan to the `examplePlans.ts` file:
 
 ```typescript
 {
-  name: "Изучение Scala с нуля",
-  description: "Полный путь от основ до продвинутых концепций",
-  data: `... экспортированный json ...`
+  name: "Learning Scala from Scratch",
+  description: "Full Path from Basics to Advanced Concepts",
+  data: `... exported json ...`
 }
 ```
 
-## Как импортировать готовый план
+## How to import a ready-made plan
 
-1. Перейдите на вкладку "Примеры"
-2. Выберите подходящий план из списка
-3. Нажмите "Импортировать"
+1. Go to the "Examples" tab
+2. Select the appropriate plan from the list
+3. Click "Import"
 
-Система проверит:
+The system will check:
 
-- Все ли типы задач из плана есть в ваших настройках
-- Все ли разделы существуют в вашей конфигурации
+- Are all the task types from the plan in your settings
+- Do all the sections exist in your configuration
 
-Пример ошибки при импорте:
+Example of an import error:
 
 ```
-Необходимо добавить:
-- Типы задач: "Видеокурс", "OpenSource"
-- Разделы: "Машинное обучение", "Нейросети"
+You need to add:
+- Task types: "Video course", "OpenSource"
+- Sections: "Machine learning", "Neural networks"
 ```
 
-## Рекомендации по использованию
+## Usage recommendations
 
-1. Перед импортом просмотрите содержание плана
-2. Адаптируйте импортированные задачи под свои нужды
-3. Комбинируйте несколько планов для комплексного развития
-4. Делитесь улучшенными версиями своих планов с сообществом
+1. Review the plan contents before importing
+2. Adapt imported tasks to your needs
+3. Combine multiple plans for comprehensive development
+4. Share improved versions of your plans with the community
 
-> 🌟 Лучшие практики: Добавляйте в описание плана свои комментарии о том, чем полезен этот план 
+> 🌟 Best practices: Add your comments to the plan description about how this plan is useful

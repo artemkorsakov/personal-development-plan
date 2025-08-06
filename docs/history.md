@@ -1,29 +1,29 @@
-# История выполнения задач
+# Task Execution History
 
-![История выполнения задач](images/history.png)
+![Task Execution History](images/history.png)
 
-## Формат записи истории
+## History Record Format
 
-После завершения задача сохраняется в истории.
+After completion, the task is saved in history.
 
-Структура архивированных задач следующая:
+The structure of archived tasks is as follows:
 
-- **Название**
-- **Тип**
-- **Оценка**:
-	- ★ - Плохо (не соответствует ожиданиям)
-	- ★★ - Удовлетворительно (минимально полезно)
-	- ★★★ - Хорошо (стандартное качество)
-	- ★★★★ - Очень хорошо (выше среднего)
-	- ★★★★★ - Отлично (превзошло ожидания)
-- **Краткое ревью**:
-	- Основные выводы
-	- Полезные идеи
-	- Критика и замечания
-	- Рекомендации (Да/Нет) с обоснованием
-- **Затрачено дней**
-    - Считается количество дней с даты начала до даты завершения включительно
+- **Title**
+- **Type**
+- **Rating**:
+    - ★ - Poor (does not meet expectations)
+    - ★★ - Fair (minimally useful)
+    - ★★★ - Good (standard quality)
+    - ★★★★ - Very good (above average)
+    - ★★★★★ - Excellent (exceeded expectations)
+- **Brief review**:
+    - Key findings
+    - Useful ideas
+    - Criticism and comments
+    - Recommendations (Yes/No) with justification
+- **Days spent**
+    - The number of days from the start date to the end date inclusive is counted
 
-## Предназначение
+## Purpose
 
-История выполнения задач необходима для расчета статистики и построения прогноза выполнения будущих задач.
+The task execution history is necessary for calculating statistics and building a forecast for the execution of future tasks.

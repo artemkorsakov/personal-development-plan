@@ -1,133 +1,135 @@
-# 📌 Настройки системы
+# 📌 System settings
 
-## 🌐 Язык интерфейса
+## 🌐 Interface language
 
-**Локализация** определяется автоматически на основе:  
-`Общие настройки Obsidian → Язык`.  
-Поддерживаемые языки:
+**Localization** is determined automatically based on:
+`Obsidian General Settings → Language`.
+Supported languages:
 
-- **English** (по умолчанию)
-- **Русский**
+- **English** (default)
+- **Russian**
 
-_Примечание:_ Все тексты внутри плагина (уведомления, названия кнопок) будут переведены согласно выбранному языку.
+_Note:_ All texts inside the plugin (notifications, button names) will be translated according to the selected language.
 
-> Чтобы добавить поддержку любого другого языка, создайте файл [localization-???.ts](https://github.com/artemkorsakov/personal-development-plan/tree/master/localization)
-> аналогичный `localization-en.ts`. 
-> И добавьте его в список [translations](https://github.com/artemkorsakov/personal-development-plan/blob/master/localization/localization.ts).
+> To add support for any other language, create a [localization-???.ts](https://github.com/artemkorsakov/personal-development-plan/tree/master/localization)
+> file similar to `localization-en.ts`.
+> And add it to the [translations](https://github.com/artemkorsakov/personal-development-plan/blob/master/localization/localization.ts) list.
 
-## ⚙️ Общие настройки
+## ⚙️ General settings
 
-### 📂 Путь к папке задач
+### 📂 Path to tasks folder
 
-Указывает, где хранятся файлы задач в вашем хранилище Obsidian.
+Specifies where task files are stored in your Obsidian repository.
 
-- **Рекомендуемые значения:**  
-    - `PersonalDevelopmentPlan` – папка по умолчанию  
-    - `Projects/Tasks` – пример альтернативного пути
+- **Recommended values:**
+    - `PersonalDevelopmentPlan` is the default folder
+    - `Projects/Tasks` is an example of an alternative path
 
-### 🔢 Максимум активных задач
+### 🔢 Maximum active tasks
 
-Лимит одновременно выполняемых задач со статусом "В работе".
+Limit of simultaneously running tasks with the "In progress" status.
 
-При попытке добавить новую задачу сверх лимита предупреждает:  
-`"Слишком много задач в работе! Верните часть из них в очередь."`
+When trying to add a new task over the limit, a warning appears:
 
-- **Рекомендуемые значения:**  
-  `3-5 задач` – оптимально для фокусировки.  
-  `1-10` – допустимый диапазон.
+`"Too many tasks in progress! Return some of them to the queue."`
 
-Ограничение для:
+- **Recommended values:**
+  `3-5 tasks` is optimal for focusing.
 
-- Снижения стресса и риска выгорания
-- Повышения эффективности обучения
-- Улучшения концентрации на приоритетах
+`1-10` is an acceptable range.
 
-### 📅 Начало отсчёта статистики
+Limit for:
 
-Дата, с которой система начинает собирать аналитику по вашей продуктивности.
+- Reducing stress and risk of burnout
+- Improving learning efficiency
+- Improving focus on priorities
 
-**Как используется?**
+### 📅 Start of statistics count
 
-- Рассчитывает **среднюю скорость выполнения задач**
-- Строит **прогнозы** для будущих задач
+The date from which the system begins collecting analytics on your productivity.
 
-Если вы обычно завершаете 5 задач в неделю, плагин предложит:  
+**How is it used?**
 
-- Реалистичные сроки для новых задач  
-- Предупредит о перегрузке
+- Calculates the **average speed of task completion**
+- Builds **forecasts** for future tasks
 
-## 📚 Типы материалов
+If you usually complete 5 tasks per week, the plugin will offer:
 
-### 🏷️ Стандартные типы
+- Realistic deadlines for new tasks
+- Warn about overload
 
-- Книга
-- Статья
-- Видео
-- Подкаст
-- Курс
+## 📚 Material types
 
-### ⚡ Возможности:
+### 🏷️ Standard types
 
-1. **Редактирование:**
-	- Изменение названия типа (например, переименовать "Видео" → "Лекция")
-	- Включение/отключение отображения в интерфейсе (чекбокс)
+- Book
+- Article
+- Video
+- Podcast
+- Course
 
-2. **Гибкий порядок:**  
-   Перетаскивайте типы в нужной последовательности — так они будут отображаться в списках.
+### ⚡ Features:
 
-3. **Чеклисты:**  
-   Для каждого типа можно задать шаблонные пункты, которые автоматически добавляются при создании задачи.
+1. **Editing:**
+   - Changing the type name (for example, rename "Video" → "Lecture")
+   - Enable/disable display in the interface (checkbox)
 
-   _Пример для типа "Курс":_
-	- Пройти модуль 1
-	- Выполнить практическое задание
-	- Сделать заметки
+2. **Flexible order:**
+   Drag and drop types in the desired order - this is how they will be displayed in the lists.
 
-### ➕ Добавление своего типа
+3. **Checklists:**
+   For each type, you can set template items that are automatically added when you create a task.
 
-1. Нажмите `+ Новый тип`
-2. Заполните параметры:
-	- **Название** (например, "Вебинар")
-	- **Чеклист** (опционально)
-3. Настройте видимость и порядок.
+   _Example for the "Course" type:_
+       - Complete module 1
+       - Complete a practical assignment
+       - Take notes
 
-## 📂 Разделы
+### ➕ Adding your own type
 
-Разделы помогают группировать задачи по темам для удобного планирования.
+1. Click `+ New type`
+2. Fill in the parameters:
+   - **Name** (e.g. "Webinar")
+   - **Checklist** (optional)
+3. Set up visibility and order.
 
-Примеры:
+## 📂 Sections
 
-- "Программирование"
-- "Иностранные языки"
-- "Личное развитие"
+Sections help group tasks by topic for easy planning.
 
-**Гибкая сортировка:** Перетаскивайте разделы в нужной последовательности.
+Examples:
 
-## 🔄 Периодические задачи
+- "Programming"
+- "Foreign languages"
+- "Personal development"
 
-| Период        | Автовключение | Примеры задач                                    |
-|---------------|---------------|--------------------------------------------------|
-| Ежедневно     | ✅             | Утренний ритуал, Чтение 10 страниц               |
-| Еженедельно   | ✅             | Обзор целей, Уборка рабочего пространства        |
-| Ежемесячно    | ✅             | Анализ прогресса, Планирование следующего месяца |
-| Ежеквартально | ✅             | Ревизия навыков, Обновление резюме               |
-| Ежегодно      | ✅             | Глобальные цели, Подведение итогов года          |
+**Flexible sorting:** Drag sections in the desired sequence.
 
-### 🛠️ Управление задачами
+## 🔄 Periodic tasks
 
-- **Добавление:**  
-  Кнопка `+ Добавить задачу` под каждым периодом.
+| Period    | Auto-enable | Example tasks                        |
+|-----------|-------------|--------------------------------------|
+| Daily     | ✅           | Morning Ritual, Read 10 Pages        |
+| Weekly    | ✅           | Goal Review, Workspace Cleaning      |
+| Monthly   | ✅           | Progress Review, Next Month Planning |
+| Quarterly | ✅           | Skills Review, Resume Update         |
+| Yearly    | ✅           | Global Goals, Year-End Review        |
 
-- **Удаление:**  
-  Нажмите `×` рядом с ненужной задачей.
+### 🛠️ Task Management
 
-- **Особенности:**
-	- Задачи можно редактировать в любой момент
-	- Поддержка markdown-форматирования в описаниях
+- **Add:**
+  The `+ Add Task` button under each period.
 
-## 💡 Советы по использованию
+- **Delete:**
+  Click `×` next to the unnecessary task.
 
-1. Начните с 3-4 активных задач.
-2. **Чеклисты материалов:** Заранее настройте шаблоны для часто используемых типов — это сэкономит время.
-3. **Периодические задачи:** Используйте для формирования привычек (например, ежедневное повторение слов).
-4. **Разделы:** Создавайте тематические группы для сложных проектов (например, "Изучение Scala → Подпроект: Cats Effect").
+- **Features:**
+    - Tasks can be edited at any time
+    - Markdown formatting support in descriptions
+
+## 💡 Usage tips
+
+1. Start with 3-4 active tasks.
+2. **Material checklists:** Set up templates for frequently used types in advance - this will save time.
+3. **Recurring tasks:** Use to form habits (e.g. daily word review).
+4. **Sections:** Create topic groups for complex projects (e.g. "Learn Scala → Subproject: Cats Effect").
