@@ -1,5 +1,7 @@
 # Personal Development Plan
 
+- [На русском](https://artemkorsakov.github.io/personal-development-plan/ru/)
+
 **Personal Development Plan** is an [Obsidian](https://obsidian.md/) knowledge management system plugin,
 designed for planning and tracking personal and professional development.
 

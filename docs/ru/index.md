@@ -1,5 +1,7 @@
 # Personal Development Plan
 
+- [English](https://artemkorsakov.github.io/personal-development-plan/)
+
 **Personal Development Plan** — это [Obsidian](https://obsidian.md/) плагин для системы управления знаниями,
 предназначенный для планирования и отслеживания личного и профессионального развития.
 
