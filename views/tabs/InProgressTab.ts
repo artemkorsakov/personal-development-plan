@@ -164,7 +164,7 @@ export default class InProgressTab {
                 await this.saveToHistory(task, result);
                 const file = this.app.vault.getAbstractFileByPath(task.filePath);
                 if (file) {
-                    await this.app.vault.delete(file);
+                    await this.app.fileManager.trashFile(file);
                 }
                 new Notice(t('taskCompletedSuccessfully'));
                 await this.updateTasksList();
@@ -181,23 +181,28 @@ export default class InProgressTab {
 
         try {
             await this.app.vault.createFolder(historyFolder).catch(() => {});
-        } catch (e) {}
 
-        let historyData = [];
-        let historyFile = this.app.vault.getAbstractFileByPath(historyFilePath);
+            let historyData: any[] = [];
+            const abstractFile = this.app.vault.getAbstractFileByPath(historyFilePath);
 
-        try {
-            if (historyFile) {
-                const content = await this.app.vault.read(historyFile as TFile);
-                historyData = JSON.parse(content);
-            } else {
-                historyFile = await this.app.vault.create(
-                    historyFilePath,
-                    JSON.stringify([], null, 2)
-                );
+            if (abstractFile) {
+                if (!(abstractFile instanceof TFile)) {
+                    throw new Error(`History path exists but is not a file: ${historyFilePath}`);
+                }
+
+                try {
+                    const content = await this.app.vault.read(abstractFile);
+                    historyData = JSON.parse(content);
+                    if (!Array.isArray(historyData)) {
+                        historyData = [];
+                    }
+                } catch (readError) {
+                    console.error("Failed to read history file, creating new", readError);
+                    historyData = [];
+                }
             }
 
-            const completedTask: any = {
+            const completedTask = {
                 type: task.type,
                 title: task.name,
                 startDate: task.startDate,
@@ -213,9 +218,16 @@ export default class InProgressTab {
             };
 
             historyData.push(completedTask);
-            await this.app.vault.modify(historyFile as TFile, JSON.stringify(historyData, null, 2));
+
+            const fileToWrite = abstractFile instanceof TFile
+                ? abstractFile
+                : await this.app.vault.create(historyFilePath, JSON.stringify([], null, 2));
+
+            await this.app.vault.modify(fileToWrite, JSON.stringify(historyData, null, 2));
+
         } catch (error) {
             console.error(t('errorLoadingHistory'), error);
+            new Notice(`Failed to save task history: ${error.message}`);
             throw error;
         }
     }
@@ -262,7 +274,7 @@ export default class InProgressTab {
             try {
                 const file = this.app.vault.getAbstractFileByPath(task.filePath);
                 if (file) {
-                    await this.app.vault.delete(file);
+                    await this.app.fileManager.trashFile(file);
                     new Notice(t('taskDeletedSuccessfully'));
                     await this.updateTasksList();
                 }

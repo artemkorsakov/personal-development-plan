@@ -40,5 +40,18 @@ export function tParametrized<K extends keyof ParametrizedTranslations>(
 ): string {
     const lang = getLanguage();
     const translator = parametrizedTranslations[lang] ?? parametrizedTranslations[DEFAULT_LANGUAGE];
-    return translator[key](params as any);
+
+    const translationFn = translator[key];
+
+    if (typeof translationFn !== 'function') {
+        console.warn(`Translation function not found for key: ${String(key)}`);
+        return String(key);
+    }
+
+    if (!params || typeof params !== 'object') {
+        console.warn(`Invalid params provided for key: ${String(key)}`);
+        return translationFn({} as Parameters<ParametrizedTranslations[K]>[0]);
+    }
+
+    return translationFn(params);
 }

@@ -77,7 +77,6 @@ export default class PersonalDevelopmentPlanPlugin extends Plugin {
     }
 
     async onunload() {
-        this.app.workspace.detachLeavesOfType(PLAN_VIEW_TYPE);
     }
 
     get vault(): Vault {

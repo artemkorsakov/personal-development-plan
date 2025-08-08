@@ -282,7 +282,7 @@ export default class PlannedTab {
             try {
                 const file = this.app.vault.getAbstractFileByPath(task.filePath);
                 if (file) {
-                    await this.app.vault.delete(file);
+                    await this.app.fileManager.trashFile(file);
                     new Notice(t('taskDeletedSuccessfully'));
                     await this.refreshContent();
                 }

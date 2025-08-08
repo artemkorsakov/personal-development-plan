@@ -245,14 +245,22 @@ export class PeriodicTasks {
     }
 
     private async appendToExistingFile(filePath: string, contentToAdd: string): Promise<void> {
-        const file = this.vault.getAbstractFileByPath(filePath) as TFile;
-        if (!file) return;
+        const abstractFile = this.vault.getAbstractFileByPath(filePath);
 
-        let currentContent = await this.vault.read(file);
+        if (!abstractFile || !(abstractFile instanceof TFile)) {
+            console.error(`File not found or is not a file: ${filePath}`);
+            return;
+        }
 
-        // Добавляем новые периоды в конец файла
-        const updatedContent = currentContent + contentToAdd;
-        await this.vault.modify(file, updatedContent);
+        try {
+            const currentContent = await this.vault.read(abstractFile);
+            const updatedContent = currentContent + contentToAdd;
+
+            await this.vault.modify(abstractFile, updatedContent);
+        } catch (error) {
+            console.error(`Failed to append content to file ${filePath}:`, error);
+            throw error;
+        }
     }
 
     private async getCurrentPeriodicContent(): Promise<string> {

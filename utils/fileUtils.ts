@@ -33,32 +33,38 @@ export async function openOrCreateSourceFile(
     content: string
 ): Promise<void> {
     try {
-        let file = vault.getAbstractFileByPath(filePath) as TFile;
+        const abstractFile = vault.getAbstractFileByPath(filePath);
 
-        if (!file) {
-            const folderPath = filePath.split('/').slice(0, -1).join('/');
-            const fileName = filePath.split('/').pop() || 'Untitled.md';
-
-            // Create folder if it doesn't exist
-            if (!vault.getAbstractFileByPath(folderPath)) {
-                await vault.createFolder(folderPath).catch(err => {
-                    throw new Error(`Failed to create folder: ${err.message}`);
-                });
+        if (abstractFile) {
+            if (!(abstractFile instanceof TFile)) {
+                throw new Error(`Path exists but is not a file: ${filePath}`);
             }
 
-            // Create file with the given content
-            file = await vault.create(filePath, content).catch(err => {
-                throw new Error(`Failed to create file: ${err.message}`);
+            const leaf = workspace.getLeaf();
+            await leaf.openFile(abstractFile, { active: true });
+            return;
+        }
+
+        const folderPath = filePath.split('/').slice(0, -1).join('/');
+        const fileName = filePath.split('/').pop() || 'Untitled.md';
+
+        if (folderPath && !vault.getAbstractFileByPath(folderPath)) {
+            await vault.createFolder(folderPath).catch(err => {
+                throw new Error(`Failed to create folder "${folderPath}": ${err.message}`);
             });
         }
 
+        const newFile = await vault.create(filePath, content).catch(err => {
+            throw new Error(`Failed to create file "${filePath}": ${err.message}`);
+        });
+
         const leaf = workspace.getLeaf();
-        await leaf.openFile(file, { active: true });
+        await leaf.openFile(newFile, { active: true });
 
     } catch (error) {
         console.error('Error in openOrCreateSourceFile:', error);
         new Notice(`Failed to handle source file: ${error.message}`);
-        throw error; // Пробрасываем ошибку для обработки выше
+        throw error;
     }
 }
 

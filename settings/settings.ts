@@ -2,15 +2,16 @@ import { App, Plugin, Setting, PluginSettingTab } from 'obsidian';
 import { MaterialType, PersonalDevelopmentPlanSettings, Section } from './settings-types';
 import { t } from '../localization/localization';
 import { TranslationKeys } from '../localization/localization-types';
+import PersonalDevelopmentPlanPlugin from '../main';
 
 export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
-    private readonly plugin: Plugin;
+    private readonly plugin: PersonalDevelopmentPlanPlugin;
     private readonly settings: PersonalDevelopmentPlanSettings;
 
-    constructor(app: App, plugin: Plugin) {
+    constructor(app: App, plugin: PersonalDevelopmentPlanPlugin) {
         super(app, plugin);
         this.plugin = plugin;
-        this.settings = (plugin as any).settings;
+        this.settings = plugin.settings;
     }
 
     display(): void {
@@ -33,7 +34,7 @@ export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
     }
 
     private async saveSettings(): Promise<void> {
-        await (this.plugin as any).saveSettings();
+        await this.plugin.saveSettings();
     }
 
     private addGeneralSettings(): void {
@@ -231,14 +232,14 @@ export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
                         });
                 })
                 .addButton(button => {
-					button.buttonEl.addClass('pdp-settings-button');
+                    button.buttonEl.addClass('pdp-settings-button');
                     button.buttonEl.addClass('pdp-settings-button-up');
                     button
                         .setButtonText('↑')
                         .onClick(async () => this.moveSection(index, 'up'));
                 })
                 .addButton(button => {
-					button.buttonEl.addClass('pdp-settings-button');
+                    button.buttonEl.addClass('pdp-settings-button');
                     button.buttonEl.addClass('pdp-settings-button-down');
                     button
                         .setButtonText('↓')
@@ -248,7 +249,7 @@ export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
 
         new Setting(sectionContainer)
             .addButton(button => {
-				button.buttonEl.addClass('pdp-settings-button');
+                button.buttonEl.addClass('pdp-settings-button');
                 button.buttonEl.addClass('pdp-settings-button-primary');
                 button
                     .setButtonText(t('addNewSection'))
@@ -281,11 +282,14 @@ export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
         const sectionContainer = containerEl.createDiv({ cls: 'pdp-settings-section' });
         sectionContainer.createEl('h2', { text: t('periodicTasks'), cls: 'pdp-settings-subtitle' });
 
-        (['daily', 'weekly', 'monthly', 'quarterly', 'yearly'] as const).forEach(taskType => {
+        const taskTypes = ['daily', 'weekly', 'monthly', 'quarterly', 'yearly'] as const;
+
+        taskTypes.forEach(taskType => {
             const taskSection = sectionContainer.createDiv({ cls: 'pdp-task-type-section' });
             const taskConfig = this.settings.periodicTasks[taskType];
             const taskName = t(taskType);
-            const taskPlaceholder = t(`${taskType}Task` as keyof TranslationKeys) || t(taskType);
+            const taskPlaceholderKey = `${taskType}Task` as const;
+            const taskPlaceholder = t(taskPlaceholderKey) || t(taskType);
 
             new Setting(taskSection)
                 .setName(taskName)
@@ -313,7 +317,7 @@ export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
                             });
                     })
                     .addButton(button => {
-						button.buttonEl.addClass('pdp-settings-button');
+                        button.buttonEl.addClass('pdp-settings-button');
                         button.buttonEl.addClass('pdp-settings-button-remove');
                         button
                             .setButtonText('×')
@@ -327,7 +331,7 @@ export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
 
             new Setting(taskSection)
                 .addButton(button => {
-					button.buttonEl.addClass('pdp-settings-button');
+                    button.buttonEl.addClass('pdp-settings-button');
                     button.buttonEl.addClass('pdp-settings-button-primary');
                     button
                         .setButtonText(t('addTask'))
@@ -346,23 +350,27 @@ export const DEFAULT_SETTINGS = getDefaultSettings();
 function getDefaultSettings(): PersonalDevelopmentPlanSettings {
     const now = new Date().toISOString().split('T')[0];
 
+    const defaultMaterialTypes: MaterialType[] = [
+        createMaterialType('book', 0, ['bookTask1', 'bookTask2']),
+        createMaterialType('article', 1, ['articleTask1', 'articleTask2']),
+        createMaterialType('video', 2, ['videoTask1', 'videoTask2']),
+        createMaterialType('podcast', 3, ['podcastTask1', 'podcastTask2']),
+        createMaterialType('course', 4, ['courseTask1', 'courseTask2'])
+    ];
+
+    const defaultSections: Section[] = [
+        createSection('general', 0, 'section1'),
+        createSection('learning', 1, 'section2'),
+        createSection('work', 2, 'section3')
+    ];
+
     return {
         maxActiveTasks: 5,
         statsStartDate: now,
         folderPath: 'PersonalDevelopmentPlan',
         historyFolderPath: 'PersonalDevelopmentPlan/history',
-        materialTypes: [
-            createMaterialType('book', 0, ['bookTask1', 'bookTask2']),
-            createMaterialType('article', 1, ['articleTask1', 'articleTask2']),
-            createMaterialType('video', 2, ['videoTask1', 'videoTask2']),
-            createMaterialType('podcast', 3, ['podcastTask1', 'podcastTask2']),
-            createMaterialType('course', 4, ['courseTask1', 'courseTask2'])
-        ],
-        sections: [
-            createSection('general', 0, 'section1'),
-            createSection('learning', 1, 'section2'),
-            createSection('work', 2, 'section3')
-        ],
+        materialTypes: defaultMaterialTypes,
+        sections: defaultSections,
         periodicTasks: {
             daily: createPeriodicTask(['periodicTasksDaily1', 'periodicTasksDaily2']),
             weekly: createPeriodicTask(['periodicTasksWeekly1', 'periodicTasksWeekly2']),

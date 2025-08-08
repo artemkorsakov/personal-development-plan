@@ -457,7 +457,7 @@ export default class KnowledgeBaseTab {
             try {
                 const file = this.app.vault.getAbstractFileByPath(item.filePath);
                 if (file) {
-                    await this.app.vault.delete(file);
+                    await this.app.fileManager.trashFile(file);
                     new Notice(t('taskDeletedSuccessfully'));
                     await this.refreshContent();
                 }
