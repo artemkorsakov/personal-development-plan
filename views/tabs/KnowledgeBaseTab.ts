@@ -417,7 +417,6 @@ export default class KnowledgeBaseTab {
 
         if (result) {
             try {
-                // Обновляем файл задачи
                 const file = this.app.vault.getAbstractFileByPath(item.filePath);
                 if (file) {
                     let content = await this.app.vault.read(file);
@@ -425,24 +424,45 @@ export default class KnowledgeBaseTab {
                     const match = content.match(frontmatterRegex);
 
                     if (match) {
-                        // Обновляем frontmatter
                         let frontmatter = match[1];
-                        frontmatter = frontmatter.replace(/status:.*\n/g, '');
-                        frontmatter = frontmatter.replace(/order:.*\n/g, '');
-                        frontmatter += `\nstatus: planned\norder: ${result.order}\n`;
+                        frontmatter = frontmatter
+                            .replace(/status:.*(\n|$)/g, '')
+                            .replace(/order:.*(\n|$)/g, '');
 
-                        content = content.replace(
+                        frontmatter = frontmatter.replace(/\n+$/, '');
+
+                        if (frontmatter.length > 0 && !frontmatter.endsWith('\n')) {
+                            frontmatter += '\n';
+                        }
+
+                        frontmatter += `status: planned\n`;
+                        frontmatter += `order: ${result.order}\n`;
+
+                        if (!frontmatter.endsWith('\n')) {
+                            frontmatter += '\n';
+                        }
+
+                        const newContent = content.replace(
                             frontmatterRegex,
                             `---\n${frontmatter}---`
                         );
 
-                        await this.app.vault.modify(file, content);
+                        await this.app.vault.modify(file, newContent);
                         new Notice(t('taskPlannedSuccessfully'));
                         await this.refreshContent();
+                    } else {
+                        console.warn(`No frontmatter found in file: ${item.filePath}`);
                     }
+                } else {
+                    console.error(`File not found: ${item.filePath}`);
                 }
             } catch (error) {
                 console.error('Error planning task:', error);
+                console.error(`Error details:`, {
+                    itemPath: item.filePath,
+                    errorMessage: error.message,
+                    errorStack: error.stack
+                });
                 new Notice(t('errorPlanningTask'));
             }
         }

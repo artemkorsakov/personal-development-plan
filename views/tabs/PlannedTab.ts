@@ -237,37 +237,56 @@ export default class PlannedTab {
                     if (match) {
                         let frontmatter = match[1];
 
-                        // Удаляем старые значения
-                        frontmatter = frontmatter.replace(/status:.*\n/g, '');
-                        frontmatter = frontmatter.replace(/startDate:.*\n/g, '');
-                        frontmatter = frontmatter.replace(/dueDate:.*\n/g, '');
-                        frontmatter = frontmatter.replace(/progress:.*\n/g, '');
+                        frontmatter = frontmatter
+                            .replace(/status:.*(\n|$)/g, '')
+                            .replace(/startDate:.*(\n|$)/g, '')
+                            .replace(/dueDate:.*(\n|$)/g, '');
 
-                        // Добавляем новые значения из модального окна
-                        frontmatter += `\nstatus: in-progress\n`;
+                        frontmatter = frontmatter.replace(/\n+$/, '');
+
+                        if (frontmatter.length > 0 && !frontmatter.endsWith('\n')) {
+                            frontmatter += '\n';
+                        }
+
+                        frontmatter += `status: in-progress\n`;
                         frontmatter += `startDate: ${result.startDate}\n`;
                         frontmatter += `dueDate: ${result.dueDate}\n`;
-                        frontmatter += `progress: 0\n`; // Начинаем с 0% прогресса
 
-                        // Сохраняем порядок задачи, если он был
                         if (task.order) {
-                            frontmatter = frontmatter.replace(/order:.*\n/g, '');
+                            frontmatter = frontmatter.replace(/order:.*(\n|$)/g, '');
+                            frontmatter = frontmatter.replace(/\n+$/, '');
+                            if (frontmatter.length > 0 && !frontmatter.endsWith('\n')) {
+                                frontmatter += '\n';
+                            }
                             frontmatter += `order: ${task.order}\n`;
                         }
 
-                        // Обновляем контент файла
-                        content = content.replace(
+                        if (!frontmatter.endsWith('\n')) {
+                            frontmatter += '\n';
+                        }
+
+                        const newContent = content.replace(
                             frontmatterRegex,
                             `---\n${frontmatter}---`
                         );
 
-                        await this.app.vault.modify(file, content);
+                        await this.app.vault.modify(file, newContent);
+
                         new Notice(t('taskStartedSuccessfully'));
                         await this.refreshContent();
+                    } else {
+                        console.warn(`No frontmatter found in file: ${task.filePath}`);
                     }
+                } else {
+                    console.error(`File not found: ${task.filePath}`);
                 }
             } catch (error) {
                 console.error('Error starting task:', error);
+                console.error(`Error details:`, {
+                    taskPath: task.filePath,
+                    errorMessage: error.message,
+                    errorStack: error.stack
+                });
                 new Notice(t('errorStartingTask'));
             }
         }

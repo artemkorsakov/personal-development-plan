@@ -247,10 +247,24 @@ export default class InProgressTab {
 
                     if (match) {
                         let frontmatter = match[1];
-                        frontmatter = frontmatter.replace(/status:.*\n/g, '');
-                        frontmatter = frontmatter.replace(/startDate:.*\n/g, '');
-                        frontmatter = frontmatter.replace(/dueDate:.*\n/g, '');
-                        frontmatter += `\nstatus: planned\n`;
+
+                        // Удаляем старые значения с улучшенной обработкой последних полей
+                        frontmatter = frontmatter
+                            .replace(/status:.*(\n|$)/g, '')
+                            .replace(/startDate:.*(\n|$)/g, '')
+                            .replace(/dueDate:.*(\n|$)/g, '');
+
+                        frontmatter = frontmatter.replace(/\n+$/, '');
+
+                        if (frontmatter.length > 0 && !frontmatter.endsWith('\n')) {
+                            frontmatter += '\n';
+                        }
+
+                        frontmatter += `status: planned\n`;
+
+                        if (!frontmatter.endsWith('\n')) {
+                            frontmatter += '\n';
+                        }
 
                         content = content.replace(frontmatterRegex, `---\n${frontmatter}---`);
                         await this.app.vault.modify(file, content);
