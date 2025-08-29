@@ -248,7 +248,6 @@ export default class InProgressTab {
                     if (match) {
                         let frontmatter = match[1];
 
-                        // Удаляем старые значения с улучшенной обработкой последних полей
                         frontmatter = frontmatter
                             .replace(/status:.*(\n|$)/g, '')
                             .replace(/startDate:.*(\n|$)/g, '')
