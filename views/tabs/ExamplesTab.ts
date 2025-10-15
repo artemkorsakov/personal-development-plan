@@ -18,8 +18,8 @@ export default class ExamplesTab {
         this.settings = settings;
         this.vault = vault;
 
-        const mainContainer = document.createElement('div');
-        mainContainer.className = 'knowledge-base-container';
+        const mainContainer = createDiv();
+        mainContainer.addClass('knowledge-base-container');
 
         const content = mainContainer.createDiv({ cls: 'knowledge-content-container' });
 

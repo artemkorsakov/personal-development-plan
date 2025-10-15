@@ -13,8 +13,8 @@ export default class SourcesTab {
         workspace: Workspace
     ): Promise<HTMLElement> {
         this.appWorkspace = workspace;
-        const container = document.createElement('div');
-        container.className = 'sources-container';
+        const container = createDiv();
+        container.addClass('sources-container');
 
         await this.createSourceCards(container, settings, vault);
 
@@ -40,8 +40,8 @@ export default class SourcesTab {
     }
 
     private static createSourceCard(type: MaterialType, folderPath: string): HTMLElement {
-        const card = document.createElement('div');
-        card.className = 'source-card';
+        const card = createDiv();
+        card.addClass('source-card');
 
         const icon = card.createSpan({ cls: 'source-icon' });
         icon.textContent = getTaskTypeIcon(type.id);

@@ -447,7 +447,7 @@ export default class KnowledgeBaseTab {
                             `---\n${frontmatter}---`
                         );
 
-                        await this.app.vault.process(file, newContent);
+                        await this.app.vault.process(file, (currentContent: string) => newContent);
                         new Notice(t('taskPlannedSuccessfully'));
                         await this.refreshContent();
                     } else {

@@ -270,7 +270,7 @@ export default class PlannedTab {
                             `---\n${frontmatter}---`
                         );
 
-                        await this.app.vault.process(file, newContent);
+                        await this.app.vault.process(file, (currentContent: string) => newContent);
 
                         new Notice(t('taskStartedSuccessfully'));
                         await this.refreshContent();

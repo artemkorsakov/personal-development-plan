@@ -15,7 +15,7 @@ export class HistoryTab {
         this.settings = settings;
         this.vault = vault;
 
-        const container = document.createElement('div');
+        const container = createDiv();
         container.addClass('history-tab-container');
 
         try {

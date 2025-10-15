@@ -27,7 +27,7 @@ export class StatisticsTab {
         this.vault = vault;
         this.metadataCache = metadataCache;
 
-        const container = document.createElement('div');
+        const container = createDiv();
         container.addClass('statistics-tab-container');
 
         try {

@@ -30,8 +30,8 @@ export default class InProgressTab {
         this.vault = vault;
         this.metadataCache = metadataCache;
 
-        this.container = document.createElement('div');
-        this.container.className = 'tasks-container';
+        this.container = createDiv();
+        this.container.addClass('tasks-container');
 
         this.createHeader(this.container);
         await this.updateTasksList();
@@ -223,7 +223,7 @@ export default class InProgressTab {
                 ? abstractFile
                 : await this.app.vault.create(historyFilePath, JSON.stringify([], null, 2));
 
-            await this.app.vault.process(fileToWrite, JSON.stringify(historyData, null, 2));
+            await this.app.vault.process(fileToWrite, (currentContent: string) => JSON.stringify(historyData, null, 2));
 
         } catch (error) {
             console.error(t('errorLoadingHistory'), error);
@@ -265,8 +265,7 @@ export default class InProgressTab {
                             frontmatter += '\n';
                         }
 
-                        content = content.replace(frontmatterRegex, `---\n${frontmatter}---`);
-                        await this.app.vault.process(file, content);
+                        await this.app.vault.process(file, (currentContent: string) => currentContent.replace(frontmatterRegex, `---\n${frontmatter}---`));
                         new Notice(t('taskPostponedSuccessfully'));
                         await this.updateTasksList();
                     }
