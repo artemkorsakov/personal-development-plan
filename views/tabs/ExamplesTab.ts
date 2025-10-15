@@ -1,4 +1,4 @@
-import { Notice, Vault, Modal } from 'obsidian';
+import { Notice, Vault, Modal, TFile } from 'obsidian';
 import { t } from '../../localization/localization';
 import { PersonalDevelopmentPlanSettings, generateTaskContent } from '../../settings/settings-types';
 import { EXAMPLE_PLANS } from '../../examples/examplePlans';
@@ -117,7 +117,8 @@ export default class ExamplesTab {
                 const filePath = `${this.settings.folderPath}/${task.filePath}`;
                 const content = this.createTaskContent(task);
 
-                if (await this.vault.adapter.exists(filePath)) {
+                const existingFile = this.vault.getAbstractFileByPath(filePath);
+                if (existingFile && existingFile instanceof TFile) {
                     new Notice(`${t('errorImportingExample')}: File ${filePath} already exists`);
                 } else {
                     await this.vault.create(filePath, content);

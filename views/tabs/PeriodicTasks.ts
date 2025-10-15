@@ -87,7 +87,7 @@ export class PeriodicTasks {
             const existingFile = this.vault.getAbstractFileByPath(path);
 
             if (existingFile && existingFile instanceof TFile) {
-                await this.vault.modify(existingFile, JSON.stringify(tasks, null, 2));
+				await this.vault.process(existingFile, (currentContent: string) => JSON.stringify(tasks, null, 2));
             } else {
                 await this.vault.create(path, JSON.stringify(tasks, null, 2));
             }
@@ -119,19 +119,16 @@ export class PeriodicTasks {
         const handleClick = async () => {
             try {
                 const filePath = this.getPeriodicPath();
-                const fileExists = await this.vault.adapter.exists(filePath);
+                const fileExists = this.vault.getAbstractFileByPath(filePath) instanceof TFile;
 
-                // 1. Генерируем новые периоды
                 const { newPeriods, contentToAdd } = await this.generateNewPeriods();
 
-                // 2. Обновляем файл
                 if (fileExists) {
                     await this.appendToExistingFile(filePath, contentToAdd);
                 } else {
                     await this.createNewFile(filePath, contentToAdd);
                 }
 
-                // 3. Обновляем completed_tasks.json
                 if (newPeriods.length > 0) {
                     const updatedTasks: Partial<CompletedTasks> = {};
                     newPeriods.forEach(({type, period}) => {
@@ -143,7 +140,6 @@ export class PeriodicTasks {
                     await this.updateCompletedTasks(updatedTasks);
                 }
 
-                // 4. Открываем файл
                 await openTaskFile(filePath, this.vault, this.app.workspace);
 
             } catch (error) {
@@ -269,10 +265,7 @@ export class PeriodicTasks {
         }
 
         try {
-            const currentContent = await this.vault.read(abstractFile);
-            const updatedContent = currentContent + contentToAdd;
-
-            await this.vault.modify(abstractFile, updatedContent);
+            await this.vault.process(abstractFile, (currentContent: string) => currentContent + contentToAdd);
         } catch (error) {
             console.error(`Failed to append content to file ${filePath}:`, error);
             throw error;

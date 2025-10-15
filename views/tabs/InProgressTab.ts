@@ -223,7 +223,7 @@ export default class InProgressTab {
                 ? abstractFile
                 : await this.app.vault.create(historyFilePath, JSON.stringify([], null, 2));
 
-            await this.app.vault.modify(fileToWrite, JSON.stringify(historyData, null, 2));
+            await this.app.vault.process(fileToWrite, JSON.stringify(historyData, null, 2));
 
         } catch (error) {
             console.error(t('errorLoadingHistory'), error);
@@ -266,7 +266,7 @@ export default class InProgressTab {
                         }
 
                         content = content.replace(frontmatterRegex, `---\n${frontmatter}---`);
-                        await this.app.vault.modify(file, content);
+                        await this.app.vault.process(file, content);
                         new Notice(t('taskPostponedSuccessfully'));
                         await this.updateTasksList();
                     }
