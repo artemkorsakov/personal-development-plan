@@ -60,7 +60,7 @@ export class BookFormBuilder extends TaskFormBuilder {
     }
 
     generateTitle(): string {
-        const name =  `${this.formData.authors || 'Unknown authors'} - ${this.formData.name || 'Untitled Book'}`;
+        const name =  `${this.formData.authors || 'Unknown authors'} - ${this.formData.name || 'Untitled book'}`;
         return generateSafeTitle(name);
     }
 }

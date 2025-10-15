@@ -1,4 +1,4 @@
-import { App, Modal, Setting, Notice } from 'obsidian';
+import { App, Modal, Setting, Notice, TFile } from 'obsidian';
 import { createTaskFile, generateSafeFilename } from '../../utils/fileUtils';
 import { t } from '../../localization/localization';
 import { MaterialType, PersonalDevelopmentPlanSettings, generateTaskContent } from '../../settings/settings-types';
@@ -59,7 +59,7 @@ export default class CreateTaskModal extends Modal {
                 dropdown.onChange(value => {
                     this.selectedTaskType = value;
                     this.updateForm();
-                    setTimeout(() => dropdown.selectEl.focus(), 0);
+                    window.setTimeout(() => dropdown.selectEl.focus(), 0);
                 });
 
                 this.selectedTaskType = taskTypes[0]?.id || '';
@@ -176,14 +176,15 @@ export default class CreateTaskModal extends Modal {
            const safeFilename = generateSafeFilename(this.formBuilder.generateTitle());
            taskData.filePath = `${this.settings.folderPath}/${safeFilename}.md`;
 
-           if (await this.app.vault.adapter.exists(taskData.filePath)) {
+           const existingFile = this.app.vault.getAbstractFileByPath(taskData.filePath);
+           if (existingFile && existingFile instanceof TFile) {
                new Notice(t('fileAlreadyExists'));
                return;
            }
 
            const content = generateTaskContent(taskType);
            await createTaskFile(taskData, content, this.settings, this.app.vault);
-           await new Promise(resolve => setTimeout(resolve, 200));
+           await new Promise(resolve => window.setTimeout(resolve, 200));
 
            this.close();
            this.onSubmitCallback?.(true, taskType.id);

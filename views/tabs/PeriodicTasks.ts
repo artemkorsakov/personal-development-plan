@@ -45,10 +45,20 @@ export class PeriodicTasks {
         return `${this.settings.folderPath}/Periodic/completed_tasks.json`;
     }
 
+    private async ensurePeriodicFolder(): Promise<void> {
+        const folderPath = `${this.settings.folderPath}/Periodic`;
+        const folder = this.vault.getAbstractFileByPath(folderPath);
+
+        if (!folder) {
+            await this.vault.createFolder(folderPath);
+        }
+    }
+
     private async loadCompletedTasks(): Promise<CompletedTasks> {
         const path = this.getCompletedPeriodicPath();
         try {
-            await this.vault.adapter.mkdir(`${this.settings.folderPath}/Periodic`);
+            await this.ensurePeriodicFolder();
+
             const file = this.vault.getAbstractFileByPath(path);
             if (file && file instanceof TFile) {
                 const content = await this.vault.cachedRead(file);
@@ -74,7 +84,13 @@ export class PeriodicTasks {
     private async saveCompletedTasks(tasks: CompletedTasks): Promise<void> {
         const path = this.getCompletedPeriodicPath();
         try {
-            await this.vault.adapter.write(path, JSON.stringify(tasks, null, 2));
+            const existingFile = this.vault.getAbstractFileByPath(path);
+
+            if (existingFile && existingFile instanceof TFile) {
+                await this.vault.modify(existingFile, JSON.stringify(tasks, null, 2));
+            } else {
+                await this.vault.create(path, JSON.stringify(tasks, null, 2));
+            }
         } catch (error) {
             console.error('Error saving completed tasks:', error);
             throw error;

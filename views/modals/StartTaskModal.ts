@@ -130,7 +130,7 @@ export class StartTaskModal extends Modal {
     private showError(message: string) {
         this.errorEl.textContent = message;
         this.errorEl.addClass('modal-error-message-visible');
-        setTimeout(() => {
+        window.setTimeout(() => {
             this.errorEl.removeClass('modal-error-message-visible');
         }, 5000);
     }

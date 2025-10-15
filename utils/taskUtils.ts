@@ -62,7 +62,7 @@ export async function getActiveTasks(
 ): Promise<TaskInProgress[]> {
     try {
         // 1. Пауза для возможного обновления кэша
-        await new Promise(resolve => setTimeout(resolve, 50));
+        await sleep(50);
 
         // 2. Получаем файлы с повторными попытками
         const files = await getFilesInFolderWithRetry(vault, settings.folderPath);
@@ -137,7 +137,7 @@ export async function getPlannedTasks(
     metadataCache: MetadataCache
 ): Promise<PlannedTask[]> {
     try {
-        await new Promise(resolve => setTimeout(resolve, 50));
+        await new Promise(resolve => window.setTimeout(resolve, 50));
         const files = await getFilesInFolderWithRetry(vault, settings.folderPath);
 
         const processor: FileProcessor<PlannedTask> = {
@@ -202,7 +202,7 @@ export async function getKnowledgeItems(
     metadataCache: MetadataCache
 ): Promise<KnowledgeItem[]> {
     try {
-        await new Promise(resolve => setTimeout(resolve, 50));
+        await new Promise(resolve => window.setTimeout(resolve, 50));
         const files = await getFilesInFolderWithRetry(vault, settings.folderPath);
 
         const processor: FileProcessor<KnowledgeItem> = {
@@ -274,7 +274,7 @@ export async function getItems(
     videos: VideoTask[];
 }> {
     try {
-        await new Promise(resolve => setTimeout(resolve, 50));
+        await new Promise(resolve => window.setTimeout(resolve, 50));
         const files = await getFilesInFolderWithRetry(vault, settings.folderPath);
 
         const result = {
@@ -412,7 +412,7 @@ async function getFilesInFolderWithRetry(
             if (files.length > 0 || i === retries - 1) {
                 return files;
             }
-            await new Promise(resolve => setTimeout(resolve, delay * (i + 1)));
+            await new Promise(resolve => window.setTimeout(resolve, delay * (i + 1)));
         } catch (error) {
             if (i === retries - 1) throw error;
         }
@@ -434,7 +434,7 @@ async function processFilesWithRetry(
             if (result.length > 0 || i === retries - 1) {
                 return result;
             }
-            await new Promise(resolve => setTimeout(resolve, delay * (i + 1)));
+            await new Promise(resolve => window.setTimeout(resolve, delay * (i + 1)));
         } catch (error) {
             if (i === retries - 1) throw error;
         }
