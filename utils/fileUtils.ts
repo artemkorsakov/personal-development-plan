@@ -1,6 +1,6 @@
 import { Vault, TFile, Notice, Workspace } from 'obsidian';
-import { BookTask } from '../settings/task-types';
 import { PersonalDevelopmentPlanSettings } from '../settings/settings-types';
+import { TaskType } from '../settings/task-types';
 import { t } from '../localization/localization';
 
 export async function openTaskFile(path: string, vault: Vault, workspace: Workspace): Promise<void> {
@@ -69,7 +69,7 @@ export async function openOrCreateSourceFile(
 }
 
 export async function createTaskFile(
-    task: ArticleTask | BookTask | CourseTask | PodcastTask | UserTypeTask | VideoTask,
+    task: TaskType,
     content: string,
     settings: PersonalDevelopmentPlanSettings,
     vault: Vault

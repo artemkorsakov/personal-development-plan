@@ -2,6 +2,7 @@ import { App, MetadataCache, Vault, TFile } from 'obsidian';
 import { PersonalDevelopmentPlanSettings, getMaterialIdByName } from '../../settings/settings-types';
 import { t } from '../../localization/localization';
 import { getActiveTasks, getPlannedTasks, getKnowledgeItems } from '../../utils/taskUtils';
+import { KnowledgeItem, PlannedTask, TaskInProgress } from '../tabs-types';
 import { CompletedTask, loadCompletedTasks } from './historyUtils';
 
 interface TaskStats {
@@ -68,7 +69,7 @@ export class StatisticsTab {
         this.renderForecastSection(container, data.contentTypeStats, data.completedTasks);
     }
 
-    private static calculateGeneralStats(activeTasks: any[], plannedTasks: any[], knowledgeItems: any[]): TaskStats {
+    private static calculateGeneralStats(activeTasks: TaskInProgress[], plannedTasks: PlannedTask[], knowledgeItems: KnowledgeItem[]): TaskStats {
         return {
             total: activeTasks.length + plannedTasks.length + knowledgeItems.length,
             inProgress: activeTasks.length,
@@ -78,9 +79,9 @@ export class StatisticsTab {
     }
 
     private static calculateContentTypeStats(
-        activeTasks: any[],
-        plannedTasks: any[],
-        knowledgeItems: any[],
+        activeTasks: TaskInProgress[],
+        plannedTasks: PlannedTask[],
+        knowledgeItems: KnowledgeItem[],
         completedTasks: CompletedTask[]
     ): Record<string, ContentTypeStats> {
         const allTasks = [...activeTasks, ...plannedTasks, ...knowledgeItems];
@@ -120,7 +121,7 @@ export class StatisticsTab {
         return stats;
     }
 
-    private static calculateSectionStats(activeTasks: any[], plannedTasks: any[], knowledgeItems: any[]): Record<string, number> {
+    private static calculateSectionStats(activeTasks: TaskInProgress[], plannedTasks: PlannedTask[], knowledgeItems: KnowledgeItem[]): Record<string, number> {
         const sectionCounts: Record<string, number> = {};
         [...activeTasks, ...plannedTasks, ...knowledgeItems].forEach(task => {
             if (task.section) sectionCounts[task.section] = (sectionCounts[task.section] || 0) + 1;

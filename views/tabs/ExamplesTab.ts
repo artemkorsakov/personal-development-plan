@@ -3,6 +3,7 @@ import { t } from '../../localization/localization';
 import { PersonalDevelopmentPlanSettings, generateTaskContent } from '../../settings/settings-types';
 import { EXAMPLE_PLANS } from '../../examples/examplePlans';
 import { ImportErrorModal } from '../modals/ImportErrorModal';
+import { TaskType } from '../../settings/task-types';
 
 export default class ExamplesTab {
     private static app: App;
@@ -111,7 +112,7 @@ export default class ExamplesTab {
         }
     }
 
-    private static async importTasks(tasks: any[]) {
+    private static async importTasks(tasks: TaskType[]) {
         await Promise.all(tasks.map(async task => {
             try {
                 const filePath = `${this.settings.folderPath}/${task.filePath}`;
@@ -129,7 +130,7 @@ export default class ExamplesTab {
         }));
     }
 
-    private static createTaskContent(task: any): string {
+    private static createTaskContent(task: TaskType): string {
         let frontmatter = `---\n`;
         frontmatter += `status: ${task.status || 'knowledge-base'}\n`;
         frontmatter += `type: ${task.type || 'user'}\n`;
@@ -140,15 +141,33 @@ export default class ExamplesTab {
         if (task.startDate) frontmatter += `startDate: ${task.startDate}\n`;
         if (task.dueDate) frontmatter += `dueDate: ${task.dueDate}\n`;
 
-        if (task.authors) frontmatter += `authors: ${task.authors}\n`;
-        if (task.author) frontmatter += `author: ${task.author}\n`;
-        if (task.name) frontmatter += `name: ${task.name}\n`;
-        if (task.pages) frontmatter += `pages: ${task.pages}\n`;
-        if (task.link) frontmatter += `link: ${task.link}\n`;
-        if (task.durationInMinutes) frontmatter += `durationInMinutes: ${task.durationInMinutes}\n`;
-        if (task.platform) frontmatter += `platform: ${task.platform}\n`;
-        if (task.episodes) frontmatter += `episodes: ${task.episodes}\n`;
-        if (task.laborInputInHours) frontmatter += `laborInputInHours: ${task.laborInputInHours}\n`;
+        if ('authors' in task && typeof task.authors === 'string') {
+            frontmatter += `authors: ${task.authors}\n`;
+        }
+        if ('author' in task && typeof task.author === 'string') {
+            frontmatter += `author: ${task.author}\n`;
+        }
+        if ('name' in task && typeof task.name === 'string') {
+            frontmatter += `name: ${task.name}\n`;
+        }
+        if ('pages' in task && typeof task.pages === 'number') {
+            frontmatter += `pages: ${task.pages}\n`;
+        }
+        if ('link' in task && typeof task.link === 'string') {
+            frontmatter += `link: ${task.link}\n`;
+        }
+        if ('durationInMinutes' in task && typeof task.durationInMinutes === 'number') {
+            frontmatter += `durationInMinutes: ${task.durationInMinutes}\n`;
+        }
+        if ('platform' in task && typeof task.platform === 'string') {
+            frontmatter += `platform: ${task.platform}\n`;
+        }
+        if ('episodes' in task && typeof task.episodes === 'number') {
+            frontmatter += `episodes: ${task.episodes}\n`;
+        }
+        if ('laborInputInHours' in task && typeof task.laborInputInHours === 'number') {
+            frontmatter += `laborInputInHours: ${task.laborInputInHours}\n`;
+        }
 
         frontmatter += `---\n\n`;
 

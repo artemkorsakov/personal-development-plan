@@ -1,6 +1,7 @@
 import { App, MetadataCache, Vault, TFile, Notice } from 'obsidian';
 import { getActiveTasks, getTaskTypeIcon, isTaskOverdue } from '../../utils/taskUtils';
 import { formatDate, calculateDaysBetween, parseDateInput } from '../../utils/dateUtils';
+import { KnowledgeItem, PlannedTask, TaskInProgress } from '../tabs-types';
 import { openTaskFile, openOrCreateSourceFile } from '../../utils/fileUtils';
 import { generateProgressBar, calculateTaskProgress } from '../../utils/progressUtils';
 import { t } from '../../localization/localization';
@@ -81,7 +82,7 @@ export default class InProgressTab {
         }
     }
 
-    private static createTaskCard(container: HTMLElement, task: any) {
+    private static createTaskCard(container: HTMLElement, task: TaskInProgress) {
         const taskCard = container.createDiv({ cls: 'task-card' });
         if (isTaskOverdue(task)) {
             taskCard.addClass('task-overdue');
@@ -120,7 +121,7 @@ export default class InProgressTab {
         this.createActionButtons(taskCard, task);
     }
 
-    private static createActionButtons(container: HTMLElement, task: any) {
+    private static createActionButtons(container: HTMLElement, task: TaskInProgress) {
         const actionsContainer = container.createDiv({ cls: 'task-actions' });
 
         // Кнопка "Выполнить"
@@ -154,7 +155,7 @@ export default class InProgressTab {
         });
     }
 
-    private static async handleCompleteTask(task: any) {
+    private static async handleCompleteTask(task: TaskInProgress) {
         const modal = new CompleteTaskModal(this.app);
         modal.open();
         const result = await modal.waitForClose();
@@ -175,7 +176,7 @@ export default class InProgressTab {
         }
     }
 
-    private static async saveToHistory(task: any, result: any) {
+    private static async saveToHistory(task: TaskInProgress, result: any) {
         const historyFolder = this.settings.historyFolderPath;
         const historyFilePath = `${historyFolder}/completed_tasks.json`;
 
@@ -232,7 +233,7 @@ export default class InProgressTab {
         }
     }
 
-    private static async handlePostponeTask(task: any) {
+    private static async handlePostponeTask(task: TaskInProgress) {
         const modal = new PostponeTaskModal(this.app);
         modal.open();
         const confirmed = await modal.waitForClose();
@@ -277,7 +278,7 @@ export default class InProgressTab {
         }
     }
 
-    private static async handleDeleteTask(task: any) {
+    private static async handleDeleteTask(task: TaskInProgress) {
         const modal = new ConfirmDeleteModal(this.app, task.name);
         modal.open();
         const confirmed = await modal.waitForClose();

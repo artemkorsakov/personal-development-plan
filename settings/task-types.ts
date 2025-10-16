@@ -43,3 +43,6 @@ export interface CourseTask extends BaseTypeTask {
 export interface UserTypeTask extends BaseTypeTask {
     laborInputInHours: number;
 }
+
+export type TaskType =
+    ArticleTask | BookTask | CourseTask | PodcastTask | UserTypeTask | VideoTask;
