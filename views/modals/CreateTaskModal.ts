@@ -43,10 +43,8 @@ export default class CreateTaskModal extends Modal {
         contentEl.empty();
         contentEl.addClass('pdp-create-task-modal');
 
-        // Заголовок
         contentEl.createEl('h2', { text: t('createNewTask') });
 
-        // Поле выбора типа
         const typeSetting = new Setting(contentEl)
             .setName(t('taskType'))
             .addDropdown(dropdown => {

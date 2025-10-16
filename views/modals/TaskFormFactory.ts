@@ -2,6 +2,7 @@ import { Setting } from 'obsidian';
 import { t } from '../../localization/localization';
 import { PersonalDevelopmentPlanSettings } from '../../settings/settings-types';
 import { getMaterialNameById } from '../../settings/settings-types';
+import { ArticleTask, BookTask, CourseTask, PodcastTask, UserTypeTask, VideoTask } from '../../settings/task-types';
 import { formatDateForInput } from '../../utils/dateUtils';
 
 export abstract class TaskFormBuilder {
@@ -17,7 +18,7 @@ export abstract class TaskFormBuilder {
     }
 
     abstract buildForm(): void;
-    abstract getTaskData(): any;
+    abstract getTaskData(): ArticleTask | BookTask | CourseTask | PodcastTask | UserTypeTask | VideoTask;
     abstract generateTitle(): string;
 
     protected addSectionField() {

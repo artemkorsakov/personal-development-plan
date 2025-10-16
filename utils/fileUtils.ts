@@ -69,7 +69,7 @@ export async function openOrCreateSourceFile(
 }
 
 export async function createTaskFile(
-    task: any,
+    task: ArticleTask | BookTask | CourseTask | PodcastTask | UserTypeTask | VideoTask,
     content: string,
     settings: PersonalDevelopmentPlanSettings,
     vault: Vault
