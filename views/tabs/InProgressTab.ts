@@ -1,4 +1,4 @@
-import { Vault, TFile, Notice } from 'obsidian';
+import { App, MetadataCache, Vault, TFile, Notice } from 'obsidian';
 import { getActiveTasks, getTaskTypeIcon, isTaskOverdue } from '../../utils/taskUtils';
 import { formatDate, calculateDaysBetween, parseDateInput } from '../../utils/dateUtils';
 import { openTaskFile, openOrCreateSourceFile } from '../../utils/fileUtils';
@@ -12,18 +12,18 @@ import { PostponeTaskModal } from '../modals/PostponeTaskModal';
 import { PeriodicTasks } from './PeriodicTasks';
 
 export default class InProgressTab {
-    private static app: any;
+    private static app: App;
     private static settings: PersonalDevelopmentPlanSettings;
     private static vault: Vault;
-    private static metadataCache: any;
+    private static metadataCache: MetadataCache;
     private static container: HTMLElement;
     private static periodicTasksInstance: PeriodicTasks;
 
     static async create(
-        app: any,
+        app: App,
         settings: PersonalDevelopmentPlanSettings,
         vault: Vault,
-        metadataCache: any
+        metadataCache: MetadataCache
     ): Promise<HTMLElement> {
         this.app = app;
         this.settings = settings;
@@ -240,7 +240,7 @@ export default class InProgressTab {
         if (confirmed) {
             try {
                 const file = this.app.vault.getAbstractFileByPath(task.filePath);
-                if (file) {
+                if (file && file instanceof TFile) {
                     let content = await this.app.vault.read(file);
                     const frontmatterRegex = /^---\n([\s\S]*?)\n---/;
                     const match = content.match(frontmatterRegex);

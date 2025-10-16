@@ -1,11 +1,11 @@
-import { Modal } from 'obsidian';
+import { App, Modal } from 'obsidian';
 import { t } from '../../localization/localization';
 
 export class ImportErrorModal extends Modal {
     private missingTypes: string[];
     private missingSections: string[];
 
-    constructor(app: any, missingTypes: string[], missingSections: string[]) {
+    constructor(app: App, missingTypes: string[], missingSections: string[]) {
         super(app);
         this.missingTypes = missingTypes;
         this.missingSections = missingSections;

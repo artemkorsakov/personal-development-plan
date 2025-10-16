@@ -1,4 +1,4 @@
-import { Vault } from 'obsidian';
+import { App, Vault } from 'obsidian';
 import { PersonalDevelopmentPlanSettings } from '../../settings/settings-types';
 import { t } from '../../localization/localization';
 import { CompletedTask, loadCompletedTasks } from './historyUtils';
@@ -8,7 +8,7 @@ export class HistoryTab {
     private static vault: Vault;
 
     static async create(
-        app: any,
+        app: App,
         settings: PersonalDevelopmentPlanSettings,
         vault: Vault
     ): Promise<HTMLElement> {

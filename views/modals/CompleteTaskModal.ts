@@ -1,4 +1,4 @@
-import { Modal } from 'obsidian';
+import { App, Modal } from 'obsidian';
 import { t } from '../../localization/localization';
 
 export interface CompleteTaskModalData {
@@ -12,7 +12,7 @@ export class CompleteTaskModal extends Modal {
     private promise: Promise<CompleteTaskModalData | null>;
     private ratingSelect: HTMLSelectElement;
 
-    constructor(app: any) {
+    constructor(app: App) {
         super(app);
         this.promise = new Promise(resolve => {
             this.resolve = resolve;

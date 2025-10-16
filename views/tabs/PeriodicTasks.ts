@@ -1,4 +1,4 @@
-import { Vault, Notice, TFile, moment } from 'obsidian';
+import { App, Vault, Notice, TFile, moment } from 'obsidian';
 import { t } from '../../localization/localization';
 import { PersonalDevelopmentPlanSettings } from '../../settings/settings-types';
 import { generateProgressBar, calculateTaskProgress } from '../../utils/progressUtils';
@@ -16,13 +16,13 @@ type CompletedTasks = {
 type PeriodType = keyof CompletedTasks;
 
 export class PeriodicTasks {
-    private app: any;
+    private app: App;
     private settings: PersonalDevelopmentPlanSettings;
     private vault: Vault;
     private taskType: string = 'periodic';
     private startDate: moment.Moment;
 
-    constructor(app: any, settings: PersonalDevelopmentPlanSettings, vault: Vault) {
+    constructor(app: App, settings: PersonalDevelopmentPlanSettings, vault: Vault) {
         this.app = app;
         this.settings = settings;
         this.vault = vault;

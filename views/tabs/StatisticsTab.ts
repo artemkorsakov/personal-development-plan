@@ -1,4 +1,4 @@
-import { Vault, TFile } from 'obsidian';
+import { App, MetadataCache, Vault, TFile } from 'obsidian';
 import { PersonalDevelopmentPlanSettings, getMaterialIdByName } from '../../settings/settings-types';
 import { t } from '../../localization/localization';
 import { getActiveTasks, getPlannedTasks, getKnowledgeItems } from '../../utils/taskUtils';
@@ -20,9 +20,9 @@ interface ContentTypeStats {
 export class StatisticsTab {
     private static settings: PersonalDevelopmentPlanSettings;
     private static vault: Vault;
-    private static metadataCache: any;
+    private static metadataCache: MetadataCache;
 
-    static async create(app: any, settings: PersonalDevelopmentPlanSettings, vault: Vault, metadataCache: any): Promise<HTMLElement> {
+    static async create(app: App, settings: PersonalDevelopmentPlanSettings, vault: Vault, metadataCache: MetadataCache): Promise<HTMLElement> {
         this.settings = settings;
         this.vault = vault;
         this.metadataCache = metadataCache;

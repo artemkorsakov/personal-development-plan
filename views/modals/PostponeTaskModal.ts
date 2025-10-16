@@ -1,11 +1,11 @@
-import { Modal } from 'obsidian';
+import { App, Modal } from 'obsidian';
 import { t } from '../../localization/localization';
 
 export class PostponeTaskModal extends Modal {
     private resolve: (confirmed: boolean) => void;
     private promise: Promise<boolean>;
 
-    constructor(app: any) {
+    constructor(app: App) {
         super(app);
         this.promise = new Promise(resolve => {
             this.resolve = resolve;

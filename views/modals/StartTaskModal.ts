@@ -1,4 +1,4 @@
-import { Modal } from 'obsidian';
+import { App, Modal } from 'obsidian';
 import { t } from '../../localization/localization';
 
 export interface StartTaskModalData {
@@ -13,7 +13,7 @@ export class StartTaskModal extends Modal {
     private promise: Promise<StartTaskModalData | null>;
     private errorEl: HTMLElement;
 
-    constructor(app: any) {
+    constructor(app: App) {
         super(app);
         this.promise = new Promise(resolve => {
             this.resolve = resolve;

@@ -1,4 +1,4 @@
-import { Notice, Vault } from 'obsidian';
+import { App, MetadataCache, Notice, TFile, Vault } from 'obsidian';
 import { openTaskFile } from '../../utils/fileUtils';
 import { getKnowledgeItems, getTaskTypeIcon, getItems } from '../../utils/taskUtils';
 import { exportToJSON } from '../../utils/exportUtils';
@@ -12,17 +12,17 @@ import { ConfirmDeleteModal } from '../modals/ConfirmDeleteModal';
 export default class KnowledgeBaseTab {
     private static currentType: string | null = null;
     private static currentSection: string | null = null;
-    private static app: any;
+    private static app: App;
     private static settings: PersonalDevelopmentPlanSettings;
     private static contentContainer: HTMLElement;
     private static vault: Vault;
-    private static metadataCache: any;
+    private static metadataCache: MetadataCache;
 
     static async create(
-        app: any,
+        app: App,
         settings: PersonalDevelopmentPlanSettings,
         vault: Vault,
-        metadataCache: any
+        metadataCache: MetadataCache
     ): Promise<HTMLElement> {
         this.app = app;
         this.settings = settings;
@@ -417,7 +417,7 @@ export default class KnowledgeBaseTab {
         if (result) {
             try {
                 const file = this.app.vault.getAbstractFileByPath(item.filePath);
-                if (file) {
+                if (file && file instanceof TFile) {
                     let content = await this.app.vault.read(file);
                     const frontmatterRegex = /^---\n([\s\S]*?)\n---/;
                     const match = content.match(frontmatterRegex);

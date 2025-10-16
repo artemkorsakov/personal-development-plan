@@ -1,4 +1,4 @@
-import { Vault, TFile, Workspace, Notice } from 'obsidian';
+import { App, MetadataCache, Vault, TFile, Workspace, Notice } from 'obsidian';
 import { openTaskFile } from '../../utils/fileUtils';
 import { generateProgressBar } from '../../utils/progressUtils';
 import { getPlannedTasks, getTaskTypeIcon, isTaskOverdue } from '../../utils/taskUtils';
@@ -12,18 +12,18 @@ import { StartTaskModal } from '../modals/StartTaskModal';
 export default class PlannedTab {
     private static currentType: string | null = null;
     private static vault: Vault;
-    private static app: any;
+    private static app: App;
     private static settings: PersonalDevelopmentPlanSettings;
-    private static metadataCache: any;
+    private static metadataCache: MetadataCache;
     private static contentContainer: HTMLElement;
     private static tabsContainer: HTMLElement;
 
     static async create(
-        app: any,
+        app: App,
         settings: PersonalDevelopmentPlanSettings,
         vault: Vault,
         workspace: Workspace,
-        metadataCache: any
+        metadataCache: MetadataCache
     ): Promise<HTMLElement> {
         this.app = app;
         this.settings = settings;
@@ -229,7 +229,7 @@ export default class PlannedTab {
         if (result) {
             try {
                 const file = this.app.vault.getAbstractFileByPath(task.filePath);
-                if (file) {
+                if (file && file instanceof TFile) {
                     let content = await this.app.vault.read(file);
                     const frontmatterRegex = /^---\n([\s\S]*?)\n---/;
                     const match = content.match(frontmatterRegex);

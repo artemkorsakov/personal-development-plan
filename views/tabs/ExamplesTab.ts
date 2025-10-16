@@ -1,16 +1,16 @@
-import { Notice, Vault, Modal, TFile } from 'obsidian';
+import { App, Notice, Vault, Modal, TFile } from 'obsidian';
 import { t } from '../../localization/localization';
 import { PersonalDevelopmentPlanSettings, generateTaskContent } from '../../settings/settings-types';
 import { EXAMPLE_PLANS } from '../../examples/examplePlans';
 import { ImportErrorModal } from '../modals/ImportErrorModal';
 
 export default class ExamplesTab {
-    private static app: any;
+    private static app: App;
     private static settings: PersonalDevelopmentPlanSettings;
     private static vault: Vault;
 
     static async create(
-        app: any,
+        app: App,
         settings: PersonalDevelopmentPlanSettings,
         vault: Vault
     ): Promise<HTMLElement> {

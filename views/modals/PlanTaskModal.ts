@@ -1,4 +1,4 @@
-import { Modal } from 'obsidian';
+import { App, Modal } from 'obsidian';
 import { t, tParametrized } from '../../localization/localization';
 import { getActiveTasks, getPlannedTasks } from '../../utils/taskUtils';
 import { PersonalDevelopmentPlanSettings } from '../../settings/settings-types';
@@ -14,7 +14,7 @@ export class PlanTaskModal extends Modal {
     private taskType: string;
     private settings: PersonalDevelopmentPlanSettings;
 
-    constructor(app: any, settings: PersonalDevelopmentPlanSettings, taskType: string) {
+    constructor(app: App, settings: PersonalDevelopmentPlanSettings, taskType: string) {
         super(app);
         this.settings = settings;
         this.taskType = taskType;
