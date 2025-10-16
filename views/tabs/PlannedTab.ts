@@ -30,8 +30,8 @@ export default class PlannedTab {
         this.vault = vault;
         this.metadataCache = metadataCache;
 
-        const mainContainer = document.createElement('div');
-        mainContainer.className = 'planned-main-container';
+        const mainContainer = createDiv();
+        mainContainer.addClass('planned-main-container');
 
         this.createHeader(mainContainer);
 

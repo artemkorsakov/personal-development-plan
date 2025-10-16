@@ -156,50 +156,47 @@ export default class PlanView extends ItemView {
     }
 
     private removeFileWatchers() {
-        const vault = this.plugin.vault; // Получаем vault через геттер
+        const vault = this.plugin.vault;
         this.fileChangeEventRef.forEach(ref => vault.offref(ref));
         this.fileChangeEventRef = [];
     }
 
     private createHelpIcon(element: HTMLElement, tooltip: string) {
-        const helpIcon = element.createEl('span', {
+        const helpIcon = element.createSpan({
             cls: 'tab-help-icon',
+            attr: {
+                'data-tooltip': tooltip
+            }
         });
 
-        // Создаем SVG элемент
-        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        const svg = createSvg('svg');
         svg.setAttribute('width', '14');
         svg.setAttribute('height', '14');
         svg.setAttribute('viewBox', '0 0 24 24');
         svg.setAttribute('fill', 'none');
         svg.setAttribute('stroke', 'currentColor');
 
-        // Создаем круг
-        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        const circle = createSvg('circle');
         circle.setAttribute('cx', '12');
         circle.setAttribute('cy', '12');
         circle.setAttribute('r', '10');
         circle.setAttribute('stroke-width', '1.5');
         svg.appendChild(circle);
 
-        // Создаем путь (знак вопроса)
-        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        const path = createSvg('path');
         path.setAttribute('d', 'M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3');
         path.setAttribute('stroke-width', '1.5');
         path.setAttribute('stroke-linecap', 'round');
         svg.appendChild(path);
 
-        // Создаем точку внизу
-        const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        const dot = createSvg('circle');
         dot.setAttribute('cx', '12');
         dot.setAttribute('cy', '16');
         dot.setAttribute('r', '1');
         dot.setAttribute('fill', 'currentColor');
         svg.appendChild(dot);
 
-        // Добавляем SVG в иконку
         helpIcon.appendChild(svg);
-        helpIcon.setAttribute('data-tooltip', tooltip);
     }
 }
 

@@ -31,10 +31,10 @@ export default class KnowledgeBaseTab {
         this.currentType = null;
         this.currentSection = null;
 
-        const mainContainer = document.createElement('div');
-        mainContainer.className = 'knowledge-base-container';
+        const mainContainer = createDiv();
+        mainContainer.addClass('knowledge-base-container');
 
-        this.createHeader(mainContainer); // Убрали лишние параметры
+        this.createHeader(mainContainer);
 
         const allItems = await getKnowledgeItems(vault, settings, metadataCache);
 
@@ -242,13 +242,13 @@ export default class KnowledgeBaseTab {
     }
 
     private static createTab(id: string, label: string, count: number): HTMLElement {
-        const tab = document.createElement('div');
-        tab.className = 'knowledge-tab';
-        tab.dataset.id = id;
+		const tab = createDiv();
+        tab.addClass('knowledge-tab');
+        tab.setAttribute('data-id', id);
 
-        const labelSpan = document.createElement('span');
-        labelSpan.className = 'knowledge-tab-label';
-        labelSpan.textContent = `${label} (${count})`;
+        const labelSpan = createSpan();
+        labelSpan.addClass('knowledge-tab-label');
+        labelSpan.setText(`${label} (${count})`);
 
         tab.appendChild(labelSpan);
         return tab;
@@ -275,14 +275,13 @@ export default class KnowledgeBaseTab {
 
         filteredItems.sort((a, b) => a.name.localeCompare(b.name));
 
-        const table = document.createElement('table');
-        table.className = 'knowledge-items-table';
+        const table = createEl('table', { cls: 'knowledge-items-table' });
 
         const headerRow = table.createEl('tr');
         headerRow.createEl('th', { text: t('knowledgeBaseName') });
         headerRow.createEl('th', { text: t('knowledgeBaseType') });
         headerRow.createEl('th', { text: t('knowledgeBaseSection') });
-        headerRow.createEl('th', { text: t('actions') }); // Новый столбец для действий
+        headerRow.createEl('th', { text: t('actions') });
 
         filteredItems.forEach(item => {
             const row = table.createEl('tr');
