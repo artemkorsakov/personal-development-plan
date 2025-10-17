@@ -19,7 +19,10 @@ export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
         containerEl.empty();
         containerEl.addClass('pdp-settings-container');
 
-        containerEl.createEl('h1', { text: t('settingsTitle'), cls: 'pdp-settings-title' });
+        new Setting(containerEl)
+            .setName(t('settingsTitle'))
+            .setHeading()
+            .setClass('pdp-settings-title');
 
         [
             this.addGeneralSettings,
@@ -40,7 +43,11 @@ export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
     private addGeneralSettings(): void {
         const { containerEl } = this;
         const section = containerEl.createDiv({ cls: 'pdp-settings-section' });
-        section.createEl('h2', { text: t('generalSettings'), cls: 'pdp-settings-subtitle' });
+        
+        new Setting(section)
+            .setName(t('generalSettings'))
+            .setHeading()
+            .setClass('pdp-settings-subtitle');
 
         new Setting(section)
             .setName(t('folderPath'))
@@ -103,7 +110,11 @@ export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
     private addMaterialTypesSettings(): void {
         const { containerEl } = this;
         const section = containerEl.createDiv({ cls: 'pdp-settings-section' });
-        section.createEl('h2', { text: t('materialTypes'), cls: 'pdp-settings-subtitle' });
+        
+        new Setting(section)
+            .setName(t('materialTypes'))
+            .setHeading()
+            .setClass('pdp-settings-subtitle');
 
         this.settings.materialTypes.forEach((material, index) => {
             const setting = new Setting(section)
@@ -216,7 +227,11 @@ export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
     private addSectionsSettings(): void {
         const { containerEl } = this;
         const sectionContainer = containerEl.createDiv({ cls: 'pdp-settings-section' });
-        sectionContainer.createEl('h2', { text: t('sectionsCategories'), cls: 'pdp-settings-subtitle' });
+        
+        new Setting(sectionContainer)
+            .setName(t('sectionsCategories'))
+            .setHeading()
+            .setClass('pdp-settings-subtitle');
 
         this.settings.sections.forEach((section, index) => {
             const setting = new Setting(sectionContainer)
@@ -280,7 +295,11 @@ export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
     private addPeriodicTasksSettings(): void {
         const { containerEl } = this;
         const sectionContainer = containerEl.createDiv({ cls: 'pdp-settings-section' });
-        sectionContainer.createEl('h2', { text: t('periodicTasks'), cls: 'pdp-settings-subtitle' });
+        
+        new Setting(sectionContainer)
+            .setName(t('periodicTasks'))
+            .setHeading()
+            .setClass('pdp-settings-subtitle');
 
         const taskTypes = ['daily', 'weekly', 'monthly', 'quarterly', 'yearly'] as const;
 
