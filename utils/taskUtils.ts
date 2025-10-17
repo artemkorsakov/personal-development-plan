@@ -13,10 +13,30 @@ type TaskCommonFields = {
     filePath: string;
 };
 
+interface FrontmatterData {
+    [key: string]: unknown;
+    title?: string;
+    type?: string;
+    section?: string;
+    order?: number;
+    status?: string;
+    startDate?: string;
+    dueDate?: string;
+    pages?: number;
+    durationInMinutes?: number;
+    episodes?: number;
+    laborInputInHours?: number;
+    authors?: string;
+    name?: string;
+    link?: string;
+    author?: string;
+    platform?: string;
+}
+
 type FileProcessor<T> = {
-    filter: (frontmatter: any) => boolean;
+    filter: (frontmatter: FrontmatterData | undefined) => boolean;
     needsContent: boolean;
-    transform: (file: TFile, frontmatter: any, content?: string) => T;
+    transform: (file: TFile, frontmatter: FrontmatterData | undefined, content?: string) => T;
 };
 
 async function processFiles<T>(
@@ -29,7 +49,7 @@ async function processFiles<T>(
 
     await Promise.all(files.map(async (file) => {
         try {
-            const frontmatter = metadataCache.getFileCache(file)?.frontmatter;
+            const frontmatter = metadataCache.getFileCache(file)?.frontmatter as FrontmatterData | undefined;
             if (!frontmatter || !processor.filter(frontmatter)) return;
 
             const content = processor.needsContent
@@ -45,12 +65,12 @@ async function processFiles<T>(
     return results;
 }
 
-function getCommonFields(file: TFile, frontmatter: any): TaskCommonFields {
+function getCommonFields(file: TFile, frontmatter: FrontmatterData | undefined): TaskCommonFields {
     return {
-        name: frontmatter?.title || file.basename || "???",
-        type: frontmatter?.type || "???",
-        section: frontmatter?.section || "???",
-        order: frontmatter?.order ?? 100,
+        name: (frontmatter?.title as string) || file.basename || "???",
+        type: (frontmatter?.type as string) || "???",
+        section: (frontmatter?.section as string) || "???",
+        order: (frontmatter?.order as number) ?? 100,
         filePath: file.path
     };
 }
@@ -154,7 +174,6 @@ export async function getPlannedTasks(
                     order: typeof frontmatter?.order === 'number' ? frontmatter.order : 0
                 };
 
-                // Добавляем специфичные поля
                 const taskId = getMaterialIdByName(settings.materialTypes, task.type);
 
                 switch (taskId) {
@@ -219,7 +238,6 @@ export async function getKnowledgeItems(
                     order: typeof frontmatter?.order === 'number' ? frontmatter.order : 0
                 };
 
-                // Добавляем специфичные поля
                 const taskId = getMaterialIdByName(settings.materialTypes, item.type);
 
                 switch (taskId) {
@@ -288,7 +306,7 @@ export async function getItems(
 
         await Promise.all(files.map(async (file) => {
             try {
-                const frontmatter = metadataCache.getFileCache(file)?.frontmatter;
+                const frontmatter = metadataCache.getFileCache(file)?.frontmatter as FrontmatterData | undefined;
                 if (!frontmatter) return;
 
                 const status = frontmatter?.status;
@@ -301,13 +319,13 @@ export async function getItems(
                     : file.path;
 
                 const commonFields = {
-                    status: frontmatter?.status || "???",
-                    title: frontmatter?.title || file.basename || "???",
-                    type: frontmatter?.type || "???",
-                    section: frontmatter?.section || "???",
-                    order: frontmatter?.order ?? 100,
-                    startDate: frontmatter?.startDate || "",
-                    dueDate: frontmatter?.dueDate || "",
+                    status: (frontmatter?.status as string) || "???",
+                    title: (frontmatter?.title as string) || file.basename || "???",
+                    type: (frontmatter?.type as string) || "???",
+                    section: (frontmatter?.section as string) || "???",
+                    order: (frontmatter?.order as number) ?? 100,
+                    startDate: (frontmatter?.startDate as string) || "",
+                    dueDate: (frontmatter?.dueDate as string) || "",
                     filePath: fileName,
                 };
 
@@ -317,9 +335,9 @@ export async function getItems(
                     case 'book': {
                         const bookTask: BookTask = {
                             ...commonFields,
-                            authors: frontmatter?.authors || "???",
-                            name: frontmatter?.name || "???",
-                            pages: frontmatter?.pages ?? 0,
+                            authors: (frontmatter?.authors as string) || "???",
+                            name: (frontmatter?.name as string) || "???",
+                            pages: (frontmatter?.pages as number) ?? 0,
                         };
                         result.books.push(bookTask);
                         break;
@@ -327,8 +345,8 @@ export async function getItems(
                     case 'article': {
                         const articleTask: ArticleTask = {
                             ...commonFields,
-                            link: frontmatter?.link || "???",
-                            durationInMinutes: frontmatter?.durationInMinutes ?? 0,
+                            link: (frontmatter?.link as string) || "???",
+                            durationInMinutes: (frontmatter?.durationInMinutes as number) ?? 0,
                         };
                         result.articles.push(articleTask);
                         break;
@@ -336,10 +354,10 @@ export async function getItems(
                     case 'video': {
                         const videoTask: VideoTask = {
                             ...commonFields,
-                            author: frontmatter?.author || "???",
-                            platform: frontmatter?.platform || "???",
-                            link: frontmatter?.link || "???",
-                            durationInMinutes: frontmatter?.durationInMinutes ?? 0,
+                            author: (frontmatter?.author as string) || "???",
+                            platform: (frontmatter?.platform as string) || "???",
+                            link: (frontmatter?.link as string) || "???",
+                            durationInMinutes: (frontmatter?.durationInMinutes as number) ?? 0,
                         };
                         result.videos.push(videoTask);
                         break;
@@ -347,10 +365,10 @@ export async function getItems(
                     case 'podcast': {
                         const podcastTask: PodcastTask = {
                             ...commonFields,
-                            platform: frontmatter?.platform || "???",
-                            link: frontmatter?.link || "???",
-                            episodes: frontmatter?.episodes ?? 1,
-                            durationInMinutes: frontmatter?.durationInMinutes ?? 0,
+                            platform: (frontmatter?.platform as string) || "???",
+                            link: (frontmatter?.link as string) || "???",
+                            episodes: (frontmatter?.episodes as number) ?? 1,
+                            durationInMinutes: (frontmatter?.durationInMinutes as number) ?? 0,
                         };
                         result.podcasts.push(podcastTask);
                         break;
@@ -358,9 +376,9 @@ export async function getItems(
                     case 'course': {
                         const courseTask: CourseTask = {
                             ...commonFields,
-                            platform: frontmatter?.platform || "???",
-                            link: frontmatter?.link || "???",
-                            durationInMinutes: frontmatter?.durationInMinutes ?? 0,
+                            platform: (frontmatter?.platform as string) || "???",
+                            link: (frontmatter?.link as string) || "???",
+                            durationInMinutes: (frontmatter?.durationInMinutes as number) ?? 0,
                         };
                         result.courses.push(courseTask);
                         break;
@@ -368,7 +386,7 @@ export async function getItems(
                     default: {
                         const userTypeTask: UserTypeTask = {
                             ...commonFields,
-                            laborInputInHours: frontmatter?.laborInputInHours ?? 0,
+                            laborInputInHours: (frontmatter?.laborInputInHours as number) ?? 0,
                         };
                         result.userTypes.push(userTypeTask);
                         break;
@@ -420,14 +438,14 @@ async function getFilesInFolderWithRetry(
     return [];
 }
 
-async function processFilesWithRetry(
+async function processFilesWithRetry<T>(
     vault: Vault,
     files: TFile[],
     metadataCache: MetadataCache,
-    processor: FileProcessor<any>,
+    processor: FileProcessor<T>,
     retries = 3,
     delay = 100
-): Promise<any[]> {
+): Promise<T[]> {
     for (let i = 0; i < retries; i++) {
         try {
             const result = await processFiles(vault, files, metadataCache, processor);
@@ -439,7 +457,7 @@ async function processFilesWithRetry(
             if (i === retries - 1) throw error;
         }
     }
-    return [];
+    return [] as T[];
 }
 
 export function isTaskOverdue(task: TaskInProgress): boolean {
