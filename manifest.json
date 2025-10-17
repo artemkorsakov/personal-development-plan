@@ -1,7 +1,7 @@
 {
 	"id": "personal-development-plan",
 	"name": "Personal development plan",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"minAppVersion": "0.15.0",
 	"description": "Build your personal development plan.",
 	"author": "Artem Korsakov",
