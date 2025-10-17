@@ -5,7 +5,24 @@ import { PodcastTask } from '../../settings/task-types';
 import { PersonalDevelopmentPlanSettings } from '../../settings/settings-types';
 import { generateSafeTitle } from '../../utils/taskUtils';
 
+interface PodcastFormData {
+    status: string;
+    sectionId?: string;
+    order?: number;
+    startDate?: string;
+    dueDate?: string;
+    name?: string;
+    platform?: string;
+    link?: string;
+    episodes?: number;
+    durationInMinutes?: number;
+    filePath?: string;
+    [key: string]: unknown;
+}
+
 export class PodcastFormBuilder extends TaskFormBuilder {
+    protected formData: PodcastFormData;
+
     constructor(
         settings: PersonalDevelopmentPlanSettings,
         container: HTMLElement,
@@ -13,6 +30,7 @@ export class PodcastFormBuilder extends TaskFormBuilder {
         taskType: string
     ) {
         super(settings, container, taskStatus, taskType);
+        this.formData = { status: taskStatus };
     }
 
     buildForm() {
@@ -45,7 +63,7 @@ export class PodcastFormBuilder extends TaskFormBuilder {
                 text.setPlaceholder('10')
                     .inputEl.type = 'number';
                 text.onChange(value => {
-                    this.formData.episodes = parseFloat(value) || 0;
+                    this.formData.episodes = parseInt(value) || 0;
                 });
             });
 
@@ -75,11 +93,11 @@ export class PodcastFormBuilder extends TaskFormBuilder {
             order: this.formData.order || 999,
             startDate: this.formData.startDate || '',
             dueDate: this.formData.dueDate || '',
-            filePath: this.formData.filePath
+            filePath: this.formData.filePath || ''
         };
     }
 
     generateTitle(): string {
-        return generateSafeTitle(this.formData.name);
+        return generateSafeTitle(this.formData.name || '');
     }
 }

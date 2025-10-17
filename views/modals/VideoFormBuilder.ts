@@ -5,7 +5,24 @@ import { VideoTask } from '../../settings/task-types';
 import { PersonalDevelopmentPlanSettings } from '../../settings/settings-types';
 import { generateSafeTitle } from '../../utils/taskUtils';
 
+interface VideoFormData {
+    status: string;
+    sectionId?: string;
+    order?: number;
+    startDate?: string;
+    dueDate?: string;
+    name?: string;
+    author?: string;
+    platform?: string;
+    link?: string;
+    durationInMinutes?: number;
+    filePath?: string;
+    [key: string]: unknown;
+}
+
 export class VideoFormBuilder extends TaskFormBuilder {
+    protected formData: VideoFormData;
+
     constructor(
         settings: PersonalDevelopmentPlanSettings,
         container: HTMLElement,
@@ -13,6 +30,7 @@ export class VideoFormBuilder extends TaskFormBuilder {
         taskType: string
     ) {
         super(settings, container, taskStatus, taskType);
+        this.formData = { status: taskStatus };
     }
 
     buildForm() {
@@ -72,11 +90,11 @@ export class VideoFormBuilder extends TaskFormBuilder {
             order: this.formData.order || 999,
             startDate: this.formData.startDate || '',
             dueDate: this.formData.dueDate || '',
-            filePath: this.formData.filePath
+            filePath: this.formData.filePath || ''
         };
     }
 
     generateTitle(): string {
-        return generateSafeTitle(this.formData.name);
+        return generateSafeTitle(this.formData.name || '');
     }
 }

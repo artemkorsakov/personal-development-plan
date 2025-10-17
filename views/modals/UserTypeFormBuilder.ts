@@ -5,7 +5,21 @@ import { UserTypeTask } from '../../settings/task-types';
 import { PersonalDevelopmentPlanSettings } from '../../settings/settings-types';
 import { generateSafeTitle } from '../../utils/taskUtils';
 
+interface UserTypeFormData {
+    status: string;
+    sectionId?: string;
+    order?: number;
+    startDate?: string;
+    dueDate?: string;
+    name?: string;
+    laborInputInHours?: number;
+    filePath?: string;
+    [key: string]: unknown;
+}
+
 export class UserTypeFormBuilder extends TaskFormBuilder {
+    protected formData: UserTypeFormData;
+
     constructor(
         settings: PersonalDevelopmentPlanSettings,
         container: HTMLElement,
@@ -13,6 +27,7 @@ export class UserTypeFormBuilder extends TaskFormBuilder {
         taskType: string
     ) {
         super(settings, container, taskStatus, taskType);
+        this.formData = { status: taskStatus };
     }
 
     buildForm() {
@@ -48,11 +63,11 @@ export class UserTypeFormBuilder extends TaskFormBuilder {
             order: this.formData.order || 999,
             startDate: this.formData.startDate || '',
             dueDate: this.formData.dueDate || '',
-            filePath: this.formData.filePath
+            filePath: this.formData.filePath || ''
         };
     }
 
     generateTitle(): string {
-        return generateSafeTitle(this.formData.name);
+        return generateSafeTitle(this.formData.name || '');
     }
 }

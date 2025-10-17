@@ -5,14 +5,30 @@ import { BookTask } from '../../settings/task-types';
 import { PersonalDevelopmentPlanSettings } from '../../settings/settings-types';
 import { generateSafeTitle } from '../../utils/taskUtils';
 
+interface BookFormData {
+    status: string;
+    sectionId?: string;
+    order?: number;
+    startDate?: string;
+    dueDate?: string;
+    name?: string;
+    authors?: string;
+    pages?: number;
+    filePath?: string;
+    [key: string]: unknown;
+}
+
 export class BookFormBuilder extends TaskFormBuilder {
-	constructor(
-		settings: PersonalDevelopmentPlanSettings,
+    protected formData: BookFormData;
+
+    constructor(
+        settings: PersonalDevelopmentPlanSettings,
         container: HTMLElement,
         taskStatus: string,
         taskType: string
     ) {
-		super(settings, container, taskStatus, taskType);
+        super(settings, container, taskStatus, taskType);
+        this.formData = { status: taskStatus };
     }
 
     buildForm() {
@@ -45,7 +61,7 @@ export class BookFormBuilder extends TaskFormBuilder {
 
     getTaskData(): BookTask {
         return {
-			status: this.formData.status,
+            status: this.formData.status,
             type: this.getType(),
             section: this.settings.sections.find(s => s.id === this.formData.sectionId)?.name || '',
             authors: this.formData.authors || '',
@@ -55,12 +71,12 @@ export class BookFormBuilder extends TaskFormBuilder {
             order: this.formData.order || 999,
             startDate: this.formData.startDate || '',
             dueDate: this.formData.dueDate || '',
-            filePath: this.formData.filePath
+            filePath: this.formData.filePath || ''
         };
     }
 
     generateTitle(): string {
-        const name =  `${this.formData.authors || 'Unknown authors'} - ${this.formData.name || 'Untitled book'}`;
+        const name = `${this.formData.authors || 'Unknown authors'} - ${this.formData.name || 'Untitled book'}`;
         return generateSafeTitle(name);
     }
 }

@@ -5,8 +5,21 @@ import { getMaterialNameById } from '../../settings/settings-types';
 import { TaskType } from '../../settings/task-types';
 import { formatDateForInput } from '../../utils/dateUtils';
 
+interface TaskFormData {
+    status: string;
+    sectionId?: string;
+    order?: number;
+    startDate?: string;
+    dueDate?: string;
+    name?: string;
+    link?: string;
+    durationInMinutes?: number;
+    filePath?: string;
+    [key: string]: unknown;
+}
+
 export abstract class TaskFormBuilder {
-    protected formData: Record<string, any> = {};
+    protected formData: TaskFormData;
 
     constructor(
         protected settings: PersonalDevelopmentPlanSettings,
@@ -14,7 +27,7 @@ export abstract class TaskFormBuilder {
         protected taskStatus: string,
         protected taskType: string
     ) {
-        this.formData.status = taskStatus;
+        this.formData = { status: taskStatus };
     }
 
     abstract buildForm(): void;
@@ -65,7 +78,7 @@ export abstract class TaskFormBuilder {
      * @param fieldName Имя поля в formData
      * @param defaultValue Значение по умолчанию (Date или строка в формате YYYY-MM-DD)
      */
-    protected addDateField(label: string, fieldName: string, defaultValue?: Date | string) {
+    protected addDateField(label: string, fieldName: keyof TaskFormData, defaultValue?: Date | string) {
         const setting = new Setting(this.container)
             .setName(label)
             .addText(text => {

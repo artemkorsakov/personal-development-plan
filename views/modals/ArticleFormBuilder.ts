@@ -5,14 +5,30 @@ import { ArticleTask } from '../../settings/task-types';
 import { PersonalDevelopmentPlanSettings } from '../../settings/settings-types';
 import { generateSafeTitle } from '../../utils/taskUtils';
 
+interface ArticleFormData {
+    status: string;
+    sectionId?: string;
+    order?: number;
+    startDate?: string;
+    dueDate?: string;
+    name?: string;
+    link?: string;
+    durationInMinutes?: number;
+    filePath?: string;
+    [key: string]: unknown;
+}
+
 export class ArticleFormBuilder extends TaskFormBuilder {
-	constructor(
-		settings: PersonalDevelopmentPlanSettings,
+    protected formData: ArticleFormData;
+
+    constructor(
+        settings: PersonalDevelopmentPlanSettings,
         container: HTMLElement,
         taskStatus: string,
         taskType: string
     ) {
-		super(settings, container, taskStatus, taskType);
+        super(settings, container, taskStatus, taskType);
+        this.formData = { status: taskStatus };
     }
 
     buildForm() {
@@ -49,7 +65,7 @@ export class ArticleFormBuilder extends TaskFormBuilder {
 
     getTaskData(): ArticleTask {
         return {
-			status: this.formData.status,
+            status: this.formData.status,
             type: this.getType(),
             section: this.settings.sections.find(s => s.id === this.formData.sectionId)?.name || '',
             title: this.generateTitle(),
@@ -58,11 +74,11 @@ export class ArticleFormBuilder extends TaskFormBuilder {
             order: this.formData.order || 999,
             startDate: this.formData.startDate || '',
             dueDate: this.formData.dueDate || '',
-            filePath: this.formData.filePath
+            filePath: this.formData.filePath || ''
         };
     }
 
     generateTitle(): string {
-        return generateSafeTitle(this.formData.name);
+        return generateSafeTitle(this.formData.name || '');
     }
 }
