@@ -295,8 +295,11 @@ export interface TranslationKeys {
     importErrorInstructions: string;
 }
 
-export interface ParametrizedTranslations {
-    confirmDeleteTask: (params: { taskName: string }) => string;
-    freeOrderAfter: (params: { order: string; taskName: string }) => string;
-    [key: string]: (params: any) => string;
+export interface ParametrizedTranslationParams {
+    confirmDeleteTask: { taskName: string };
+    freeOrderAfter: { order: string; taskName: string };
 }
+
+export type ParametrizedTranslations = {
+    [K in keyof ParametrizedTranslationParams]: (params: ParametrizedTranslationParams[K]) => string;
+};

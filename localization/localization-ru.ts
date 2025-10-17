@@ -299,5 +299,5 @@ export const ru: TranslationKeys = {
 
 export const ruParametrized: ParametrizedTranslations = {
     confirmDeleteTask: (params: { taskName: string }) => `Вы уверены, что хотите удалить задачу "${params.taskName}"?`,
-    freeOrderAfter: (params: { order: string, taskName: string }) => `Cвободный номер ${params.order}, предыдущая задача: \"${params.taskName}\"`
+    freeOrderAfter: (params: { order: string, taskName: string }) => `Свободный порядок ${params.order}, после задачи: \"${params.taskName}\"`
 };
