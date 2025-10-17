@@ -8,7 +8,7 @@ import { t } from '../../localization/localization';
 import { PersonalDevelopmentPlanSettings, getMaterialIdByName } from '../../settings/settings-types';
 import CreateTaskModal from '../modals/CreateTaskModal';
 import { ConfirmDeleteModal } from '../modals/ConfirmDeleteModal';
-import { CompleteTaskModal } from '../modals/CompleteTaskModal';
+import { CompleteTaskModal, CompleteTaskModalData } from '../modals/CompleteTaskModal';
 import { PostponeTaskModal } from '../modals/PostponeTaskModal';
 import { PeriodicTasks } from './PeriodicTasks';
 
@@ -176,14 +176,29 @@ export default class InProgressTab {
         }
     }
 
-    private static async saveToHistory(task: TaskInProgress, result: any) {
+    private static async saveToHistory(task: TaskInProgress, result: CompleteTaskModalData) {
         const historyFolder = this.settings.historyFolderPath;
         const historyFilePath = `${historyFolder}/completed_tasks.json`;
+
+        interface HistoryItem {
+            type: string;
+            title: string;
+            startDate: string;
+            completionDate: string;
+            workingDays: number;
+            rating: number;
+            review: string;
+            completedAt: string;
+            section: string;
+            pages: number | undefined;
+            laborInputInHours: number | undefined;
+            durationInMinutes: number | undefined;
+        }
 
         try {
             await this.app.vault.createFolder(historyFolder).catch(() => {});
 
-            let historyData: any[] = [];
+            let historyData: HistoryItem[] = [];
             const abstractFile = this.app.vault.getAbstractFileByPath(historyFilePath);
 
             if (abstractFile) {
@@ -193,8 +208,11 @@ export default class InProgressTab {
 
                 try {
                     const content = await this.app.vault.read(abstractFile);
-                    historyData = JSON.parse(content);
-                    if (!Array.isArray(historyData)) {
+                    const parsedData = JSON.parse(content);
+
+                    if (Array.isArray(parsedData)) {
+                        historyData = parsedData as HistoryItem[];
+                    } else {
                         historyData = [];
                     }
                 } catch (readError) {
@@ -203,7 +221,7 @@ export default class InProgressTab {
                 }
             }
 
-            const completedTask = {
+            const completedTask: HistoryItem = {
                 type: task.type,
                 title: task.name,
                 startDate: task.startDate,
