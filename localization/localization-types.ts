@@ -98,6 +98,8 @@ export interface TranslationKeys {
 
     // Default material types
     all: string;
+    otherTypes: string;
+    otherSections: string;
     book: string;
     bookTask1: string;
     bookTask2: string;

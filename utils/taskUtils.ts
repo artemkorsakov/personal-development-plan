@@ -479,7 +479,8 @@ const TYPE_ICONS: Record<string, string> = {
     course: "🎓",
     video: "▶️",
     podcast: "🎧",
-    periodic: "🔄"
+    periodic: "🔄",
+    other: "📦"
 };
 
 export function getTaskTypeIcon(type: string): string {

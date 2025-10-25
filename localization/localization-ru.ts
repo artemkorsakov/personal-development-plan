@@ -100,6 +100,8 @@ export const ru: TranslationKeys = {
 
     // Default material types
     all: 'Все',
+    otherTypes: 'Остальные',
+    otherSections: 'Остальные',
     book: 'Книга',
     bookTask1: 'Прочитать книгу',
     bookTask2: 'Конспектировать',

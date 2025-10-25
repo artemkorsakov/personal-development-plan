@@ -100,6 +100,8 @@ export const en: TranslationKeys = {
 
     // Default material types
     all: 'All',
+    otherTypes: 'Other',
+    otherSections: 'Other',
     book: 'Book',
     bookTask1: 'Read book',
     bookTask2: 'Take notes',

@@ -49,17 +49,13 @@ export default class KnowledgeBaseTab {
 
     static async refreshContent() {
         try {
-            // Получаем свежие экземпляры vault и metadataCache
             const vault = this.app.vault;
             const metadataCache = this.app.metadataCache;
 
-            // Принудительно обновляем данные
             const allItems = await getKnowledgeItems(vault, this.settings, metadataCache);
 
-            // Обновляем UI
             this.updateContent(this.contentContainer, allItems);
 
-            // Обновляем счетчики во вкладках
             const mainContainer = this.contentContainer.closest('.knowledge-base-container');
             if (mainContainer) {
                 const typeTabs = mainContainer.querySelector('.knowledge-type-tabs') as HTMLElement;
@@ -153,7 +149,8 @@ export default class KnowledgeBaseTab {
             .filter(type => type.enabled)
             .sort((a, b) => a.order - b.order);
 
-        // Add "All" tab
+        const enabledTypeNames = enabledTypes.map(type => type.name);
+
         const allTab = this.createTab(
             'all',
             `${getTaskTypeIcon('all')} ${t('all')}`,
@@ -190,7 +187,26 @@ export default class KnowledgeBaseTab {
             container.appendChild(tab);
         });
 
-        // Set 'all' tab as active by default
+        const otherTypesCount = items.filter(item => !enabledTypeNames.includes(item.type)).length;
+        if (otherTypesCount > 0) {
+            const otherTab = this.createTab(
+                'other-types',
+                `${getTaskTypeIcon('other')} ${t('otherTypes')}`,
+                otherTypesCount
+            );
+
+            otherTab.addEventListener('click', () => {
+                this.currentType = 'other';
+                this.currentSection = null;
+                this.setActiveTab(otherTab, container);
+                this.resetActiveTab(container.parentElement?.querySelector('.knowledge-section-tabs'));
+                this.updateContent(contentContainer, items);
+                this.updateSectionTabsCounts(container.parentElement?.querySelector('.knowledge-section-tabs'), items);
+            });
+
+            container.appendChild(otherTab);
+        }
+
         allTab.click();
     }
 
@@ -202,13 +218,12 @@ export default class KnowledgeBaseTab {
     ) {
         const sections = [...settings.sections].sort((a, b) => a.order - b.order);
 
-        // Add "All" tab
+        const sectionNames = sections.map(section => section.name);
+
         const allTab = this.createTab(
             'all-sections',
             t('all'),
-            this.currentType
-                ? items.filter(item => item.type === this.currentType).length
-                : items.length
+            this.getFilteredItemsCount(items, null, null)
         );
 
         allTab.addEventListener('click', () => {
@@ -220,10 +235,7 @@ export default class KnowledgeBaseTab {
         container.appendChild(allTab);
 
         sections.forEach(section => {
-            const count = items.filter(item =>
-                item.section === section.name &&
-                (!this.currentType || item.type === this.currentType)
-            ).length;
+            const count = this.getFilteredItemsCount(items, this.currentType, section.name);
 
             const tab = this.createTab(
                 section.id,
@@ -239,6 +251,46 @@ export default class KnowledgeBaseTab {
 
             container.appendChild(tab);
         });
+
+        const otherSectionsCount = this.getFilteredItemsCount(items, this.currentType, 'other');
+
+        if (otherSectionsCount > 0) {
+            const otherTab = this.createTab(
+                'other-sections',
+                t('otherSections'),
+                otherSectionsCount
+            );
+
+            otherTab.addEventListener('click', () => {
+                this.currentSection = 'other';
+                this.setActiveTab(otherTab, container);
+                this.updateContent(contentContainer, items);
+            });
+
+            container.appendChild(otherTab);
+        }
+    }
+
+    private static getFilteredItemsCount(items: KnowledgeItem[], typeFilter: string | null, sectionFilter: string | null): number {
+        let filteredItems = [...items];
+
+        if (typeFilter === 'other') {
+            const enabledTypeNames = this.settings.materialTypes
+                .filter(type => type.enabled)
+                .map(type => type.name);
+            filteredItems = filteredItems.filter(item => !enabledTypeNames.includes(item.type));
+        } else if (typeFilter) {
+            filteredItems = filteredItems.filter(item => item.type === typeFilter);
+        }
+
+        if (sectionFilter === 'other') {
+            const sectionNames = this.settings.sections.map(section => section.name);
+            filteredItems = filteredItems.filter(item => !sectionNames.includes(item.section));
+        } else if (sectionFilter) {
+            filteredItems = filteredItems.filter(item => item.section === sectionFilter);
+        }
+
+        return filteredItems.length;
     }
 
     private static createTab(id: string, label: string, count: number): HTMLElement {
@@ -259,11 +311,19 @@ export default class KnowledgeBaseTab {
 
         let filteredItems = [...items];
 
-        if (this.currentType) {
+        if (this.currentType === 'other') {
+            const enabledTypeNames = this.settings.materialTypes
+                .filter(type => type.enabled)
+                .map(type => type.name);
+            filteredItems = filteredItems.filter(item => !enabledTypeNames.includes(item.type));
+        } else if (this.currentType) {
             filteredItems = filteredItems.filter(item => item.type === this.currentType);
         }
 
-        if (this.currentSection) {
+        if (this.currentSection === 'other') {
+            const sectionNames = this.settings.sections.map(section => section.name);
+            filteredItems = filteredItems.filter(item => !sectionNames.includes(item.section));
+        } else if (this.currentSection) {
             filteredItems = filteredItems.filter(item => item.section === this.currentSection);
         }
 
@@ -300,18 +360,15 @@ export default class KnowledgeBaseTab {
             row.createEl('td', { text: item.type });
             row.createEl('td', { text: item.section });
 
-            // Добавляем столбец с кнопками действий
             const actionsCell = row.createEl('td');
             actionsCell.className = 'knowledge-item-actions';
 
-            // Кнопка "В очередь"
             const planBtn = actionsCell.createEl('button', {
                 cls: 'knowledge-action-btn plan-btn',
                 text: t('addToQueue')
             });
             planBtn.addEventListener('click', () => this.handlePlanTask(item));
 
-            // Кнопка "Удалить"
             const deleteBtn = actionsCell.createEl('button', {
                 cls: 'knowledge-action-btn delete-btn',
                 text: t('delete')
@@ -325,22 +382,34 @@ export default class KnowledgeBaseTab {
     private static updateTabCounts(container: HTMLElement, items: KnowledgeItem[]) {
         container.querySelectorAll('.knowledge-tab').forEach(tab => {
             const tabId = tab.getAttribute('data-id');
+            let count = 0;
+
             if (tabId === 'all') {
-                const count = items.length;
-                const labelSpan = tab.querySelector('.knowledge-tab-label');
-                if (labelSpan) {
-                    labelSpan.textContent = `${t('all')} (${count})`;
+                count = items.length;
+            } else if (tabId === 'other-types') {
+                const enabledTypeNames = this.settings.materialTypes
+                    .filter(type => type.enabled)
+                    .map(type => type.name);
+                count = items.filter(item => !enabledTypeNames.includes(item.type)).length;
+            } else {
+                const type = this.settings.materialTypes.find(t => t.id === tabId);
+                if (type) {
+                    count = items.filter(item => item.type === type.name).length;
                 }
-                return;
             }
 
-            const type = this.settings.materialTypes.find(t => t.id === tabId);
-            if (!type) return;
-
-            const count = items.filter(item => item.type === type.name).length;
             const labelSpan = tab.querySelector('.knowledge-tab-label');
             if (labelSpan) {
-                labelSpan.textContent = `${type.name} (${count})`;
+                if (tabId === 'all') {
+                    labelSpan.textContent = `${t('all')} (${count})`;
+                } else if (tabId === 'other-types') {
+                    labelSpan.textContent = `${t('otherTypes')} (${count})`;
+                } else {
+                    const type = this.settings.materialTypes.find(t => t.id === tabId);
+                    if (type) {
+                        labelSpan.textContent = `${type.name} (${count})`;
+                    }
+                }
             }
         });
     }
@@ -350,30 +419,63 @@ export default class KnowledgeBaseTab {
 
         container.querySelectorAll('.knowledge-tab').forEach(tab => {
             const sectionId = tab.getAttribute('data-id');
+            let count = 0;
+
             if (sectionId === 'all-sections') {
-                const count = this.currentType
-                    ? items.filter(item => item.type === this.currentType).length
-                    : items.length;
-                const labelSpan = tab.querySelector('.knowledge-tab-label');
-                if (labelSpan) {
-                    labelSpan.textContent = `${t('all')} (${count})`;
+                if (this.currentType === 'other') {
+                    const enabledTypeNames = this.settings.materialTypes
+                        .filter(type => type.enabled)
+                        .map(type => type.name);
+                    count = items.filter(item => !enabledTypeNames.includes(item.type)).length;
+                } else if (this.currentType) {
+                    count = items.filter(item => item.type === this.currentType).length;
+                } else {
+                    count = items.length;
                 }
-                return;
+            } else if (sectionId === 'other-sections') {
+                const sectionNames = this.settings.sections.map(section => section.name);
+
+                let filteredItems = items;
+                if (this.currentType === 'other') {
+                    const enabledTypeNames = this.settings.materialTypes
+                        .filter(type => type.enabled)
+                        .map(type => type.name);
+                    filteredItems = items.filter(item => !enabledTypeNames.includes(item.type));
+                } else if (this.currentType) {
+                    filteredItems = items.filter(item => item.type === this.currentType);
+                }
+
+                count = filteredItems.filter(item => !sectionNames.includes(item.section)).length;
+            } else {
+                const section = this.settings.sections.find((s: Section) => s.id === sectionId);
+                if (section) {
+                    let filteredItems = items.filter(item => item.section === section.name);
+
+                    if (this.currentType === 'other') {
+                        const enabledTypeNames = this.settings.materialTypes
+                            .filter(type => type.enabled)
+                            .map(type => type.name);
+                        filteredItems = filteredItems.filter(item => !enabledTypeNames.includes(item.type));
+                    } else if (this.currentType) {
+                        filteredItems = filteredItems.filter(item => item.type === this.currentType);
+                    }
+
+                    count = filteredItems.length;
+                }
             }
-
-            const section = this.settings.sections.find((s: Section) => s.id === sectionId);
-            if (!section) return;
-
-            const count = this.currentType
-                ? items.filter(item =>
-                    item.section === section.name &&
-                    item.type === this.currentType
-                ).length
-                : items.filter(item => item.section === section.name).length;
 
             const labelSpan = tab.querySelector('.knowledge-tab-label');
             if (labelSpan) {
-                labelSpan.textContent = `${section.name} (${count})`;
+                if (sectionId === 'all-sections') {
+                    labelSpan.textContent = `${t('all')} (${count})`;
+                } else if (sectionId === 'other-sections') {
+                    labelSpan.textContent = `${t('otherSections')} (${count})`;
+                } else {
+                    const section = this.settings.sections.find((s: Section) => s.id === sectionId);
+                    if (section) {
+                        labelSpan.textContent = `${section.name} (${count})`;
+                    }
+                }
             }
         });
     }

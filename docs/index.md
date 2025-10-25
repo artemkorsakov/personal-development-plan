@@ -73,13 +73,14 @@ Storage for tasks that are queued for execution.
 
 Materials are grouped by type (number of tasks of a given type in brackets):
 
-- 🗂️ All (51)
+- 🗂️ All (52)
 - 📚 Book (12)
 - 🎓 Course (5)
 - 📄 Article (23)
 - ▶️ Video (7)
 - 🎧️ Podcast (3)
 - ✏️ Custom type (1)
+- 📦 Other (1)
 
 Tasks are sorted by the `order` field, specified when [creating a task](lifecycle.md).
 

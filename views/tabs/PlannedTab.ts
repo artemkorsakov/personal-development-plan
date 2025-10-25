@@ -37,7 +37,7 @@ export default class PlannedTab {
 
         const allTasks = await getPlannedTasks(vault, settings, metadataCache);
         const [tabsContainer, contentContainer] = this.createContainers(mainContainer);
-        this.tabsContainer = tabsContainer as HTMLElement; // Приведение типа
+        this.tabsContainer = tabsContainer as HTMLElement;
         this.contentContainer = contentContainer;
 
         this.createTypeTabs(tabsContainer as HTMLElement, settings, allTasks, contentContainer);
@@ -95,13 +95,34 @@ export default class PlannedTab {
             const typeId = tab.getAttribute('data-type');
             if (!typeId) return;
 
-            const type = this.settings.materialTypes.find(t => t.id === typeId);
-            if (!type) return;
+            let taskCount = 0;
 
-            const taskCount = tasks.filter(task => task.type === type.name).length;
+            if (typeId === 'all') {
+                taskCount = tasks.length;
+            } else if (typeId === 'other') {
+                const enabledTypeNames = this.settings.materialTypes
+                    .filter(type => type.enabled)
+                    .map(type => type.name);
+                taskCount = tasks.filter(task => !enabledTypeNames.includes(task.type)).length;
+            } else {
+                const type = this.settings.materialTypes.find(t => t.id === typeId);
+                if (type) {
+                    taskCount = tasks.filter(task => task.type === type.name).length;
+                }
+            }
+
             const label = tab.querySelector('.planned-tab-label');
             if (label) {
-                label.textContent = `${type.name} (${taskCount})`;
+                if (typeId === 'other') {
+                    label.textContent = `${t('otherTypes')} (${taskCount})`;
+                } else if (typeId === 'all') {
+                    label.textContent = `${t('all')} (${taskCount})`;
+                } else {
+                    const type = this.settings.materialTypes.find(t => t.id === typeId);
+                    if (type) {
+                        label.textContent = `${type.name} (${taskCount})`;
+                    }
+                }
             }
         });
     }
@@ -122,7 +143,8 @@ export default class PlannedTab {
             .filter(type => type.enabled)
             .sort((a, b) => a.order - b.order);
 
-        // Добавляем вкладку "All"
+        const enabledTypeNames = enabledTypes.map(type => type.name);
+
         const allTab = container.createDiv({ cls: 'planned-tab', attr: { 'data-type': 'all' } });
         allTab.createSpan({ cls: 'planned-tab-icon', text: getTaskTypeIcon('all') });
         const allLabel = allTab.createSpan({ cls: 'planned-tab-label' });
@@ -152,7 +174,21 @@ export default class PlannedTab {
             });
         });
 
-        // По умолчанию выбираем вкладку "All"
+        const otherTasksCount = tasks.filter(task => !enabledTypeNames.includes(task.type)).length;
+        if (otherTasksCount > 0) {
+            const otherTab = container.createDiv({ cls: 'planned-tab', attr: { 'data-type': 'other' } });
+            otherTab.createSpan({ cls: 'planned-tab-icon', text: getTaskTypeIcon('other') });
+            const otherLabel = otherTab.createSpan({ cls: 'planned-tab-label' });
+            otherLabel.textContent = `${t('otherTypes')} (${otherTasksCount})`;
+
+            otherTab.addEventListener('click', () => {
+                this.currentType = 'other';
+                this.updateActiveTab(otherTab, container);
+                const otherTasks = tasks.filter(task => !enabledTypeNames.includes(task.type));
+                this.updateContent(contentContainer, otherTasks, 'other');
+            });
+        }
+
         allTab.click();
     }
 
@@ -166,7 +202,18 @@ export default class PlannedTab {
     private static updateContent(container: HTMLElement, tasks: PlannedTask[], type: string) {
         container.empty();
 
-        const filteredTasks = type ? tasks.filter(task => task.type === type) : [...tasks];
+        let filteredTasks: PlannedTask[];
+
+        if (type === 'other') {
+            const enabledTypeNames = this.settings.materialTypes
+                .filter(t => t.enabled)
+                .map(t => t.name);
+            filteredTasks = tasks.filter(task => !enabledTypeNames.includes(task.type));
+        } else if (type) {
+            filteredTasks = tasks.filter(task => task.type === type);
+        } else {
+            filteredTasks = [...tasks];
+        }
 
         if (filteredTasks.length === 0) {
             const emptyMsg = container.createDiv({ cls: 'planned-empty-message' });
@@ -196,10 +243,8 @@ export default class PlannedTab {
             const typeSpan = cardContent.createDiv({ cls: 'planned-type' });
             typeSpan.textContent = task.type;
 
-            // Добавляем кнопки действий
             const actionsContainer = taskCard.createDiv({ cls: 'planned-actions with-gap' });
 
-            // Кнопка "Взять в работу"
             const startBtn = actionsContainer.createEl('button', {
                 cls: 'knowledge-action-btn plan-btn',
                 text: t('startTask')
@@ -209,7 +254,6 @@ export default class PlannedTab {
                 this.handleStartTask(task);
             });
 
-            // Кнопка "Удалить"
             const deleteBtn = actionsContainer.createEl('button', {
                 cls: 'knowledge-action-btn delete-btn',
                 text: t('delete')
