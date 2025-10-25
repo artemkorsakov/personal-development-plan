@@ -164,15 +164,68 @@ export default class InProgressTab {
             try {
                 await this.saveToHistory(task, result);
                 const file = this.app.vault.getAbstractFileByPath(task.filePath);
-                if (file) {
-                    await this.app.fileManager.trashFile(file);
+
+                if (file && file instanceof TFile) {
+                    if (this.settings.moveCompletedToHistory) {
+                        await this.moveFileToHistoryFolder(file, this.settings.historyFolderPath);
+                    } else {
+                        await this.app.fileManager.trashFile(file);
+                    }
                 }
+
                 new Notice(t('taskCompletedSuccessfully'));
                 await this.updateTasksList();
             } catch (error) {
                 console.error('Error completing task:', error);
                 new Notice(t('errorCompletingTask'));
             }
+        }
+    }
+
+    private static async moveFileToHistoryFolder(file: TFile, historyFolderPath: string): Promise<void> {
+        try {
+            const historyFolder = this.app.vault.getAbstractFileByPath(historyFolderPath);
+            if (!historyFolder) {
+                await this.app.vault.createFolder(historyFolderPath);
+            }
+
+            await this.app.vault.process(file, (content: string) => {
+                const frontmatterRegex = /^---\n([\s\S]*?)\n---/;
+                const match = content.match(frontmatterRegex);
+
+                if (match) {
+                    let frontmatter = match[1];
+                    frontmatter = frontmatter.replace(/status:.*(\n|$)/g, '');
+                    frontmatter = frontmatter.replace(/\n+$/, '');
+
+                    if (frontmatter.length > 0 && !frontmatter.endsWith('\n')) {
+                        frontmatter += '\n';
+                    }
+
+                    frontmatter += `status: archived\n`;
+
+                    if (!frontmatter.endsWith('\n')) {
+                        frontmatter += '\n';
+                    }
+
+                    return content.replace(frontmatterRegex, `---\n${frontmatter}---`);
+                }
+                return content;
+            });
+
+
+            // Генерируем новое имя файла с timestamp для избежания конфликтов
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+            const fileName = file.name.replace(/\.md$/, '');
+            const newFileName = `${fileName}_completed_${timestamp}.md`;
+            const newFilePath = `${historyFolderPath}/${newFileName}`;
+
+            await this.app.fileManager.renameFile(file, newFilePath);
+
+        } catch (error) {
+            console.error('Error moving file to history folder:', error);
+            await this.app.fileManager.trashFile(file);
+            new Notice(t('errorMovingToHistory'));
         }
     }
 

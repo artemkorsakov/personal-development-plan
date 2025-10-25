@@ -28,7 +28,6 @@ export class CompleteTaskModal extends Modal {
 
         const form = contentEl.createEl('form');
 
-        // Поле для ревью (на всю ширину)
         const reviewGroup = form.createDiv({ cls: 'modal-form-group full-width' });
         reviewGroup.createEl('label', {
             text: t('taskReview'),
@@ -42,7 +41,6 @@ export class CompleteTaskModal extends Modal {
             cls: 'full-width-textarea'
         });
 
-        // Поле для оценки (выпадающий список)
         const ratingGroup = form.createDiv({ cls: 'modal-form-group' });
         ratingGroup.createEl('label', {
             text: t('taskRating'),
@@ -54,7 +52,6 @@ export class CompleteTaskModal extends Modal {
             cls: 'rating-select'
         });
 
-        // Добавляем варианты оценок
         const ratings = [
             { value: 1, label: '★ - ' + t('ratingPoor') },
             { value: 2, label: '★★ - ' + t('ratingFair') },
@@ -70,7 +67,6 @@ export class CompleteTaskModal extends Modal {
             });
         });
 
-        // Поле для даты завершения
         const dateGroup = form.createDiv({ cls: 'modal-form-group' });
         dateGroup.createEl('label', {
             text: t('completionDate'),
@@ -84,7 +80,6 @@ export class CompleteTaskModal extends Modal {
             }
         });
 
-        // Кнопки
         const buttonContainer = form.createDiv({ cls: 'modal-button-container' });
         const completeBtn = buttonContainer.createEl('button', {
             text: t('complete'),

@@ -47,10 +47,13 @@ export const ru: TranslationKeys = {
     folderPathDesc: 'Папка для хранения всех файлов плана развития',
     historyFolderPath: 'Путь к папке с историей',
     historyFolderPathDesc: 'Папка для хранения истории выполнения задач',
+    moveToHistory: 'Переместить завершенные файлы в папку "История"',
+    moveToHistoryDesc: 'Если включено, завершенные файлы будут автоматически перемещены в папку "История". Если отключено, завершенные файлы будут удалены.',
     maxActiveTasks: 'Максимум активных задач',
     maxActiveTasksDesc: 'Максимальное количество одновременно выполняемых задач (1-10)',
     statsStartDate: 'Начало отсчёта статистики',
     statsStartDateDesc: 'Дата начала сбора данных (формат: ГГГГ-ММ-ДД)',
+    cantDeleteTheLast: 'Нельзя удалить последний элемент',
 
     // Item management
     addNewType: '+ Новый тип',
@@ -180,6 +183,7 @@ export const ru: TranslationKeys = {
     ratingExcellent: 'Отлично (превзошло ожидания)',
     taskCompletedSuccessfully: 'Задача успешно завершена',
     errorCompletingTask: 'Ошибка при завершении задачи',
+    errorMovingToHistory: 'Ошибка при перемещении задачи в историю',
     postponeTask: 'Отложить задачу',
     confirmPostponeTask: 'Вы уверены, что хотите отложить эту задачу?',
     postpone: 'Отложить',

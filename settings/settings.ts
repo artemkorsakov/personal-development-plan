@@ -1,4 +1,4 @@
-import { App, Plugin, Setting, PluginSettingTab } from 'obsidian';
+import { App, Notice, Plugin, Setting, PluginSettingTab } from 'obsidian';
 import { MaterialType, PersonalDevelopmentPlanSettings, Section } from './settings-types';
 import { t } from '../localization/localization';
 import { TranslationKeys } from '../localization/localization-types';
@@ -78,6 +78,19 @@ export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
             });
 
         new Setting(section)
+            .setName(t('moveToHistory'))
+            .setDesc(t('moveToHistoryDesc'))
+            .addToggle(toggle => {
+                toggle.toggleEl.addClass('pdp-settings-toggle');
+                toggle
+                    .setValue(this.settings.moveCompletedToHistory || false)
+                    .onChange(async (value) => {
+                        this.settings.moveCompletedToHistory = value;
+                        await this.saveSettings();
+                    });
+            });
+
+        new Setting(section)
             .setName(t('maxActiveTasks'))
             .setDesc(t('maxActiveTasksDesc'))
             .addSlider(slider => {
@@ -110,7 +123,7 @@ export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
     private addMaterialTypesSettings(): void {
         const { containerEl } = this;
         const section = containerEl.createDiv({ cls: 'pdp-settings-section' });
-        
+
         new Setting(section)
             .setName(t('materialTypes'))
             .setHeading()
@@ -151,6 +164,22 @@ export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
                     button
                         .setButtonText('↓')
                         .onClick(async () => this.moveMaterialType(index, 'down'));
+                })
+                .addButton(button => {
+                    button.buttonEl.addClass('pdp-settings-button');
+                    button.buttonEl.addClass('pdp-settings-button-remove');
+                    button
+                        .setButtonText('×')
+                        .onClick(async () => {
+                            if (this.settings.materialTypes.length > 1) {
+                                this.settings.materialTypes.splice(index, 1);
+                                this.updateItemsOrder(this.settings.materialTypes);
+                                await this.saveSettings();
+                                this.display();
+                            } else {
+                                new Notice(t('cantDeleteTheLast'));
+                            }
+                        });
                 });
 
             setting.addButton(button => {
@@ -227,7 +256,7 @@ export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
     private addSectionsSettings(): void {
         const { containerEl } = this;
         const sectionContainer = containerEl.createDiv({ cls: 'pdp-settings-section' });
-        
+
         new Setting(sectionContainer)
             .setName(t('sectionsCategories'))
             .setHeading()
@@ -259,6 +288,22 @@ export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
                     button
                         .setButtonText('↓')
                         .onClick(async () => this.moveSection(index, 'down'));
+                })
+                .addButton(button => {
+                    button.buttonEl.addClass('pdp-settings-button');
+                    button.buttonEl.addClass('pdp-settings-button-remove');
+                    button
+                        .setButtonText('×')
+                        .onClick(async () => {
+                            if (this.settings.sections.length > 1) {
+                                this.settings.sections.splice(index, 1);
+                                this.updateItemsOrder(this.settings.sections);
+                                await this.saveSettings();
+                                this.display();
+                            } else {
+                                new Notice(t('cantDeleteTheLast'));
+                            }
+                        });
                 });
         });
 
@@ -295,7 +340,7 @@ export class PersonalDevelopmentPlanSettingsTab extends PluginSettingTab {
     private addPeriodicTasksSettings(): void {
         const { containerEl } = this;
         const sectionContainer = containerEl.createDiv({ cls: 'pdp-settings-section' });
-        
+
         new Setting(sectionContainer)
             .setName(t('periodicTasks'))
             .setHeading()
@@ -388,6 +433,7 @@ function getDefaultSettings(): PersonalDevelopmentPlanSettings {
         statsStartDate: now,
         folderPath: 'PersonalDevelopmentPlan',
         historyFolderPath: 'PersonalDevelopmentPlan/history',
+        moveCompletedToHistory: false,
         materialTypes: defaultMaterialTypes,
         sections: defaultSections,
         periodicTasks: {

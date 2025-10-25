@@ -44,10 +44,13 @@ export interface TranslationKeys {
     folderPathDesc: string;
     historyFolderPath: string;
     historyFolderPathDesc: string;
+    moveToHistory: string;
+    moveToHistoryDesc: string;
     maxActiveTasks: string;
     maxActiveTasksDesc: string;
     statsStartDate: string;
     statsStartDateDesc: string;
+    cantDeleteTheLast: string;
 
     // Item management
     addNewType: string;
@@ -181,6 +184,7 @@ export interface TranslationKeys {
     ratingExcellent: string;
     taskCompletedSuccessfully: string;
     errorCompletingTask: string;
+    errorMovingToHistory: string;
     postponeTask: string;
     confirmPostponeTask: string;
     postpone: string;

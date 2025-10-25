@@ -22,8 +22,31 @@ _Note:_ All texts inside the plugin (notifications, button names) will be transl
 Specifies where task files are stored in your Obsidian repository.
 
 - **Recommended values:**
-    - `PersonalDevelopmentPlan` is the default folder
-    - `Projects/Tasks` is an example of an alternative path
+	- `PersonalDevelopmentPlan` is the default folder
+	- `Projects/Tasks` is an example of an alternative path
+
+### 📁 Path to history folder
+
+Specifies where completed task files are stored when the "Move completed files to History Folder" option is enabled.
+
+- **Recommended values:**
+	- `PersonalDevelopmentPlan/history` is the default folder
+	- `PersonalDevelopmentPlan/archive` is an alternative naming
+	- Can be any folder path in your vault
+
+### 💾 Move completed files to History Folder
+
+When enabled, completed tasks are moved to the history folder instead of being deleted.
+
+- **When enabled:** Completed tasks are preserved in the history folder with their status changed to "archived"
+- **When disabled:** Completed tasks are moved to Obsidian's trash (default behavior)
+
+**Benefits of enabling:**
+
+- Preserve completed tasks for future reference
+- Maintain a complete history of your work
+- Review past accomplishments and progress
+- Files are automatically renamed with completion timestamp to avoid conflicts
 
 ### 🔢 Maximum active tasks
 

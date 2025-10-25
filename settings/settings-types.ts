@@ -5,6 +5,7 @@ export interface PersonalDevelopmentPlanSettings {
     statsStartDate: string;
     folderPath: string;
     historyFolderPath: string;
+    moveCompletedToHistory: boolean;
     materialTypes: MaterialType[];
     sections: Section[];
     periodicTasks: PeriodicTaskSettings;

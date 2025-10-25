@@ -47,10 +47,13 @@ export const en: TranslationKeys = {
     folderPathDesc: 'Folder to store all development plan files',
     historyFolderPath: 'History folder Path',
     historyFolderPathDesc: 'Folder to store history files',
+    moveToHistory: 'Move completed files to History Folder',
+    moveToHistoryDesc: 'When enabled, completed files will be automatically moved to the history folder. When disabled, completed files will be deleted.',
     maxActiveTasks: 'Max active Tasks',
     maxActiveTasksDesc: 'Maximum number of simultaneously active tasks (1-10)',
     statsStartDate: 'Statistics start Date',
     statsStartDateDesc: 'Start date for statistics collection (format: YYYY-MM-DD)',
+    cantDeleteTheLast: 'Cannot delete the last item',
 
     // Item management
     addNewType: '+ New type',
@@ -180,6 +183,7 @@ export const en: TranslationKeys = {
     ratingExcellent: 'Excellent (exceeded expectations)',
     taskCompletedSuccessfully: 'Task completed successfully',
     errorCompletingTask: 'Error completing task',
+    errorMovingToHistory: 'Failed to move file to history folder',
     postponeTask: 'Postpone task',
     confirmPostponeTask: 'Are you sure you want to postpone this task?',
     postpone: 'Postpone',
