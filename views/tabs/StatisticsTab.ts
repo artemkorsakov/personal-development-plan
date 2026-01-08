@@ -137,19 +137,11 @@ export class StatisticsTab {
         const section = container.createEl('section', { cls: 'stats-section' });
         section.createEl('h2', { text: t('contentTypeStatistics') });
 
-        this.createTable(section, [t('type'), t('totalInPlan'), t('remaining')],
+        this.createTable(section, [t('type'), t('totalInPlan'), t('remaining'), t('completedCount'), t('completedTotal')],
             Object.entries(stats).map(([type, typeStats]) => [
                 type,
                 typeStats.total.toString(),
-                typeStats.remaining
-            ])
-        );
-
-        section.createEl('div', { cls: 'stats-table-divider' });
-
-        this.createTable(section, [t('type'), t('completedCount'), t('completedTotal')],
-            Object.entries(stats).map(([type, typeStats]) => [
-                type,
+                typeStats.remaining,
                 typeStats.completed.toString(),
                 this.calculateTotalEffort(completedTasks, type)
             ])
