@@ -169,10 +169,17 @@ export default class KnowledgeBaseTab {
         container.appendChild(allTab);
 
         enabledTypes.forEach(type => {
+            const count = items.filter(item => item.type === type.name).length;
+
+            // Пропускаем тип, если нет задач
+            if (count === 0) {
+                return;
+            }
+
             const tab = this.createTab(
                 type.id,
                 `${getTaskTypeIcon(type.id)} ${type.name}`,
-                items.filter(item => item.type === type.name).length
+                count
             );
 
             tab.addEventListener('click', () => {
@@ -237,6 +244,11 @@ export default class KnowledgeBaseTab {
         sections.forEach(section => {
             const count = this.getFilteredItemsCount(items, this.currentType, section.name);
 
+            // Пропускаем раздел, если нет задач
+            if (count === 0) {
+                return;
+            }
+
             const tab = this.createTab(
                 section.id,
                 section.name,
@@ -294,7 +306,7 @@ export default class KnowledgeBaseTab {
     }
 
     private static createTab(id: string, label: string, count: number): HTMLElement {
-		const tab = createDiv();
+        const tab = createDiv();
         tab.addClass('knowledge-tab');
         tab.setAttribute('data-id', id);
 
@@ -380,7 +392,8 @@ export default class KnowledgeBaseTab {
     }
 
     private static updateTabCounts(container: HTMLElement, items: KnowledgeItem[]) {
-        container.querySelectorAll('.knowledge-tab').forEach(tab => {
+        container.querySelectorAll('.knowledge-tab').forEach((tabElement: Element) => {
+            const tab = tabElement as HTMLElement;
             const tabId = tab.getAttribute('data-id');
             let count = 0;
 
@@ -411,13 +424,21 @@ export default class KnowledgeBaseTab {
                     }
                 }
             }
+
+            // Скрываем вкладку, если количество задач равно 0
+            if (count === 0) {
+                tab.style.display = 'none';
+            } else {
+                tab.style.display = 'flex';
+            }
         });
     }
 
     private static updateSectionTabsCounts(container: HTMLElement | null | undefined, items: KnowledgeItem[]) {
         if (!container) return;
 
-        container.querySelectorAll('.knowledge-tab').forEach(tab => {
+        container.querySelectorAll('.knowledge-tab').forEach((tabElement: Element) => {
+            const tab = tabElement as HTMLElement;
             const sectionId = tab.getAttribute('data-id');
             let count = 0;
 
@@ -476,6 +497,13 @@ export default class KnowledgeBaseTab {
                         labelSpan.textContent = `${section.name} (${count})`;
                     }
                 }
+            }
+
+            // Скрываем вкладку, если количество задач равно 0
+            if (count === 0) {
+                tab.style.display = 'none';
+            } else {
+                tab.style.display = 'flex';
             }
         });
     }
