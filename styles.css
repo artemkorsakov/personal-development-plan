@@ -466,34 +466,32 @@
 
 .planned-tabs-container {
   display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.planned-type-tabs,
+.planned-section-tabs {
+  display: flex;
   flex-wrap: wrap;
   gap: 4px;
-  padding: 12px 16px 0;
-  background: var(--background-primary);
-  border-bottom: 1px solid var(--background-modifier-border);
-  position: sticky;
-  top: 0;
-  z-index: 1;
+  padding: 8px;
+  background: var(--background-secondary);
+  border-radius: 4px;
 }
 
 .planned-tab {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 12px;
+  padding: 6px 12px;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 0.9em;
-  color: var(--text-muted);
-  background: var(--background-secondary);
-  border: 1px solid transparent;
+  background: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
   transition: all 0.2s ease;
 }
 
 .planned-tab.active {
-  color: var(--text-normal);
   background: var(--interactive-accent);
-  border-color: var(--interactive-accent);
+  color: var(--text-on-accent);
 }
 
 .planned-tab.active .planned-tab-icon {
