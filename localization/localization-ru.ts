@@ -261,6 +261,9 @@ export const ru: TranslationKeys = {
     remainingPages: 'стр.',
     remainingHours: 'ч.',
     sectionStatistics: 'Статистика по разделам',
+    noStatisticsAvailable: 'Нет данных для расчета статистики',
+    noSectionStatistics: 'Нет данных для расчета статистики по разделам',
+    noForecastDataAvailable: 'Нет данных для расчета прогноза',
 
     // Forecast
     forecastTitle: 'Прогноз завершения',

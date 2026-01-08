@@ -261,6 +261,9 @@ export const en: TranslationKeys = {
     remainingPages: 'pages',
     remainingHours: 'hours',
     sectionStatistics: 'Section statistics',
+    noStatisticsAvailable: 'No statistics available',
+    noSectionStatistics: 'No section statistics',
+    noForecastDataAvailable: 'No forecast data available',
 
     // Forecast
     forecastTitle: 'Forecast completion',

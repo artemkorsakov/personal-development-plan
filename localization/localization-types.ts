@@ -259,6 +259,9 @@ export interface TranslationKeys {
     remainingPages: string;
     remainingHours: string;
     sectionStatistics: string;
+    noStatisticsAvailable: string;
+    noSectionStatistics: string;
+    noForecastDataAvailable: string;
 
     // Forecast
     forecastTitle: string;

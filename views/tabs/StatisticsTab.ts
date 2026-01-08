@@ -1,5 +1,5 @@
 import { App, MetadataCache, Vault, TFile } from 'obsidian';
-import { PersonalDevelopmentPlanSettings, getMaterialIdByName } from '../../settings/settings-types';
+import { PersonalDevelopmentPlanSettings, getMaterialIdByName, MaterialType } from '../../settings/settings-types';
 import { t } from '../../localization/localization';
 import { getActiveTasks, getPlannedTasks, getKnowledgeItems } from '../../utils/taskUtils';
 import { KnowledgeItem, PlannedTask, TaskInProgress } from '../tabs-types';
@@ -22,6 +22,19 @@ export class StatisticsTab {
     private static settings: PersonalDevelopmentPlanSettings;
     private static vault: Vault;
     private static metadataCache: MetadataCache;
+
+    // Вспомогательные методы для получения материалов
+    private static getEnabledMaterialTypes(): MaterialType[] {
+        return this.settings.materialTypes.filter(type => type.enabled);
+    }
+
+    private static getEnabledMaterialTypeNames(): string[] {
+        return this.getEnabledMaterialTypes().map(type => type.name);
+    }
+
+    private static getSectionNames(): string[] {
+        return this.settings.sections.map(section => section.name);
+    }
 
     static async create(app: App, settings: PersonalDevelopmentPlanSettings, vault: Vault, metadataCache: MetadataCache): Promise<HTMLElement> {
         this.settings = settings;
@@ -87,25 +100,53 @@ export class StatisticsTab {
         const allTasks = [...activeTasks, ...plannedTasks, ...knowledgeItems];
         const stats: Record<string, ContentTypeStats> = {};
 
-        this.settings.materialTypes.forEach(type => {
+        // Создаем статистику для включенных типов материалов
+        this.getEnabledMaterialTypes().forEach(type => {
             stats[type.name] = { total: 0, completed: 0, remaining: '0' };
         });
 
+        // Добавляем категорию "Остальные" для типов
+        stats[t('otherTypes')] = { total: 0, completed: 0, remaining: '0' };
+
+        // Получаем имена включенных типов
+        const enabledTypeNames = this.getEnabledMaterialTypeNames();
+
+        // Считаем задачи по типам
         allTasks.forEach(task => {
-            if (stats[task.type]) {
-                stats[task.type].total += 1; // Исправлено: вместо инкремента через ++
+            if (enabledTypeNames.includes(task.type) && stats[task.type]) {
+                stats[task.type].total += 1;
+            } else {
+                stats[t('otherTypes')].total += 1;
             }
         });
 
+        // Считаем выполненные задачи по типам
         completedTasks.forEach(task => {
-            if (stats[task.type]) {
-                stats[task.type].completed += 1; // Исправлено: вместо инкремента через ++
+            if (enabledTypeNames.includes(task.type) && stats[task.type]) {
+                stats[task.type].completed += 1;
+            } else {
+                stats[t('otherTypes')].completed += 1;
             }
         });
 
+        // Рассчитываем оставшиеся усилия для каждого типа
         Object.entries(stats).forEach(([type, typeStats]) => {
-            const materialId = getMaterialIdByName(this.settings.materialTypes, type);
-            const relevantTasks = allTasks.filter(t => t.type === type);
+            // Получаем актуальные задачи для этого типа
+            let relevantTasks: any[] = [];
+
+            if (type === t('otherTypes')) {
+                relevantTasks = allTasks.filter(t => !enabledTypeNames.includes(t.type));
+            } else if (enabledTypeNames.includes(type)) {
+                relevantTasks = allTasks.filter(t => t.type === type);
+            }
+
+            if (relevantTasks.length === 0) {
+                typeStats.remaining = type === t('otherTypes') ? `0 ${t('remainingHours')}` : '0';
+                return;
+            }
+
+            // Определяем ID материала для типа
+            const materialId = type === t('otherTypes') ? 'other' : getMaterialIdByName(this.settings.materialTypes, type);
 
             if (materialId === 'book') {
                 const totalPages = relevantTasks.reduce((sum, task) => sum + (task.pages || 0), 0);
@@ -121,11 +162,41 @@ export class StatisticsTab {
         return stats;
     }
 
-    private static calculateSectionStats(activeTasks: TaskInProgress[], plannedTasks: PlannedTask[], knowledgeItems: KnowledgeItem[]): Record<string, number> {
+    private static calculateSectionStats(
+        activeTasks: TaskInProgress[],
+        plannedTasks: PlannedTask[],
+        knowledgeItems: KnowledgeItem[]
+    ): Record<string, number> {
         const sectionCounts: Record<string, number> = {};
-        [...activeTasks, ...plannedTasks, ...knowledgeItems].forEach(task => {
-            if (task.section) sectionCounts[task.section] = (sectionCounts[task.section] || 0) + 1;
+        const allTasks = [...activeTasks, ...plannedTasks, ...knowledgeItems];
+
+        // Получаем имена разделов
+        const sectionNames = this.getSectionNames();
+
+        // Создаем записи для всех включенных разделов
+        sectionNames.forEach(sectionName => {
+            sectionCounts[sectionName] = 0;
         });
+
+        // Добавляем категорию "Остальные" для разделов
+        sectionCounts[t('otherSections')] = 0;
+
+        // Считаем задачи по разделам
+        allTasks.forEach(task => {
+            if (task.section && sectionNames.includes(task.section)) {
+                sectionCounts[task.section] = (sectionCounts[task.section] || 0) + 1;
+            } else if (task.section) {
+                sectionCounts[t('otherSections')] = (sectionCounts[t('otherSections')] || 0) + 1;
+            }
+        });
+
+        // Удаляем пустые разделы
+        Object.keys(sectionCounts).forEach(section => {
+            if (sectionCounts[section] === 0) {
+                delete sectionCounts[section];
+            }
+        });
+
         return sectionCounts;
     }
 
@@ -137,8 +208,19 @@ export class StatisticsTab {
         const section = container.createEl('section', { cls: 'stats-section' });
         section.createEl('h2', { text: t('contentTypeStatistics') });
 
-        this.createTable(section, [t('type'), t('totalInPlan'), t('remaining'), t('completedCount'), t('completedTotal')],
-            Object.entries(stats).map(([type, typeStats]) => [
+        // Фильтруем только типы, у которых есть задачи
+        const filteredStats = Object.entries(stats).filter(([type, typeStats]) =>
+            typeStats.total > 0 || typeStats.completed > 0
+        );
+
+        if (filteredStats.length === 0) {
+            section.createEl('p', { text: t('noStatisticsAvailable') });
+            return;
+        }
+
+        this.createTable(section,
+            [t('type'), t('totalInPlan'), t('remaining'), t('completedCount'), t('completedTotal')],
+            filteredStats.map(([type, typeStats]) => [
                 type,
                 typeStats.total.toString(),
                 typeStats.remaining,
@@ -166,14 +248,31 @@ export class StatisticsTab {
     }
 
     private static calculateTotalEffort(completedTasks: CompletedTask[], type: string): string {
-        const materialId = getMaterialIdByName(this.settings.materialTypes, type);
-        const total = completedTasks
-            .filter(task => task.type === type)
-            .reduce((sum, task) => {
-                if (materialId === 'book') return sum + (task.pages || 0);
-                if (task.durationInMinutes) return sum + task.durationInMinutes / 60;
-                return sum + (task.laborInputInHours || 0);
-            }, 0);
+        // Получаем имена включенных типов
+        const enabledTypeNames = this.getEnabledMaterialTypeNames();
+
+        let filteredTasks: CompletedTask[];
+
+        if (type === t('otherTypes')) {
+            // Для "Остальных" типов фильтруем задачи, которые не входят во включенные типы
+            filteredTasks = completedTasks.filter(task => !enabledTypeNames.includes(task.type));
+        } else {
+            // Для обычных типов фильтруем по названию типа
+            filteredTasks = completedTasks.filter(task => task.type === type);
+        }
+
+        if (filteredTasks.length === 0) {
+            return `0 ${t('remainingHours')}`;
+        }
+
+        // Определяем ID материала
+        const materialId = type === t('otherTypes') ? 'other' : getMaterialIdByName(this.settings.materialTypes, type);
+
+        const total = filteredTasks.reduce((sum, task) => {
+            if (materialId === 'book') return sum + (task.pages || 0);
+            if (task.durationInMinutes) return sum + task.durationInMinutes / 60;
+            return sum + (task.laborInputInHours || 0);
+        }, 0);
 
         return materialId === 'book'
             ? `${total} ${t('remainingPages')}`
@@ -200,6 +299,12 @@ export class StatisticsTab {
         section.createEl('h2', { text: t('sectionStatistics') });
 
         const totalTasks = Object.values(stats).reduce((sum, count) => sum + count, 0);
+
+        if (totalTasks === 0) {
+            section.createEl('p', { text: t('noSectionStatistics') });
+            return;
+        }
+
         const chartContainer = section.createDiv({ cls: 'bar-chart-container' });
 
         Object.entries(stats)
@@ -253,73 +358,55 @@ export class StatisticsTab {
         });
 
         const tbody = forecastTable.createEl('tbody');
-        Object.entries(forecastData).forEach(([type, data]) => {
-            if (data.baseDays > 0) {
-                const row = tbody.createEl('tr');
-                const formula = this.getForecastFormula(type, data, stats[type], completedTasks);
 
-                // Тип
-                row.createEl('td', {
-                    text: type,
-                    cls: 'forecast-type'
-                });
+        // Фильтруем только типы, для которых есть данные прогноза
+        const filteredForecastData = Object.entries(forecastData)
+            .filter(([type, data]) => data.baseDays > 0)
+            .sort((a, b) => a[0].localeCompare(b[0]));
 
-                // Базовый прогноз
-                row.createEl('td', {
-                    text: `${Math.round(data.baseDays)}`,
-                    cls: 'stat-value forecast-base'
-                });
+        if (filteredForecastData.length === 0) {
+            const row = tbody.createEl('tr');
+            const emptyCell = row.createEl('td', {
+                text: t('noForecastDataAvailable'),
+                attr: { 'colspan': '5' },
+                cls: 'forecast-empty'
+            });
+            return;
+        }
 
-                // Формула
-                row.createEl('td', {
-                    text: formula,
-                    cls: 'forecast-formula'
-                });
+        filteredForecastData.forEach(([type, data]) => {
+            const row = tbody.createEl('tr');
+            const formula = this.getForecastFormula(type, data, stats[type], completedTasks);
 
-                // Оптимистичный прогноз (-15%)
-                row.createEl('td', {
-                    text: `${Math.round(data.baseDays * 0.85)}`,
-                    cls: 'stat-value forecast-optimistic'
-                });
+            // Тип
+            row.createEl('td', {
+                text: type,
+                cls: 'forecast-type'
+            });
 
-                // Пессимистичный прогноз (+15%)
-                row.createEl('td', {
-                    text: `${Math.round(data.baseDays * 1.15)}`,
-                    cls: 'stat-value forecast-pessimistic'
-                });
-            } else {
-                const row = tbody.createEl('tr');
+            // Базовый прогноз
+            row.createEl('td', {
+                text: `${Math.round(data.baseDays)}`,
+                cls: 'stat-value forecast-base'
+            });
 
-                // Тип
-                row.createEl('td', {
-                    text: type,
-                    cls: 'forecast-type'
-                });
+            // Формула
+            row.createEl('td', {
+                text: formula,
+                cls: 'forecast-formula'
+            });
 
-                // Базовый прогноз
-                row.createEl('td', {
-                    text: t('noForecast'),
-                    cls: 'stat-value forecast-base'
-                });
+            // Оптимистичный прогноз (-15%)
+            row.createEl('td', {
+                text: `${Math.round(data.baseDays * 0.85)}`,
+                cls: 'stat-value forecast-optimistic'
+            });
 
-                // Формула
-                row.createEl('td', {
-                    text: '-',
-                    cls: 'forecast-formula'
-                });
-
-                // Оптимистичный прогноз (-15%)
-                row.createEl('td', {
-                    text: '-',
-                    cls: 'stat-value forecast-optimistic'
-                });
-
-                // Пессимистичный прогноз (+15%)
-                row.createEl('td', {
-                    text: '-',
-                    cls: 'stat-value forecast-pessimistic'
-                });
-			}
+            // Пессимистичный прогноз (+15%)
+            row.createEl('td', {
+                text: `${Math.round(data.baseDays * 1.15)}`,
+                cls: 'stat-value forecast-pessimistic'
+            });
         });
     }
 
@@ -333,7 +420,10 @@ export class StatisticsTab {
             ? Math.floor((Date.now() - new Date(this.settings.statsStartDate).getTime()) / (1000 * 60 * 60 * 24))
             : 30;
 
-        const materialId = getMaterialIdByName(this.settings.materialTypes, type);
+        // Получаем имена включенных типов
+        const enabledTypeNames = this.getEnabledMaterialTypeNames();
+
+        const materialId = type === t('otherTypes') ? 'other' : getMaterialIdByName(this.settings.materialTypes, type);
         const completed = parseFloat(this.calculateTotalEffort(completedTasks, type).split(' ')[0]) || 0;
 
         if (materialId === 'book') {
@@ -355,17 +445,30 @@ export class StatisticsTab {
             : 30;
 
         Object.entries(stats).forEach(([type, typeStats]) => {
-            const completed = parseFloat(this.calculateTotalEffort(completedTasks, type).split(' ')[0]) || 0;
-            if (completed <= 0) return;
+            // Определяем ID материала
+            const materialId = type === t('otherTypes') ? 'other' : getMaterialIdByName(this.settings.materialTypes, type);
 
-            const materialId = getMaterialIdByName(this.settings.materialTypes, type);
+            // Получаем выполненные усилия для этого типа
+            const completedText = this.calculateTotalEffort(completedTasks, type);
+            const completed = parseFloat(completedText.split(' ')[0]) || 0;
+
+            if (completed <= 0) {
+                result[type] = { baseDays: 0 };
+                return;
+            }
+
+            // Получаем оставшиеся усилия
             const remaining = parseFloat(typeStats.remaining.split(' ')[0]) || 0;
+
+            if (remaining <= 0) {
+                result[type] = { baseDays: 0 };
+                return;
+            }
+
             const ratePerDay = completed / daysPassed;
 
             result[type] = {
-                baseDays: materialId === 'book'
-                    ? remaining / (ratePerDay || 1)
-                    : remaining / (ratePerDay || 1)
+                baseDays: remaining / (ratePerDay || 1)
             };
         });
 
