@@ -294,13 +294,7 @@ export const en: TranslationKeys = {
     description: 'Description',
     import: 'Import',
     exampleImportedSuccessfully: 'Example imported successfully',
-    errorImportingExample: 'Error importing example',
-
-    // Export error modal
-    importErrorTitle: 'Import error',
-    missingTypes: 'Missing types:',
-    missingSections: 'Missing sections:',
-    importErrorInstructions: 'Please add the specified types and sections in the plugin settings before importing.'
+    errorImportingExample: 'Error importing example'
 };
 
 export const enParametrized: ParametrizedTranslations = {

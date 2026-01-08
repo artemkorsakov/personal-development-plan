@@ -293,12 +293,6 @@ export interface TranslationKeys {
     import: string;
     exampleImportedSuccessfully: string;
     errorImportingExample: string;
-
-    // Export error modal
-    importErrorTitle: string;
-    missingTypes: string;
-    missingSections: string;
-    importErrorInstructions: string;
 }
 
 export interface ParametrizedTranslationParams {

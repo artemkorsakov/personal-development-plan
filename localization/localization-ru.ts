@@ -294,13 +294,7 @@ export const ru: TranslationKeys = {
     description: 'Описание',
     import: 'Импортировать',
     exampleImportedSuccessfully: 'Пример плана успешно импортирован',
-    errorImportingExample: 'Ошибка импорта примера плана',
-
-    // Export error modal
-    importErrorTitle: 'Ошибка импорта',
-    missingTypes: 'Отсутствуют следующие типы задач:',
-    missingSections: 'Отсутствуют следующие разделы:',
-    importErrorInstructions: 'Пожалуйста, добавьте указанные типы и разделы в настройках плагина перед импортом.'
+    errorImportingExample: 'Ошибка импорта примера плана'
 };
 
 export const ruParametrized: ParametrizedTranslations = {

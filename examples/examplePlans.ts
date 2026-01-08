@@ -6,6 +6,279 @@ export interface ExamplePlan {
 
 export const EXAMPLE_PLANS: ExamplePlan[] = [
     {
+        name: "Personal Development & Self-Improvement Resources",
+        description: "A curated collection of resources for personal growth, mindset development, and building better habits for lifelong learning.",
+        data: `{
+                 "books": [
+                   {
+                     "status": "knowledge-base",
+                     "title": "Atomic Habits by James Clear",
+                     "type": "Book",
+                     "section": "Personal Development",
+                     "order": 1,
+                     "startDate": "",
+                     "dueDate": "",
+                     "filePath": "Atomic_Habits_James_Clear.md",
+                     "authors": "James Clear",
+                     "name": "Atomic Habits",
+                     "pages": 246
+                   },
+                   {
+                     "status": "knowledge-base",
+                     "title": "Mindset by Carol Dweck",
+                     "type": "Book",
+                     "section": "Personal Development",
+                     "order": 2,
+                     "startDate": "",
+                     "dueDate": "",
+                     "filePath": "Mindset_Carol_Dweck.md",
+                     "authors": "Carol Dweck",
+                     "name": "Mindset. The New Psychology of Success",
+                     "pages": 276
+                   }
+                 ],
+                 "courses": [
+                   {
+                     "status": "knowledge-base",
+                     "title": "Learning How to Learn",
+                     "type": "Course",
+                     "section": "Personal Development",
+                     "order": 1,
+                     "startDate": "",
+                     "dueDate": "",
+                     "filePath": "Learning_How_to_Learn.md",
+                     "platform": "Coursera",
+                     "link": "https://www.coursera.org/learn/learning-how-to-learn",
+                     "durationInMinutes": 1200
+                   }
+                 ],
+                 "podcasts": [
+                   {
+                     "status": "knowledge-base",
+                     "title": "The Tim Ferriss Show",
+                     "type": "Podcast",
+                     "section": "Personal Development",
+                     "order": 1,
+                     "startDate": "",
+                     "dueDate": "",
+                     "filePath": "The_Tim_Ferriss_Show.md",
+                     "platform": "Various",
+                     "link": "https://tim.blog/podcast/",
+                     "episodes": 832,
+                     "durationInMinutes": 120
+                   }
+                 ],
+                 "articles": [
+                   {
+                     "status": "knowledge-base",
+                     "title": "The Ultimate Guide to Personal Development",
+                     "type": "Article",
+                     "section": "Personal Development",
+                     "order": 1,
+                     "startDate": "",
+                     "dueDate": "",
+                     "filePath": "Ultimate_Guide_Personal_Development.md",
+                     "link": "https://jamesclear.com/articles",
+                     "durationInMinutes": 15
+                   }
+                 ],
+                 "userTypes": [],
+                 "videos": [],
+                 "exportedAt": "2025-08-06T07:00:04.970Z"
+               }`
+    },
+    {
+        name: "Time Management & Productivity System",
+        description: "Essential resources for mastering time management, productivity systems, and effective work organization techniques.",
+        data: `{
+                 "books": [
+                   {
+                     "status": "knowledge-base",
+                     "title": "Getting Things Done by David Allen",
+                     "type": "Book",
+                     "section": "General",
+                     "order": 1,
+                     "startDate": "",
+                     "dueDate": "",
+                     "filePath": "Getting_Things_Done_David_Allen.md",
+                     "authors": "David Allen",
+                     "name": "Getting Things Done",
+                     "pages": 288
+                   },
+                   {
+                     "status": "knowledge-base",
+                     "title": "Deep Work by Cal Newport",
+                     "type": "Book",
+                     "section": "General",
+                     "order": 2,
+                     "startDate": "",
+                     "dueDate": "",
+                     "filePath": "Deep_Work_Cal_Newport.md",
+                     "authors": "Cal Newport",
+                     "name": "Deep Work. Rules for Focused Success in a Distracted World",
+                     "pages": 304
+                   }
+                 ],
+                 "courses": [
+                   {
+                     "status": "knowledge-base",
+                     "title": "Work Smarter, Not Harder - Time Management for Personal & Professional Productivity",
+                     "type": "Course",
+                     "section": "General",
+                     "order": 1,
+                     "startDate": "",
+                     "dueDate": "",
+                     "filePath": "Work_Smarter_Not_Harder.md",
+                     "platform": "Coursera",
+                     "link": "https://www.coursera.org/learn/work-smarter-not-harder",
+                     "durationInMinutes": 900
+                   }
+                 ],
+                 "articles": [
+                   {
+                     "status": "knowledge-base",
+                     "title": "The Pomodoro Technique",
+                     "type": "Article",
+                     "section": "General",
+                     "order": 1,
+                     "startDate": "",
+                     "dueDate": "",
+                     "filePath": "Pomodoro_Technique.md",
+                     "link": "https://www.pomodorotechnique.com/the-pomodoro-technique-book/",
+                     "durationInMinutes": 10
+                   },
+                   {
+                     "status": "knowledge-base",
+                     "title": "Eisenhower Matrix. How to Prioritize Your Tasks",
+                     "type": "Article",
+                     "section": "General",
+                     "order": 2,
+                     "startDate": "",
+                     "dueDate": "",
+                     "filePath": "Eisenhower_Matrix.md",
+                     "link": "https://www.eisenhower.me/eisenhower-matrix/",
+                     "durationInMinutes": 8
+                   }
+                 ],
+                 "videos": [
+                   {
+                     "status": "knowledge-base",
+                     "title": "How to Manage Your Time Better",
+                     "type": "Video",
+                     "section": "General",
+                     "order": 1,
+                     "startDate": "",
+                     "dueDate": "",
+                     "filePath": "How_to_Manage_Your_Time_Better.md",
+                     "author": "Ali Abdaal",
+                     "platform": "YouTube",
+                     "link": "https://www.youtube.com/watch?v=VUk6LXRZMMk",
+                     "durationInMinutes": 18
+                   }
+                 ],
+                 "podcasts": [],
+                 "userTypes": [],
+                 "exportedAt": "2025-08-06T07:00:04.970Z"
+               }`
+    },
+    {
+        name: "Personal Effectiveness & Performance Optimization",
+        description: "Resources focused on maximizing personal effectiveness, energy management, and optimizing performance in work and life.",
+        data: `{
+                 "books": [
+                   {
+                     "status": "knowledge-base",
+                     "title": "The 7 Habits of Highly Effective People",
+                     "type": "Book",
+                     "section": "General",
+                     "order": 1,
+                     "startDate": "",
+                     "dueDate": "",
+                     "filePath": "7_Habits_Highly_Effective_People.md",
+                     "authors": "Stephen R. Covey",
+                     "name": "The 7 Habits of Highly Effective People",
+                     "pages": 282
+                   },
+                   {
+                     "status": "knowledge-base",
+                     "title": "The Power of Full Engagement",
+                     "type": "Book",
+                     "section": "General",
+                     "order": 2,
+                     "startDate": "",
+                     "dueDate": "",
+                     "filePath": "Power_of_Full_Engagement.md",
+                     "authors": "Jim Loehr, Tony Schwartz",
+                     "name": "The Power of Full Engagement. Managing Energy, Not Time, Is the Key to High Performance and Personal Renewal",
+                     "pages": 256
+                   }
+                 ],
+                 "courses": [
+                   {
+                     "status": "knowledge-base",
+                     "title": "Achieving Personal and Professional Success",
+                     "type": "Course",
+                     "section": "General",
+                     "order": 1,
+                     "startDate": "",
+                     "dueDate": "",
+                     "filePath": "Achieving_Success.md",
+                     "platform": "Coursera",
+                     "link": "https://www.coursera.org/specializations/wharton-success",
+                     "durationInMinutes": 1500
+                   }
+                 ],
+                 "articles": [
+                   {
+                     "status": "knowledge-base",
+                     "title": "The Ultimate Productivity System for Busy People",
+                     "type": "Article",
+                     "section": "General",
+                     "order": 1,
+                     "startDate": "",
+                     "dueDate": "",
+                     "filePath": "Ultimate_Productivity_System.md",
+                     "link": "https://todoist.com/productivity-methods",
+                     "durationInMinutes": 12
+                   }
+                 ],
+                 "podcasts": [
+                   {
+                     "status": "knowledge-base",
+                     "title": "The Productivity Show",
+                     "type": "Podcast",
+                     "section": "General",
+                     "order": 1,
+                     "startDate": "",
+                     "dueDate": "",
+                     "filePath": "The_Productivity_Show.md",
+                     "platform": "Asian Efficiency",
+                     "link": "https://www.asianefficiency.com/podcast/",
+                     "episodes": 400,
+                     "durationInMinutes": 45
+                   }
+                 ],
+                 "videos": [
+                   {
+                     "status": "knowledge-base",
+                     "title": "The Science of Productivity",
+                     "type": "Video",
+                     "section": "General",
+                     "order": 1,
+                     "startDate": "",
+                     "dueDate": "",
+                     "filePath": "Science_of_Productivity.md",
+                     "author": "AsapSCIENCE",
+                     "platform": "YouTube",
+                     "link": "https://www.youtube.com/watch?v=lHfjvYzr-3g",
+                     "durationInMinutes": 5
+                   }
+                 ],
+                 "userTypes": [],
+                 "exportedAt": "2025-08-06T07:00:04.970Z"
+               }`
+    },
+    {
         name: "Foundations of functional programming & Software excellence",
         description: "This comprehensive learning plan is designed to deepen your understanding of functional programming principles, software engineering best practices, and algorithmic thinking.",
         data: `{
@@ -425,279 +698,6 @@ export const EXAMPLE_PLANS: ExamplePlan[] = [
                      "durationInMinutes": 120
                    }
                  ],
-                 "exportedAt": "2025-08-06T07:00:04.970Z"
-               }`
-    },
-    {
-        name: "Personal Development & Self-Improvement Resources",
-        description: "A curated collection of resources for personal growth, mindset development, and building better habits for lifelong learning.",
-        data: `{
-                 "books": [
-                   {
-                     "status": "knowledge-base",
-                     "title": "Atomic Habits by James Clear",
-                     "type": "Book",
-                     "section": "Personal Development",
-                     "order": 1,
-                     "startDate": "",
-                     "dueDate": "",
-                     "filePath": "Atomic_Habits_James_Clear.md",
-                     "authors": "James Clear",
-                     "name": "Atomic Habits",
-                     "pages": 246
-                   },
-                   {
-                     "status": "knowledge-base",
-                     "title": "Mindset by Carol Dweck",
-                     "type": "Book",
-                     "section": "Personal Development",
-                     "order": 2,
-                     "startDate": "",
-                     "dueDate": "",
-                     "filePath": "Mindset_Carol_Dweck.md",
-                     "authors": "Carol Dweck",
-                     "name": "Mindset. The New Psychology of Success",
-                     "pages": 276
-                   }
-                 ],
-                 "courses": [
-                   {
-                     "status": "knowledge-base",
-                     "title": "Learning How to Learn",
-                     "type": "Course",
-                     "section": "Personal Development",
-                     "order": 1,
-                     "startDate": "",
-                     "dueDate": "",
-                     "filePath": "Learning_How_to_Learn.md",
-                     "platform": "Coursera",
-                     "link": "https://www.coursera.org/learn/learning-how-to-learn",
-                     "durationInMinutes": 1200
-                   }
-                 ],
-                 "podcasts": [
-                   {
-                     "status": "knowledge-base",
-                     "title": "The Tim Ferriss Show",
-                     "type": "Podcast",
-                     "section": "Personal Development",
-                     "order": 1,
-                     "startDate": "",
-                     "dueDate": "",
-                     "filePath": "The_Tim_Ferriss_Show.md",
-                     "platform": "Various",
-                     "link": "https://tim.blog/podcast/",
-                     "episodes": 832,
-                     "durationInMinutes": 120
-                   }
-                 ],
-                 "articles": [
-                   {
-                     "status": "knowledge-base",
-                     "title": "The Ultimate Guide to Personal Development",
-                     "type": "Article",
-                     "section": "Personal Development",
-                     "order": 1,
-                     "startDate": "",
-                     "dueDate": "",
-                     "filePath": "Ultimate_Guide_Personal_Development.md",
-                     "link": "https://jamesclear.com/articles",
-                     "durationInMinutes": 15
-                   }
-                 ],
-                 "userTypes": [],
-                 "videos": [],
-                 "exportedAt": "2025-08-06T07:00:04.970Z"
-               }`
-    },
-    {
-        name: "Time Management & Productivity System",
-        description: "Essential resources for mastering time management, productivity systems, and effective work organization techniques.",
-        data: `{
-                 "books": [
-                   {
-                     "status": "knowledge-base",
-                     "title": "Getting Things Done by David Allen",
-                     "type": "Book",
-                     "section": "General",
-                     "order": 1,
-                     "startDate": "",
-                     "dueDate": "",
-                     "filePath": "Getting_Things_Done_David_Allen.md",
-                     "authors": "David Allen",
-                     "name": "Getting Things Done",
-                     "pages": 288
-                   },
-                   {
-                     "status": "knowledge-base",
-                     "title": "Deep Work by Cal Newport",
-                     "type": "Book",
-                     "section": "General",
-                     "order": 2,
-                     "startDate": "",
-                     "dueDate": "",
-                     "filePath": "Deep_Work_Cal_Newport.md",
-                     "authors": "Cal Newport",
-                     "name": "Deep Work. Rules for Focused Success in a Distracted World",
-                     "pages": 304
-                   }
-                 ],
-                 "courses": [
-                   {
-                     "status": "knowledge-base",
-                     "title": "Work Smarter, Not Harder - Time Management for Personal & Professional Productivity",
-                     "type": "Course",
-                     "section": "General",
-                     "order": 1,
-                     "startDate": "",
-                     "dueDate": "",
-                     "filePath": "Work_Smarter_Not_Harder.md",
-                     "platform": "Coursera",
-                     "link": "https://www.coursera.org/learn/work-smarter-not-harder",
-                     "durationInMinutes": 900
-                   }
-                 ],
-                 "articles": [
-                   {
-                     "status": "knowledge-base",
-                     "title": "The Pomodoro Technique",
-                     "type": "Article",
-                     "section": "General",
-                     "order": 1,
-                     "startDate": "",
-                     "dueDate": "",
-                     "filePath": "Pomodoro_Technique.md",
-                     "link": "https://www.pomodorotechnique.com/the-pomodoro-technique-book/",
-                     "durationInMinutes": 10
-                   },
-                   {
-                     "status": "knowledge-base",
-                     "title": "Eisenhower Matrix. How to Prioritize Your Tasks",
-                     "type": "Article",
-                     "section": "General",
-                     "order": 2,
-                     "startDate": "",
-                     "dueDate": "",
-                     "filePath": "Eisenhower_Matrix.md",
-                     "link": "https://www.eisenhower.me/eisenhower-matrix/",
-                     "durationInMinutes": 8
-                   }
-                 ],
-                 "videos": [
-                   {
-                     "status": "knowledge-base",
-                     "title": "How to Manage Your Time Better",
-                     "type": "Video",
-                     "section": "General",
-                     "order": 1,
-                     "startDate": "",
-                     "dueDate": "",
-                     "filePath": "How_to_Manage_Your_Time_Better.md",
-                     "author": "Ali Abdaal",
-                     "platform": "YouTube",
-                     "link": "https://www.youtube.com/watch?v=VUk6LXRZMMk",
-                     "durationInMinutes": 18
-                   }
-                 ],
-                 "podcasts": [],
-                 "userTypes": [],
-                 "exportedAt": "2025-08-06T07:00:04.970Z"
-               }`
-    },
-    {
-        name: "Personal Effectiveness & Performance Optimization",
-        description: "Resources focused on maximizing personal effectiveness, energy management, and optimizing performance in work and life.",
-        data: `{
-                 "books": [
-                   {
-                     "status": "knowledge-base",
-                     "title": "The 7 Habits of Highly Effective People",
-                     "type": "Book",
-                     "section": "General",
-                     "order": 1,
-                     "startDate": "",
-                     "dueDate": "",
-                     "filePath": "7_Habits_Highly_Effective_People.md",
-                     "authors": "Stephen R. Covey",
-                     "name": "The 7 Habits of Highly Effective People",
-                     "pages": 282
-                   },
-                   {
-                     "status": "knowledge-base",
-                     "title": "The Power of Full Engagement",
-                     "type": "Book",
-                     "section": "General",
-                     "order": 2,
-                     "startDate": "",
-                     "dueDate": "",
-                     "filePath": "Power_of_Full_Engagement.md",
-                     "authors": "Jim Loehr, Tony Schwartz",
-                     "name": "The Power of Full Engagement. Managing Energy, Not Time, Is the Key to High Performance and Personal Renewal",
-                     "pages": 256
-                   }
-                 ],
-                 "courses": [
-                   {
-                     "status": "knowledge-base",
-                     "title": "Achieving Personal and Professional Success",
-                     "type": "Course",
-                     "section": "General",
-                     "order": 1,
-                     "startDate": "",
-                     "dueDate": "",
-                     "filePath": "Achieving_Success.md",
-                     "platform": "Coursera",
-                     "link": "https://www.coursera.org/specializations/wharton-success",
-                     "durationInMinutes": 1500
-                   }
-                 ],
-                 "articles": [
-                   {
-                     "status": "knowledge-base",
-                     "title": "The Ultimate Productivity System for Busy People",
-                     "type": "Article",
-                     "section": "General",
-                     "order": 1,
-                     "startDate": "",
-                     "dueDate": "",
-                     "filePath": "Ultimate_Productivity_System.md",
-                     "link": "https://todoist.com/productivity-methods",
-                     "durationInMinutes": 12
-                   }
-                 ],
-                 "podcasts": [
-                   {
-                     "status": "knowledge-base",
-                     "title": "The Productivity Show",
-                     "type": "Podcast",
-                     "section": "General",
-                     "order": 1,
-                     "startDate": "",
-                     "dueDate": "",
-                     "filePath": "The_Productivity_Show.md",
-                     "platform": "Asian Efficiency",
-                     "link": "https://www.asianefficiency.com/podcast/",
-                     "episodes": 400,
-                     "durationInMinutes": 45
-                   }
-                 ],
-                 "videos": [
-                   {
-                     "status": "knowledge-base",
-                     "title": "The Science of Productivity",
-                     "type": "Video",
-                     "section": "General",
-                     "order": 1,
-                     "startDate": "",
-                     "dueDate": "",
-                     "filePath": "Science_of_Productivity.md",
-                     "author": "AsapSCIENCE",
-                     "platform": "YouTube",
-                     "link": "https://www.youtube.com/watch?v=lHfjvYzr-3g",
-                     "durationInMinutes": 5
-                   }
-                 ],
-                 "userTypes": [],
                  "exportedAt": "2025-08-06T07:00:04.970Z"
                }`
     }

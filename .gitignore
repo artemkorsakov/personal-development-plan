@@ -4,6 +4,7 @@
 # Intellij
 *.iml
 .idea
+.gigaide
 
 # npm
 node_modules

@@ -2,7 +2,6 @@ import { App, Notice, Vault, Modal, TFile } from 'obsidian';
 import { t } from '../../localization/localization';
 import { PersonalDevelopmentPlanSettings, generateTaskContent } from '../../settings/settings-types';
 import { EXAMPLE_PLANS } from '../../examples/examplePlans';
-import { ImportErrorModal } from '../modals/ImportErrorModal';
 import { TaskType } from '../../settings/task-types';
 
 export default class ExamplesTab {
@@ -71,30 +70,6 @@ export default class ExamplesTab {
                 ...(data.userTypes || []),
                 ...(data.videos || [])
             ];
-
-            const missingTypes = new Set<string>();
-            const missingSections = new Set<string>();
-
-            allTasks.forEach(task => {
-                const taskType = this.settings.materialTypes.find(t => t.name === task.type);
-                if (!taskType) {
-                    missingTypes.add(task.type);
-                }
-
-                const section = this.settings.sections.find(s => s.name === task.section);
-                if (!section) {
-                    missingSections.add(task.section);
-                }
-            });
-
-            if (missingTypes.size > 0 || missingSections.size > 0) {
-                new ImportErrorModal(
-                    this.app,
-                    Array.from(missingTypes),
-                    Array.from(missingSections)
-                ).open();
-                return;
-            }
 
             await Promise.all([
                 this.importTasks(data.articles || []),
