@@ -353,7 +353,7 @@ export class StatisticsTab {
         const headerRow = thead.createEl('tr');
 
         // Заголовки столбцов
-        [t('type'), t('baseForecast'), t('formula'), t('optimistic'), t('pessimistic')].forEach(text => {
+        [t('type'), t('baseForecast'), t('formula'), t('weekForecast'), t('monthForecast'), t('yearForecast')].forEach(text => {
             headerRow.createEl('th', { text });
         });
 
@@ -386,7 +386,7 @@ export class StatisticsTab {
 
             // Базовый прогноз
             row.createEl('td', {
-                text: `${Math.round(data.baseDays)}`,
+                text: `${data.baseDays.toFixed(1)}`,
                 cls: 'stat-value forecast-base'
             });
 
@@ -396,16 +396,22 @@ export class StatisticsTab {
                 cls: 'forecast-formula'
             });
 
-            // Оптимистичный прогноз (-15%)
+            // Прогноз в неделях
             row.createEl('td', {
-                text: `${Math.round(data.baseDays * 0.85)}`,
-                cls: 'stat-value forecast-optimistic'
+                text: `${(data.baseDays / 7.0).toFixed(1)}`,
+                cls: 'stat-value'
             });
 
-            // Пессимистичный прогноз (+15%)
+            // Прогноз в месяцах
             row.createEl('td', {
-                text: `${Math.round(data.baseDays * 1.15)}`,
-                cls: 'stat-value forecast-pessimistic'
+                text: `${(data.baseDays / 30.0).toFixed(1)}`,
+                cls: 'stat-value'
+            });
+
+            // Прогноз в годах
+            row.createEl('td', {
+                text: `${(data.baseDays / 365.0).toFixed(1)}`,
+                cls: 'stat-value'
             });
         });
     }

@@ -271,10 +271,11 @@ export interface TranslationKeys {
     forecastStartDate: string;
     booksForecastFormula: string;
     otherTypesForecastFormula: string;
-    optimistic: string;
     baseForecast: string;
     formula: string;
-    pessimistic: string;
+    weekForecast: string;
+    monthForecast: string;
+    yearForecast: string;
     noForecast: string;
 
     // History
