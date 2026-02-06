@@ -1,6 +1,6 @@
 import { App, Notice, Vault, Modal, TFile } from 'obsidian';
 import { t } from '../../localization/localization';
-import { PersonalDevelopmentPlanSettings, generateTaskContent } from '../../settings/settings-types';
+import { PersonalDevelopmentPlanSettings, generateTaskContent, generateEmptyTaskContent } from '../../settings/settings-types';
 import { EXAMPLE_PLANS } from '../../examples/examplePlans';
 import { TaskType } from '../../settings/task-types';
 
@@ -150,11 +150,7 @@ export default class ExamplesTab {
         if (taskType) {
             frontmatter += generateTaskContent(taskType);
         } else {
-            frontmatter += `# ${t('taskLabel')}\n\n`;
-            frontmatter += `${t('taskDefaultDescription')}\n\n`;
-            frontmatter += `## ${t('checklist')}\n\n`;
-            frontmatter += `## ${t('notes')}\n\n`;
-            frontmatter += `${t('addYourThoughts')}`;
+            frontmatter += generateEmptyTaskContent();
         }
 
         return frontmatter;

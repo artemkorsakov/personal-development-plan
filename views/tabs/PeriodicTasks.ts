@@ -228,7 +228,10 @@ export class PeriodicTasks {
                 if (!completedTasks[type].includes(periodStr)) {
 					const formattedHeader = this.formatPeriodHeader(type, currentDate);
                     sectionContent += `#### ${formattedHeader}\n\n`;
-                    tasks.forEach(task => sectionContent += `- [ ] ${task}\n`);
+                    tasks.forEach(task => {
+                        const formattedTask = task.replace(/    /g, '\n    ');
+                        sectionContent += `- [ ] ${formattedTask}\n`;
+                    });
                     sectionContent += '\n';
                     newPeriods.push({type, period: periodStr});
                 }

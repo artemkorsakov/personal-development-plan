@@ -38,6 +38,14 @@ export function generateTaskContent(taskType: MaterialType): string {
            `${t('addYourThoughts')}`;
 }
 
+export function generateEmptyTaskContent(): string {
+    return `# ${t('taskLabel')}\n\n` +
+           `${t('taskDefaultDescription')}\n\n` +
+           `## ${t('checklist')}\n\n` +
+           `## ${t('notes')}\n\n` +
+           `${t('addYourThoughts')}`;
+}
+
 export interface Section {
     id: string;
     name: string;
