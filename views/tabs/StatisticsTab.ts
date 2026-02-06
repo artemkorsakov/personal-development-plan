@@ -307,11 +307,26 @@ export class StatisticsTab {
 
         const chartContainer = section.createDiv({ cls: 'bar-chart-container' });
 
-        Object.entries(stats)
-            .sort((a, b) => b[1] - a[1])
-            .forEach(([sectionName, count]) =>
-                this.addBarRow(chartContainer, sectionName, count, totalTasks)
-            );
+        const sections = this.settings?.sections || [];
+
+        // Создаем массив для сортировки, объединяя статистику с порядком из настроек
+        const sortedStats = Object.entries(stats)
+            .map(([sectionName, count]) => {
+                const sectionConfig = sections.find(s => s.name === sectionName);
+                return {
+                    name: sectionName,
+                    count,
+                    order: sectionConfig?.order ?? Number.MAX_SAFE_INTEGER // если раздела нет в настройках, ставим в конец
+                };
+            })
+            .sort((a, b) => {
+                return a.order - b.order;
+            });
+
+        // Рендерим отсортированные данные
+        sortedStats.forEach(({ name, count }) =>
+            this.addBarRow(chartContainer, name, count, totalTasks)
+        );
     }
 
     private static addBarRow(container: HTMLElement, label: string, value: number, total: number) {
@@ -359,10 +374,16 @@ export class StatisticsTab {
 
         const tbody = forecastTable.createEl('tbody');
 
+        const materialTypes = this.settings?.materialTypes || [];
+
         // Фильтруем только типы, для которых есть данные прогноза
         const filteredForecastData = Object.entries(forecastData)
             .filter(([type, data]) => data.baseDays > 0)
-            .sort((a, b) => a[0].localeCompare(b[0]));
+            .sort((a, b) => {
+                const orderA = materialTypes.find(mt => mt.name === a[0])?.order ?? Number.MAX_SAFE_INTEGER;
+                const orderB = materialTypes.find(mt => mt.name === b[0])?.order ?? Number.MAX_SAFE_INTEGER;
+                return orderA - orderB;
+            });
 
         if (filteredForecastData.length === 0) {
             const row = tbody.createEl('tr');
