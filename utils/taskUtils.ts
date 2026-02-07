@@ -3,7 +3,7 @@ import { KnowledgeItem, PlannedTask, TaskInProgress } from '../views/tabs-types'
 import { PersonalDevelopmentPlanSettings, getMaterialIdByName } from '../settings/settings-types';
 import { calculateTaskProgress } from './progressUtils';
 import { getFilesInFolder } from './fileUtils';
-import { ArticleTask, BookTask, CourseTask, PodcastTask, UserTypeTask, VideoTask } from '../settings/task-types';
+import { ArticleTask, BookTask, CourseTask, PodcastTask, UserTypeTask, VideoTask, MAX_ORDER } from '../settings/task-types';
 
 type TaskCommonFields = {
     name: string;
@@ -212,6 +212,90 @@ export async function getPlannedTasks(
     } catch (error) {
         console.error('Failed to get planned tasks:', error);
         return [];
+    }
+}
+
+export async function reorderPlannedTasks(
+    vault: Vault,
+    settings: PersonalDevelopmentPlanSettings,
+    metadataCache: MetadataCache,
+    targetOrder: number
+): Promise<void> {
+    try {
+        const tasks = await getPlannedTasks(vault, settings, metadataCache);
+        
+        const tasksToUpdate = tasks
+            .filter(task => task.order >= targetOrder && task.order < MAX_ORDER)
+            .sort((a, b) => b.order - a.order); // сортируем по убыванию чтобы избежать конфликтов
+
+        // Обновляем order для каждой задачи
+        for (const task of tasksToUpdate) {
+            try {
+                const file = vault.getAbstractFileByPath(task.filePath);
+
+                if (!file || !(file instanceof TFile)) {
+                    console.warn(`File not found for task: ${task.name}`);
+                    continue;
+                }
+
+                // Читаем текущий контент файла
+                const content = await vault.read(file);
+                const lines = content.split('\n');
+                
+                // Ищем frontmatter для обновления order
+                let inFrontmatter = false;
+                let foundOrder = false;
+                
+                const updatedLines = lines.map((line, index) => {
+                    // Проверяем начало frontmatter
+                    if (index === 0 && line.trim() === '---') {
+                        inFrontmatter = true;
+                        return line;
+                    }
+                    
+                    // Проверяем конец frontmatter
+                    if (inFrontmatter && line.trim() === '---') {
+                        inFrontmatter = false;
+                        
+                        // Если не нашли order в существующем frontmatter, добавляем перед закрытием
+                        if (!foundOrder) {
+                            return `order: ${task.order + 1}\n${line}`;
+                        }
+                        return line;
+                    }
+                    
+                    // Находим строку с order в frontmatter
+                    if (inFrontmatter && line.startsWith('order:')) {
+                        foundOrder = true;
+                        // Обновляем значение order на +1
+                        return `order: ${task.order + 1}`;
+                    }
+                    
+                    return line;
+                });
+
+                // Если frontmatter не был найден, но файл существует, создаем его
+                let finalContent = updatedLines.join('\n');
+                if (!inFrontmatter && lines[0]?.trim() !== '---') {
+                    finalContent = `---\norder: ${task.order + 1}\n---\n${finalContent}`;
+                }
+
+                // Записываем обновленный контент обратно в файл
+                await vault.modify(file, finalContent);
+                
+                console.log(`Updated order for ${task.name}: ${task.order} → ${task.order + 1}`);
+                
+            } catch (error) {
+                console.error(`Failed to update task ${task.name}:`, error);
+                // Продолжаем с другими задачами даже если одна не удалась
+            }
+        }
+
+        console.log(`Successfully reordered ${tasksToUpdate.length} tasks starting from order ${targetOrder}`);
+        
+    } catch (error) {
+        console.error('Failed to reorder planned tasks:', error);
+        throw error;
     }
 }
 

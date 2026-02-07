@@ -1,4 +1,4 @@
-import { App, Notice, Plugin, Setting, PluginSettingTab } from 'obsidian';
+import { App, Notice, Setting, PluginSettingTab } from 'obsidian';
 import { MaterialType, PersonalDevelopmentPlanSettings, Section } from './settings-types';
 import { t } from '../localization/localization';
 import { TranslationKeys } from '../localization/localization-types';

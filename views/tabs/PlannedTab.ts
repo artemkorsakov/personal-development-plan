@@ -1,10 +1,9 @@
 import { App, MetadataCache, Vault, TFile, Workspace, Notice } from 'obsidian';
 import { openTaskFile } from '../../utils/fileUtils';
-import { generateProgressBar } from '../../utils/progressUtils';
-import { getPlannedTasks, getTaskTypeIcon, isTaskOverdue } from '../../utils/taskUtils';
+import { getPlannedTasks, getTaskTypeIcon } from '../../utils/taskUtils';
 import { t } from '../../localization/localization';
 import { PlannedTask } from '../tabs-types';
-import { PersonalDevelopmentPlanSettings, getMaterialNameById, getMaterialIdByName } from '../../settings/settings-types';
+import { PersonalDevelopmentPlanSettings, getMaterialIdByName } from '../../settings/settings-types';
 import CreateTaskModal from '../modals/CreateTaskModal';
 import { ConfirmDeleteModal } from '../modals/ConfirmDeleteModal';
 import { StartTaskModal } from '../modals/StartTaskModal';

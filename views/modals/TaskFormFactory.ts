@@ -4,6 +4,7 @@ import { PersonalDevelopmentPlanSettings } from '../../settings/settings-types';
 import { getMaterialNameById } from '../../settings/settings-types';
 import { TaskType, MAX_ORDER, MAX_ORDER_STR } from '../../settings/task-types';
 import { formatDateForInput } from '../../utils/dateUtils';
+import { IN_PROGRESS } from '../tabs-types';
 
 interface TaskFormData {
     status: string;
@@ -65,7 +66,7 @@ export abstract class TaskFormBuilder {
                     });
                 });
 
-            if (status === 'in-progress') {
+            if (status === IN_PROGRESS) {
                 this.addDateField(t('inProgressStartDate'), 'startDate');
                 this.addDateField(t('inProgressDueDate'), 'dueDate');
             }

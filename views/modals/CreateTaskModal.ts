@@ -1,7 +1,7 @@
 import { App, Modal, Setting, Notice, TFile } from 'obsidian';
 import { createTaskFile, generateSafeFilename } from '../../utils/fileUtils';
 import { t } from '../../localization/localization';
-import { MaterialType, PersonalDevelopmentPlanSettings, generateTaskContent } from '../../settings/settings-types';
+import { PersonalDevelopmentPlanSettings, generateTaskContent } from '../../settings/settings-types';
 import { TaskFormBuilder } from './TaskFormFactory';
 import { ArticleFormBuilder } from './ArticleFormBuilder';
 import { BookFormBuilder } from './BookFormBuilder';

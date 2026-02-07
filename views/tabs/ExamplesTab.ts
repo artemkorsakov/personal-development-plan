@@ -1,4 +1,4 @@
-import { App, Notice, Vault, Modal, TFile } from 'obsidian';
+import { App, Notice, Vault, TFile } from 'obsidian';
 import { t } from '../../localization/localization';
 import { PersonalDevelopmentPlanSettings, generateTaskContent, generateEmptyTaskContent } from '../../settings/settings-types';
 import { EXAMPLE_PLANS } from '../../examples/examplePlans';

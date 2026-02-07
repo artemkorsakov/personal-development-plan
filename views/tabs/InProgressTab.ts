@@ -1,9 +1,9 @@
 import { App, MetadataCache, Vault, TFile, Notice } from 'obsidian';
 import { getActiveTasks, getTaskTypeIcon, isTaskOverdue } from '../../utils/taskUtils';
 import { formatDate, calculateDaysBetween, parseDateInput } from '../../utils/dateUtils';
-import { KnowledgeItem, PlannedTask, TaskInProgress } from '../tabs-types';
-import { openTaskFile, openOrCreateSourceFile } from '../../utils/fileUtils';
-import { generateProgressBar, calculateTaskProgress } from '../../utils/progressUtils';
+import { TaskInProgress, IN_PROGRESS } from '../tabs-types';
+import { openTaskFile } from '../../utils/fileUtils';
+import { generateProgressBar } from '../../utils/progressUtils';
 import { t } from '../../localization/localization';
 import { PersonalDevelopmentPlanSettings, getMaterialIdByName } from '../../settings/settings-types';
 import CreateTaskModal from '../modals/CreateTaskModal';
@@ -381,7 +381,7 @@ export default class InProgressTab {
             const modal = new CreateTaskModal(
                 this.app,
                 this.settings,
-                'in-progress',
+                IN_PROGRESS,
                 async (success) => {
                     if (success) {
                         await this.updateTasksList();

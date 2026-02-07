@@ -7,6 +7,11 @@ export interface TabDefinition {
     tooltip?: string;
 }
 
+export const IN_PROGRESS: string = 'in-progress';
+export const PLANNED: string = 'planned';
+export const KNOWLEDGE_BASE: string = 'knowledge-base';
+
+
 export const TAB_DEFINITIONS: TabDefinition[] = [
     {
         id: 'in-progress',

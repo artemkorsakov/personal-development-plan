@@ -6,7 +6,7 @@ import { t } from '../../localization/localization';
 import { KnowledgeItem } from '../tabs-types';
 import { PersonalDevelopmentPlanSettings, Section } from '../../settings/settings-types';
 import CreateTaskModal from '../modals/CreateTaskModal';
-import { PlanTaskModal, PlanTaskModalData } from '../modals/PlanTaskModal';
+import { PlanTaskModal } from '../modals/PlanTaskModal';
 import { ConfirmDeleteModal } from '../modals/ConfirmDeleteModal';
 
 export default class KnowledgeBaseTab {

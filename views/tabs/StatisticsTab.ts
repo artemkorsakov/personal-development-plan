@@ -1,4 +1,4 @@
-import { App, MetadataCache, Vault, TFile } from 'obsidian';
+import { App, MetadataCache, Vault } from 'obsidian';
 import { PersonalDevelopmentPlanSettings, getMaterialIdByName, MaterialType } from '../../settings/settings-types';
 import { t } from '../../localization/localization';
 import { getActiveTasks, getPlannedTasks, getKnowledgeItems } from '../../utils/taskUtils';
