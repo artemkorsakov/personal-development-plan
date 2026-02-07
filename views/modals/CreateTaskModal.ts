@@ -68,22 +68,12 @@ export default class CreateTaskModal extends Modal {
                 dropdown.setValue(this.selectedTaskType);
             });
 
-        // Основной контейнер для всей формы
         const mainFormContainer = contentEl.createDiv({ cls: 'task-main-container' });
-        
-        // Контейнер для динамической формы (будет пересоздаваться)
         this.formContainer = mainFormContainer.createDiv({ cls: 'task-form-container' });
-        
-        // Контейнер для чекбокса (не будет пересоздаваться)
         this.shiftOrderContainer = mainFormContainer.createDiv({ cls: 'shift-order-container' });
-        
-        // Инициализируем форму
         this.updateForm();
-
-        // Напоминалка
         this.renderReminder();
 
-        // Кнопки действий
         const actionsEl = contentEl.createDiv({ cls: 'modal-actions' });
         new Setting(actionsEl)
             .addButton(button => {
@@ -165,16 +155,13 @@ export default class CreateTaskModal extends Modal {
             this.formBuilder.buildForm();
         }
         
-        // Создаем или обновляем чекбокс (если он еще не существует)
         this.addOrUpdateShiftOrderCheckbox();
     }
 
     private addOrUpdateShiftOrderCheckbox() {
         if (this.taskStatus === PLANNED && this.shiftOrderContainer) {
-            // Очищаем контейнер чекбокса
             this.shiftOrderContainer.empty();
             
-            // Создаем новый чекбокс
             new Setting(this.shiftOrderContainer)
                 .setName(t('shiftOrderForExistingTasks'))
                 .setDesc(t('shiftOrderTooltip'))
@@ -184,7 +171,6 @@ export default class CreateTaskModal extends Modal {
                         .onChange(value => this.shiftOrderEnabled = value);
                 });
         } else if (this.shiftOrderContainer) {
-            // Если статус не PLANNED, скрываем контейнер
             this.shiftOrderContainer.style.display = 'none';
         }
     }

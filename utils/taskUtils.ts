@@ -281,18 +281,12 @@ export async function reorderPlannedTasks(
                 }
 
                 // Записываем обновленный контент обратно в файл
-                await vault.modify(file, finalContent);
-                
-                console.log(`Updated order for ${task.name}: ${task.order} → ${task.order + 1}`);
-                
+                await vault.modify(file, finalContent);                
             } catch (error) {
                 console.error(`Failed to update task ${task.name}:`, error);
                 // Продолжаем с другими задачами даже если одна не удалась
             }
-        }
-
-        console.log(`Successfully reordered ${tasksToUpdate.length} tasks starting from order ${targetOrder}`);
-        
+        }        
     } catch (error) {
         console.error('Failed to reorder planned tasks:', error);
         throw error;
