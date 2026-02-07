@@ -1,7 +1,7 @@
 import { Setting } from 'obsidian';
 import { TaskFormBuilder } from './TaskFormFactory';
 import { t } from '../../localization/localization';
-import { BookTask } from '../../settings/task-types';
+import { BookTask, MAX_ORDER } from '../../settings/task-types';
 import { PersonalDevelopmentPlanSettings } from '../../settings/settings-types';
 import { generateSafeTitle } from '../../utils/taskUtils';
 
@@ -68,7 +68,7 @@ export class BookFormBuilder extends TaskFormBuilder {
             name: this.formData.name || '',
             title: this.generateTitle(),
             pages: this.formData.pages || 0,
-            order: this.formData.order || 999,
+            order: this.formData.order || MAX_ORDER,
             startDate: this.formData.startDate || '',
             dueDate: this.formData.dueDate || '',
             filePath: this.formData.filePath || ''

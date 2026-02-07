@@ -1,7 +1,7 @@
 import { Setting } from 'obsidian';
 import { TaskFormBuilder } from './TaskFormFactory';
 import { t } from '../../localization/localization';
-import { ArticleTask } from '../../settings/task-types';
+import { ArticleTask, MAX_ORDER } from '../../settings/task-types';
 import { PersonalDevelopmentPlanSettings } from '../../settings/settings-types';
 import { generateSafeTitle } from '../../utils/taskUtils';
 
@@ -71,7 +71,7 @@ export class ArticleFormBuilder extends TaskFormBuilder {
             title: this.generateTitle(),
             link: this.formData.link || '',
             durationInMinutes: this.formData.durationInMinutes || 0,
-            order: this.formData.order || 999,
+            order: this.formData.order || MAX_ORDER,
             startDate: this.formData.startDate || '',
             dueDate: this.formData.dueDate || '',
             filePath: this.formData.filePath || ''

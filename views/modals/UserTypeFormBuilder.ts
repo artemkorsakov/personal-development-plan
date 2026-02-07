@@ -1,7 +1,7 @@
 import { Setting } from 'obsidian';
 import { TaskFormBuilder } from './TaskFormFactory';
 import { t } from '../../localization/localization';
-import { UserTypeTask } from '../../settings/task-types';
+import { UserTypeTask, MAX_ORDER } from '../../settings/task-types';
 import { PersonalDevelopmentPlanSettings } from '../../settings/settings-types';
 import { generateSafeTitle } from '../../utils/taskUtils';
 
@@ -60,7 +60,7 @@ export class UserTypeFormBuilder extends TaskFormBuilder {
             section: this.settings.sections.find(s => s.id === this.formData.sectionId)?.name || '',
             title: this.generateTitle(),
             laborInputInHours: this.formData.laborInputInHours || 0,
-            order: this.formData.order || 999,
+            order: this.formData.order || MAX_ORDER,
             startDate: this.formData.startDate || '',
             dueDate: this.formData.dueDate || '',
             filePath: this.formData.filePath || ''

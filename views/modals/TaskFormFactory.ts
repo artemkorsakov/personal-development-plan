@@ -2,7 +2,7 @@ import { Setting } from 'obsidian';
 import { t } from '../../localization/localization';
 import { PersonalDevelopmentPlanSettings } from '../../settings/settings-types';
 import { getMaterialNameById } from '../../settings/settings-types';
-import { TaskType } from '../../settings/task-types';
+import { TaskType, MAX_ORDER, MAX_ORDER_STR } from '../../settings/task-types';
 import { formatDateForInput } from '../../utils/dateUtils';
 
 interface TaskFormData {
@@ -57,11 +57,11 @@ export abstract class TaskFormBuilder {
             new Setting(this.container)
                 .setName(t('taskOrder'))
                 .addText(text => {
-                    text.setPlaceholder('999')
+                    text.setPlaceholder(MAX_ORDER_STR)
                         .inputEl.type = 'number';
-                    text.setValue('999');
+                    text.setValue(MAX_ORDER_STR);
                     text.onChange(value => {
-                        this.formData.order = parseInt(value) || 999;
+                        this.formData.order = parseInt(value) || MAX_ORDER;
                     });
                 });
 

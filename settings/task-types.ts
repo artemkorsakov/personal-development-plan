@@ -46,3 +46,8 @@ export interface UserTypeTask extends BaseTypeTask {
 
 export type TaskType =
     ArticleTask | BookTask | CourseTask | PodcastTask | UserTypeTask | VideoTask;
+
+export const MAX_ORDER: number = 999;
+
+export const MAX_ORDER_STR: string = '999';
+

@@ -1,7 +1,7 @@
 import { Setting } from 'obsidian';
 import { TaskFormBuilder } from './TaskFormFactory';
 import { t } from '../../localization/localization';
-import { PodcastTask } from '../../settings/task-types';
+import { PodcastTask, MAX_ORDER } from '../../settings/task-types';
 import { PersonalDevelopmentPlanSettings } from '../../settings/settings-types';
 import { generateSafeTitle } from '../../utils/taskUtils';
 
@@ -90,7 +90,7 @@ export class PodcastFormBuilder extends TaskFormBuilder {
             link: this.formData.link || '',
             episodes: this.formData.episodes || 0,
             durationInMinutes: this.formData.durationInMinutes || 0,
-            order: this.formData.order || 999,
+            order: this.formData.order || MAX_ORDER,
             startDate: this.formData.startDate || '',
             dueDate: this.formData.dueDate || '',
             filePath: this.formData.filePath || ''
