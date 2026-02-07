@@ -150,6 +150,10 @@ export const ru: TranslationKeys = {
     create: 'Создать',
     cancel: 'Отмена',
     refreshFailed: 'Ошибка обновления',
+    shiftOrderForExistingTasks: 'Сдвинуть порядок у существующих задач',
+    shiftOrderTooltip: 'При включении этой опции порядок всех существующих задач с порядком не меньше текущего будет увеличен на 1',
+    tasksReordered: 'Порядок существующих задач обновлен',
+    reorderError: 'Ошибка при сдвиге порядка задач',
 
     // New keys for task management
     actions: 'Действия',

@@ -151,6 +151,10 @@ export interface TranslationKeys {
     create: string;
     cancel: string;
     refreshFailed: string;
+    shiftOrderForExistingTasks: string;
+    shiftOrderTooltip: string;
+    tasksReordered: string;
+    reorderError: string;
 
     // New keys for task management
     actions: string;

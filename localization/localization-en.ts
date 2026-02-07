@@ -150,6 +150,10 @@ export const en: TranslationKeys = {
     create: 'Create',
     cancel: 'Cancel',
     refreshFailed: 'Refresh failed',
+    shiftOrderForExistingTasks: 'Shift the order of existing tasks',
+    shiftOrderTooltip: 'When this option is enabled, the order of all existing tasks with an order greater than or equal to the current task order will be increased by 1',
+    tasksReordered: 'The order of existing tasks has been updated',
+    reorderError: 'Error when shifting the order of tasks',
 
     // New task management translations
     actions: 'Actions',

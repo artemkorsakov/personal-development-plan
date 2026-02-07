@@ -1,7 +1,7 @@
 import { App, Modal, Setting, Notice, TFile } from 'obsidian';
 import { createTaskFile, generateSafeFilename } from '../../utils/fileUtils';
 import { t } from '../../localization/localization';
-import { PersonalDevelopmentPlanSettings, generateTaskContent } from '../../settings/settings-types';
+import { MaterialType, PersonalDevelopmentPlanSettings, generateTaskContent } from '../../settings/settings-types';
 import { TaskFormBuilder } from './TaskFormFactory';
 import { ArticleFormBuilder } from './ArticleFormBuilder';
 import { BookFormBuilder } from './BookFormBuilder';
@@ -9,7 +9,8 @@ import { CourseFormBuilder } from './CourseFormBuilder';
 import { PodcastFormBuilder } from './PodcastFormBuilder';
 import { VideoFormBuilder } from './VideoFormBuilder';
 import { UserTypeFormBuilder } from './UserTypeFormBuilder';
-import { KNOWLEDGE_BASE } from '../tabs-types';
+import { KNOWLEDGE_BASE, PLANNED } from '../tabs-types';
+import { reorderPlannedTasks } from '../../utils/taskUtils';
 
 export default class CreateTaskModal extends Modal {
     private settings: PersonalDevelopmentPlanSettings;
@@ -19,6 +20,8 @@ export default class CreateTaskModal extends Modal {
     private formBuilder: TaskFormBuilder | null = null;
     private typeDropdown: HTMLSelectElement | null = null;
     private formContainer: HTMLElement | null = null;
+    private shiftOrderContainer: HTMLElement | null = null;
+    private shiftOrderEnabled: boolean = false;
 
     constructor(
         app: App,
@@ -65,8 +68,16 @@ export default class CreateTaskModal extends Modal {
                 dropdown.setValue(this.selectedTaskType);
             });
 
-        // Контейнер для динамической формы
-        this.formContainer = contentEl.createDiv({ cls: 'task-form-container' });
+        // Основной контейнер для всей формы
+        const mainFormContainer = contentEl.createDiv({ cls: 'task-main-container' });
+        
+        // Контейнер для динамической формы (будет пересоздаваться)
+        this.formContainer = mainFormContainer.createDiv({ cls: 'task-form-container' });
+        
+        // Контейнер для чекбокса (не будет пересоздаваться)
+        this.shiftOrderContainer = mainFormContainer.createDiv({ cls: 'shift-order-container' });
+        
+        // Инициализируем форму
         this.updateForm();
 
         // Напоминалка
@@ -117,31 +128,31 @@ export default class CreateTaskModal extends Modal {
                 );
                 break;
             case 'course':
-				this.formBuilder = new CourseFormBuilder(
+                this.formBuilder = new CourseFormBuilder(
                     this.settings,
                     this.formContainer,
                     this.taskStatus,
                     this.selectedTaskType
                 );
-				break;
+                break;
             case 'podcast':
-				this.formBuilder = new PodcastFormBuilder(
+                this.formBuilder = new PodcastFormBuilder(
                     this.settings,
                     this.formContainer,
                     this.taskStatus,
                     this.selectedTaskType
                 );
-				break;
-			case 'video':
-				this.formBuilder = new VideoFormBuilder(
+                break;
+            case 'video':
+                this.formBuilder = new VideoFormBuilder(
                     this.settings,
                     this.formContainer,
                     this.taskStatus,
                     this.selectedTaskType
                 );
-				break;
+                break;
             default:
-				this.formBuilder = new UserTypeFormBuilder(
+                this.formBuilder = new UserTypeFormBuilder(
                     this.settings,
                     this.formContainer,
                     this.taskStatus,
@@ -152,6 +163,29 @@ export default class CreateTaskModal extends Modal {
 
         if (this.formBuilder) {
             this.formBuilder.buildForm();
+        }
+        
+        // Создаем или обновляем чекбокс (если он еще не существует)
+        this.addOrUpdateShiftOrderCheckbox();
+    }
+
+    private addOrUpdateShiftOrderCheckbox() {
+        if (this.taskStatus === PLANNED && this.shiftOrderContainer) {
+            // Очищаем контейнер чекбокса
+            this.shiftOrderContainer.empty();
+            
+            // Создаем новый чекбокс
+            new Setting(this.shiftOrderContainer)
+                .setName(t('shiftOrderForExistingTasks'))
+                .setDesc(t('shiftOrderTooltip'))
+                .addToggle(toggle => {
+                    toggle
+                        .setValue(this.shiftOrderEnabled)
+                        .onChange(value => this.shiftOrderEnabled = value);
+                });
+        } else if (this.shiftOrderContainer) {
+            // Если статус не PLANNED, скрываем контейнер
+            this.shiftOrderContainer.style.display = 'none';
         }
     }
 
@@ -164,37 +198,55 @@ export default class CreateTaskModal extends Modal {
         }
     }
 
-   private async handleCreateTask() {
-       try {
-           if (!this.formBuilder) return;
+    private async handleCreateTask() {
+        try {
+            if (!this.formBuilder) return;
 
-           const taskType = this.settings.materialTypes.find(t => t.id === this.selectedTaskType);
-           if (!taskType) throw new Error(t('invalidTaskType'));
+            const taskType = this.settings.materialTypes.find(t => t.id === this.selectedTaskType);
+            if (!taskType) throw new Error(t('invalidTaskType'));
 
-           const taskData = this.formBuilder.getTaskData();
-           const safeFilename = generateSafeFilename(this.formBuilder.generateTitle());
-           taskData.filePath = `${this.settings.folderPath}/${safeFilename}.md`;
+            const taskData = this.formBuilder.getTaskData();
+            const safeFilename = generateSafeFilename(this.formBuilder.generateTitle());
+            taskData.filePath = `${this.settings.folderPath}/${safeFilename}.md`;
 
-           const existingFile = this.app.vault.getAbstractFileByPath(taskData.filePath);
-           if (existingFile && existingFile instanceof TFile) {
-               new Notice(t('fileAlreadyExists'));
-               return;
-           }
+            const existingFile = this.app.vault.getAbstractFileByPath(taskData.filePath);
+            if (existingFile && existingFile instanceof TFile) {
+                new Notice(t('fileAlreadyExists'));
+                return;
+            }
 
-           const content = generateTaskContent(taskType);
-           await createTaskFile(taskData, content, this.settings, this.app.vault);
-           await new Promise(resolve => window.setTimeout(resolve, 200));
+            // Если создается задача в статусе 'planned' и включен чекбокс сдвига
+            if (this.taskStatus === PLANNED && this.shiftOrderEnabled && taskData.order) {
+                try {
+                    // Вызываем функцию сдвига порядка перед созданием файла
+                    await reorderPlannedTasks(
+                        this.app.vault,
+                        this.settings,
+                        this.app.metadataCache,
+                        taskData.order
+                    );
+                    new Notice(t('tasksReordered'));
+                } catch (error) {
+                    console.error('Error reordering tasks:', error);
+                    new Notice(t('reorderError'));
+                }
+            }
 
-           this.close();
-           this.onSubmitCallback?.(true, taskType.id);
-       } catch (error) {
-           console.error('Error creating task:', error);
-           new Notice(t('taskCreationError') + ': ' + (error instanceof Error ? error.message : String(error)));
-           this.onSubmitCallback?.(false);
-       }
-   }
+            const content = generateTaskContent(taskType);
+            await createTaskFile(taskData, content, this.settings, this.app.vault);
+            await new Promise(resolve => window.setTimeout(resolve, 200));
+
+            this.close();
+            this.onSubmitCallback?.(true, taskType.id);
+        } catch (error) {
+            console.error('Error creating task:', error);
+            new Notice(t('taskCreationError') + ': ' + (error instanceof Error ? error.message : String(error)));
+            this.onSubmitCallback?.(false);
+        }
+    }
 
     onClose() {
         this.contentEl.empty();
+        this.shiftOrderEnabled = false;
     }
 }
