@@ -3,6 +3,7 @@ import { t } from '../../localization/localization';
 import { PersonalDevelopmentPlanSettings, generateTaskContent, generateEmptyTaskContent } from '../../settings/settings-types';
 import { EXAMPLE_PLANS } from '../../examples/examplePlans';
 import { TaskType } from '../../settings/task-types';
+import { KNOWLEDGE_BASE } from '../tabs-types';
 
 export default class ExamplesTab {
     private static app: App;
@@ -107,7 +108,7 @@ export default class ExamplesTab {
 
     private static createTaskContent(task: TaskType): string {
         let frontmatter = `---\n`;
-        frontmatter += `status: ${task.status || 'knowledge-base'}\n`;
+        frontmatter += `status: ${task.status || KNOWLEDGE_BASE}\n`;
         frontmatter += `type: ${task.type || 'user'}\n`;
         frontmatter += `section: ${task.section || 'general'}\n`;
         frontmatter += `title: ${task.title || 'Untitled'}\n`;

@@ -9,6 +9,7 @@ import { CourseFormBuilder } from './CourseFormBuilder';
 import { PodcastFormBuilder } from './PodcastFormBuilder';
 import { VideoFormBuilder } from './VideoFormBuilder';
 import { UserTypeFormBuilder } from './UserTypeFormBuilder';
+import { KNOWLEDGE_BASE } from '../tabs-types';
 
 export default class CreateTaskModal extends Modal {
     private settings: PersonalDevelopmentPlanSettings;
@@ -155,7 +156,7 @@ export default class CreateTaskModal extends Modal {
     }
 
     private renderReminder() {
-        if (this.taskStatus !== 'knowledge-base') {
+        if (this.taskStatus !== KNOWLEDGE_BASE) {
             const reminderContainer = this.contentEl.createDiv({ cls: 'task-reminder-container' });
             reminderContainer.createDiv({ cls: 'task-reminder' }, el => {
                 el.textContent = t('dontForgetToFillPlan');

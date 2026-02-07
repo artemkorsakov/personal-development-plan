@@ -2,7 +2,7 @@ import { App, MetadataCache, Vault, TFile, Workspace, Notice } from 'obsidian';
 import { openTaskFile } from '../../utils/fileUtils';
 import { getPlannedTasks, getTaskTypeIcon } from '../../utils/taskUtils';
 import { t } from '../../localization/localization';
-import { PlannedTask } from '../tabs-types';
+import { PlannedTask, PLANNED } from '../tabs-types';
 import { PersonalDevelopmentPlanSettings, getMaterialIdByName } from '../../settings/settings-types';
 import CreateTaskModal from '../modals/CreateTaskModal';
 import { ConfirmDeleteModal } from '../modals/ConfirmDeleteModal';
@@ -62,7 +62,7 @@ export default class PlannedTab {
             const modal = new CreateTaskModal(
                 this.app,
                 this.settings,
-                'planned',
+                PLANNED,
                 async (success) => {
                     if (success) {
                         await this.refreshContent();

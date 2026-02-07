@@ -3,7 +3,7 @@ import { openTaskFile } from '../../utils/fileUtils';
 import { getKnowledgeItems, getTaskTypeIcon, getItems } from '../../utils/taskUtils';
 import { exportToJSON } from '../../utils/exportUtils';
 import { t } from '../../localization/localization';
-import { KnowledgeItem } from '../tabs-types';
+import { KnowledgeItem, KNOWLEDGE_BASE } from '../tabs-types';
 import { PersonalDevelopmentPlanSettings, Section } from '../../settings/settings-types';
 import CreateTaskModal from '../modals/CreateTaskModal';
 import { PlanTaskModal } from '../modals/PlanTaskModal';
@@ -85,7 +85,7 @@ export default class KnowledgeBaseTab {
             const modal = new CreateTaskModal(
                 this.app,
                 this.settings,
-                'knowledge-base',
+                KNOWLEDGE_BASE,
                 async (success) => {
                     if (!success) return;
 

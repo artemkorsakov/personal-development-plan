@@ -11,22 +11,21 @@ export const IN_PROGRESS: string = 'in-progress';
 export const PLANNED: string = 'planned';
 export const KNOWLEDGE_BASE: string = 'knowledge-base';
 
-
 export const TAB_DEFINITIONS: TabDefinition[] = [
     {
-        id: 'in-progress',
+        id: IN_PROGRESS,
         name: t('inProgress'),
         icon: 'play',
         tooltip: t('inProgressTooltip')
     },
     {
-        id: 'planned',
+        id: PLANNED,
         name: t('planned'),
         icon: 'calendar',
         tooltip: t('plannedTooltip')
     },
     {
-        id: 'knowledge-base',
+        id: KNOWLEDGE_BASE,
         name: t('knowledgeBase'),
         icon: 'book',
         tooltip: t('knowledgeBaseTooltip')

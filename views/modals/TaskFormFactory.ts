@@ -4,7 +4,7 @@ import { PersonalDevelopmentPlanSettings } from '../../settings/settings-types';
 import { getMaterialNameById } from '../../settings/settings-types';
 import { TaskType, MAX_ORDER, MAX_ORDER_STR } from '../../settings/task-types';
 import { formatDateForInput } from '../../utils/dateUtils';
-import { IN_PROGRESS } from '../tabs-types';
+import { IN_PROGRESS, KNOWLEDGE_BASE } from '../tabs-types';
 
 interface TaskFormData {
     status: string;
@@ -54,7 +54,7 @@ export abstract class TaskFormBuilder {
     }
 
     protected addCommonFields(status: string) {
-        if (status !== 'knowledge-base') {
+        if (status !== KNOWLEDGE_BASE) {
             new Setting(this.container)
                 .setName(t('taskOrder'))
                 .addText(text => {

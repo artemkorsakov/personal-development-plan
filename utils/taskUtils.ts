@@ -1,5 +1,5 @@
 import { Vault, TFile, MetadataCache } from 'obsidian';
-import { KnowledgeItem, PlannedTask, TaskInProgress } from '../views/tabs-types';
+import { KnowledgeItem, PlannedTask, TaskInProgress, IN_PROGRESS, PLANNED, KNOWLEDGE_BASE } from '../views/tabs-types';
 import { PersonalDevelopmentPlanSettings, getMaterialIdByName } from '../settings/settings-types';
 import { calculateTaskProgress } from './progressUtils';
 import { getFilesInFolder } from './fileUtils';
@@ -92,7 +92,7 @@ export async function getActiveTasks(
             filter: (frontmatter) => {
                 const status = frontmatter?.status;
                 return typeof status === 'string' &&
-                       status.toLowerCase() === 'in-progress';
+                       status.toLowerCase() === IN_PROGRESS;
             },
             needsContent: true,
             transform: (file, frontmatter, content) => {
@@ -164,7 +164,7 @@ export async function getPlannedTasks(
             filter: (frontmatter) => {
                 const status = frontmatter?.status;
                 return typeof status === 'string' &&
-                       status.toLowerCase() === 'planned';
+                       status.toLowerCase() === PLANNED;
             },
             needsContent: false,
             transform: (file, frontmatter) => {
@@ -312,7 +312,7 @@ export async function getKnowledgeItems(
             filter: (frontmatter) => {
                 const status = frontmatter?.status;
                 return typeof status === 'string' &&
-                       status.toLowerCase() === 'knowledge-base';
+                       status.toLowerCase() === KNOWLEDGE_BASE;
             },
             needsContent: false,
             transform: (file, frontmatter) => {
@@ -394,7 +394,7 @@ export async function getItems(
                 if (!frontmatter) return;
 
                 const status = frontmatter?.status;
-                if (typeof status !== 'string' || status.toLowerCase() !== 'knowledge-base') {
+                if (typeof status !== 'string' || status.toLowerCase() !== KNOWLEDGE_BASE) {
                     return;
                 }
 

@@ -1,6 +1,6 @@
 import { ItemView, WorkspaceLeaf, TFile, EventRef } from 'obsidian';
 import PersonalDevelopmentPlanPlugin from "../main";
-import { TabDefinition, TAB_DEFINITIONS, IN_PROGRESS } from './tabs-types';
+import { TabDefinition, TAB_DEFINITIONS, IN_PROGRESS, PLANNED, KNOWLEDGE_BASE } from './tabs-types';
 import { t } from '../localization/localization';
 import InProgressTab from './tabs/InProgressTab';
 import PlannedTab from './tabs/PlannedTab';
@@ -109,10 +109,10 @@ export default class PlanView extends ItemView {
             case IN_PROGRESS:
                 tabContent.appendChild(await InProgressTab.create(app, settings, app.vault, app.metadataCache));
                 break;
-            case 'planned':
+            case PLANNED:
                 tabContent.appendChild(await PlannedTab.create(app, settings, app.vault, app.workspace, app.metadataCache));
                 break;
-            case 'knowledge-base':
+            case KNOWLEDGE_BASE:
                 tabContent.appendChild(await KnowledgeBaseTab.create(app, settings, app.vault, app.metadataCache));
                 break;
             case 'sources':
