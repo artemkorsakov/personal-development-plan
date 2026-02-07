@@ -18,6 +18,11 @@ export default class PlannedTab {
     private static contentContainer: HTMLElement;
     private static typeTabsContainer: HTMLElement;
     private static sectionTabsContainer: HTMLElement;
+    
+    // Добавляем статическое поле для отслеживания обновлений
+    private static refreshInProgress = false;
+    private static pendingRefresh = false;
+    private static refreshTimeoutId: number | null = null;
 
     static async create(
         app: App,
@@ -32,6 +37,9 @@ export default class PlannedTab {
         this.metadataCache = metadataCache;
         this.currentType = null;
         this.currentSection = null;
+        this.refreshInProgress = false;
+        this.pendingRefresh = false;
+        this.refreshTimeoutId = null;
 
         const mainContainer = createDiv();
         mainContainer.addClass('planned-main-container');
@@ -49,10 +57,10 @@ export default class PlannedTab {
 
         return mainContainer;
     }
-
+    
     private static createHeader(container: HTMLElement) {
         const header = container.createDiv({ cls: 'planned-header' });
-
+    
         const createBtn = header.createEl('button', {
             cls: 'planned-create-btn',
             text: t('createNewTask')
@@ -65,18 +73,37 @@ export default class PlannedTab {
                 PLANNED,
                 async (success) => {
                     if (success) {
-                        await this.refreshContent();
-                        this.switchToAllTab();
+                        await this.reloadEntireTab();
                     }
                 }
             );
-
+    
             if (this.currentType) {
                 modal.setInitialType(getMaterialIdByName(this.settings.materialTypes, this.currentType));
             }
-
+    
             modal.open();
         });
+    }
+
+    private static async reloadEntireTab() {
+        const tabContent = this.contentContainer?.closest('.plan-tab-content[data-tab="planned"]');
+        
+        if (tabContent) {
+            const scrollTop = tabContent.scrollTop;
+            tabContent.empty();
+            
+            const newTab = await PlannedTab.create(
+                this.app,
+                this.settings,
+                this.vault,
+                this.app.workspace,
+                this.metadataCache
+            );
+            
+            tabContent.appendChild(newTab);
+            tabContent.scrollTop = scrollTop;
+        }
     }
 
     private static switchToAllTab() {
@@ -86,15 +113,68 @@ export default class PlannedTab {
         }
     }
 
-    private static async refreshContent() {
-        const allTasks = await getPlannedTasks(this.vault, this.settings, this.metadataCache);
-        this.updateContent(this.contentContainer, allTasks);
+    static async refreshContent() {
+        return this.scheduleRefresh();
+    }
+        static async rebuild(parentContainer: HTMLElement) {
+        if (!parentContainer) return;
+        
+        parentContainer.empty();
+        
+        const newTab = await this.create(
+            this.app,
+            this.settings,
+            this.vault,
+            this.app.workspace,
+            this.metadataCache
+        );
+        
+        parentContainer.appendChild(newTab);
+    }
 
-        if (this.typeTabsContainer) {
-            this.updateTabCounts(this.typeTabsContainer, allTasks);
+    private static async scheduleRefresh() {
+        if (this.refreshTimeoutId !== null) {
+            window.clearTimeout(this.refreshTimeoutId);
+            this.refreshTimeoutId = null;
         }
-        if (this.sectionTabsContainer) {
-            this.updateSectionTabCounts(this.sectionTabsContainer, allTasks);
+
+        if (this.refreshInProgress) {
+            this.pendingRefresh = true;
+            return;
+        }
+
+        this.refreshTimeoutId = window.setTimeout(async () => {
+            await this.performRefresh();
+        }, 300); // 300мс задержка для группировки быстрых обновлений
+    }
+
+    private static async performRefresh() {
+        try {
+            this.refreshInProgress = true;
+            this.pendingRefresh = false;
+            this.refreshTimeoutId = null;
+
+            const allTasks = await getPlannedTasks(this.vault, this.settings, this.metadataCache);
+            
+            // Обновляем UI только если контейнеры существуют
+            if (this.contentContainer) {
+                this.updateContent(this.contentContainer, allTasks);
+            }
+            if (this.typeTabsContainer) {
+                this.updateTabCounts(this.typeTabsContainer, allTasks);
+            }
+            if (this.sectionTabsContainer) {
+                this.updateSectionTabCounts(this.sectionTabsContainer, allTasks);
+            }
+        } catch (error) {
+            console.error('Error during refresh:', error);
+        } finally {
+            this.refreshInProgress = false;
+            
+            // Если пока мы обновлялись, появился запрос на обновление, выполняем его
+            if (this.pendingRefresh) {
+                await this.scheduleRefresh();
+            }
         }
     }
 
@@ -470,7 +550,7 @@ export default class PlannedTab {
                     const match = content.match(frontmatterRegex);
 
                     if (match) {
-                        let frontmatter = match[1];
+                       let frontmatter = match[1];
 
                         frontmatter = frontmatter
                             .replace(/status:.*(\n|$)/g, '')
@@ -508,7 +588,7 @@ export default class PlannedTab {
                         await this.app.vault.process(file, (currentContent: string) => newContent);
 
                         new Notice(t('taskStartedSuccessfully'));
-                        await this.refreshContent();
+                        await this.scheduleRefresh();
                     } else {
                         console.warn(`No frontmatter found in file: ${task.filePath}`);
                     }
@@ -538,7 +618,7 @@ export default class PlannedTab {
                 if (file) {
                     await this.app.fileManager.trashFile(file);
                     new Notice(t('taskDeletedSuccessfully'));
-                    await this.refreshContent();
+                    await this.scheduleRefresh();
                 }
             } catch (error) {
                 console.error('Error deleting task:', error);

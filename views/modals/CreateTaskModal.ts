@@ -187,24 +187,22 @@ export default class CreateTaskModal extends Modal {
     private async handleCreateTask() {
         try {
             if (!this.formBuilder) return;
-
+    
             const taskType = this.settings.materialTypes.find(t => t.id === this.selectedTaskType);
             if (!taskType) throw new Error(t('invalidTaskType'));
-
+    
             const taskData = this.formBuilder.getTaskData();
             const safeFilename = generateSafeFilename(this.formBuilder.generateTitle());
             taskData.filePath = `${this.settings.folderPath}/${safeFilename}.md`;
-
+    
             const existingFile = this.app.vault.getAbstractFileByPath(taskData.filePath);
             if (existingFile && existingFile instanceof TFile) {
                 new Notice(t('fileAlreadyExists'));
                 return;
             }
-
-            // Если создается задача в статусе 'planned' и включен чекбокс сдвига
+    
             if (this.taskStatus === PLANNED && this.shiftOrderEnabled && taskData.order) {
                 try {
-                    // Вызываем функцию сдвига порядка перед созданием файла
                     await reorderPlannedTasks(
                         this.app.vault,
                         this.settings,
@@ -214,16 +212,16 @@ export default class CreateTaskModal extends Modal {
                     new Notice(t('tasksReordered'));
                 } catch (error) {
                     console.error('Error reordering tasks:', error);
-                    new Notice(t('reorderError'));
                 }
             }
-
+            
             const content = generateTaskContent(taskType);
             await createTaskFile(taskData, content, this.settings, this.app.vault);
-            await new Promise(resolve => window.setTimeout(resolve, 200));
-
+            
             this.close();
+            
             this.onSubmitCallback?.(true, taskType.id);
+            
         } catch (error) {
             console.error('Error creating task:', error);
             new Notice(t('taskCreationError') + ': ' + (error instanceof Error ? error.message : String(error)));
