@@ -294,13 +294,20 @@ export interface TranslationKeys {
     historyRating: string;
     historyReview: string;
 
-    // Export
+    // Export and Import
     noExamplePlansAvailable: string;
     planName: string;
     description: string;
     import: string;
     exampleImportedSuccessfully: string;
     errorImportingExample: string;
+    importFromJSON: string;
+    importStarted: string;
+    importSuccess: string;
+    importError: string;
+    importReadError: string;
+    invalidImportFile: string;
+    tasksImported: string;
 }
 
 export interface ParametrizedTranslationParams {

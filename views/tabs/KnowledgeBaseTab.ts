@@ -8,6 +8,7 @@ import { PersonalDevelopmentPlanSettings, Section } from '../../settings/setting
 import CreateTaskModal from '../modals/CreateTaskModal';
 import { PlanTaskModal } from '../modals/PlanTaskModal';
 import { ConfirmDeleteModal } from '../modals/ConfirmDeleteModal';
+import { importFromJSON } from '../../utils/importUtils';
 
 export default class KnowledgeBaseTab {
     private static currentType: string | null = null;
@@ -75,12 +76,12 @@ export default class KnowledgeBaseTab {
 
     private static createHeader(container: HTMLElement) {
         const header = container.createDiv({ cls: 'knowledge-header' });
-
+    
         const createBtn = header.createEl('button', {
             cls: 'knowledge-create-btn',
             text: t('createNewTask')
         });
-
+    
         createBtn.addEventListener('click', () => {
             const modal = new CreateTaskModal(
                 this.app,
@@ -88,24 +89,19 @@ export default class KnowledgeBaseTab {
                 KNOWLEDGE_BASE,
                 async (success) => {
                     if (!success) return;
-
+    
                     try {
-                        // 1. Ждем обновления данных
                         await this.refreshContent();
-
-                        // 2. Получаем свежие DOM-элементы
+    
                         const allTab = container.querySelector('.knowledge-tab[data-id="all"]') as HTMLElement;
                         const typeTabs = container.querySelector('.knowledge-type-tabs') as HTMLElement;
                         const sectionTabs = container.querySelector('.knowledge-section-tabs') as HTMLElement;
-
-                        // 3. Переключаем на вкладку all
+    
                         if (allTab && typeTabs) {
                             this.currentType = null;
                             this.currentSection = null;
                             this.setActiveTab(allTab, typeTabs);
                             if (sectionTabs) this.resetActiveTab(sectionTabs);
-
-                            // 4. Дополнительное обновление для гарантии
                             await this.refreshContent();
                         }
                     } catch (error) {
@@ -113,19 +109,65 @@ export default class KnowledgeBaseTab {
                     }
                 }
             );
-
+    
             if (this.currentType) {
                 modal.setInitialType(this.currentType);
             }
-
+    
             modal.open();
         });
-
+    
         const exportBtn = header.createEl('button', {
             cls: 'knowledge-export-btn',
             text: t('exportToJSON')
         });
         exportBtn.addEventListener('click', () => this.handleExport());
+    
+        const importBtn = header.createEl('button', {
+            cls: 'knowledge-import-btn',
+            text: t('importFromJSON')
+        });
+        importBtn.addEventListener('click', () => this.handleImport());
+    }
+
+    private static async handleImport() {
+        try {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.style.display = 'none';
+            
+            input.addEventListener('change', async (e) => {
+                const file = (e.target as HTMLInputElement).files?.[0];
+                if (!file) return;
+                
+                try {
+                    new Notice(t('importStarted'));
+                    
+                    const importedCount = await importFromJSON(
+                        this.app,
+                        this.settings,
+                        file
+                    );
+                    
+                    await this.refreshContent();
+                    
+                    new Notice(`${t('importSuccess')}: ${importedCount} ${t('tasksImported')}`);
+                    
+                } catch (error) {
+                    console.error('Import error:', error);
+                    new Notice(`${t('importError')}: ${error.message}`);
+                }
+            });
+            
+            document.body.appendChild(input);
+            input.click();
+            document.body.removeChild(input);
+            
+        } catch (error) {
+            console.error('Import initialization error:', error);
+            new Notice(t('importError'));
+        }
     }
 
     private static createTabContainers(container: HTMLElement): [HTMLElement, HTMLElement, HTMLElement] {

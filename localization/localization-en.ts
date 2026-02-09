@@ -296,13 +296,20 @@ export const en: TranslationKeys = {
     historyRating: "Rating",
     historyReview: "Review",
 
-    // Export
+    // Export and Import
     noExamplePlansAvailable: 'No example plans available',
     planName: 'Plan name',
     description: 'Description',
     import: 'Import',
     exampleImportedSuccessfully: 'Example imported successfully',
-    errorImportingExample: 'Error importing example'
+    errorImportingExample: 'Error importing example',
+    importFromJSON: 'Import from JSON',
+    importStarted: 'Import started...',
+    importSuccess: 'Import completed successfully',
+    importError: 'Import error',
+    importReadError: 'File read error',
+    invalidImportFile: 'Invalid import file format',
+    tasksImported: 'tasks imported'
 };
 
 export const enParametrized: ParametrizedTranslations = {

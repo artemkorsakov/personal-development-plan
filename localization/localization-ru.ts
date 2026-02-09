@@ -296,13 +296,20 @@ export const ru: TranslationKeys = {
     historyRating: "Оценка",
     historyReview: "Краткое ревью",
 
-    // Export
+    // Export and Import
     noExamplePlansAvailable: 'Нет доступных примеров планов',
     planName: 'Название плана',
     description: 'Описание',
     import: 'Импортировать',
     exampleImportedSuccessfully: 'Пример плана успешно импортирован',
-    errorImportingExample: 'Ошибка импорта примера плана'
+    errorImportingExample: 'Ошибка импорта примера плана',
+    importFromJSON: 'Импорт из JSON',
+    importStarted: 'Импорт начат...',
+    importSuccess: 'Импорт успешно завершен',
+    importError: 'Ошибка импорта',
+    importReadError: 'Ошибка чтения файла',
+    invalidImportFile: 'Неверный формат файла импорта',
+    tasksImported: 'задач импортировано'
 };
 
 export const ruParametrized: ParametrizedTranslations = {

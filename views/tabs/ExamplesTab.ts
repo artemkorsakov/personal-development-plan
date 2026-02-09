@@ -1,9 +1,8 @@
 import { App, Notice, Vault, TFile } from 'obsidian';
 import { t } from '../../localization/localization';
-import { PersonalDevelopmentPlanSettings, generateTaskContent, generateEmptyTaskContent } from '../../settings/settings-types';
+import { PersonalDevelopmentPlanSettings } from '../../settings/settings-types';
 import { EXAMPLE_PLANS } from '../../examples/examplePlans';
-import { TaskType } from '../../settings/task-types';
-import { KNOWLEDGE_BASE } from '../tabs-types';
+import { importTasks } from '../../utils/importUtils';
 
 export default class ExamplesTab {
     private static app: App;
@@ -73,12 +72,12 @@ export default class ExamplesTab {
             ];
 
             await Promise.all([
-                this.importTasks(data.articles || []),
-                this.importTasks(data.books || []),
-                this.importTasks(data.courses || []),
-                this.importTasks(data.podcasts || []),
-                this.importTasks(data.userTypes || []),
-                this.importTasks(data.videos || [])
+                importTasks(this.vault, this.settings, data.articles || [], 'article'),
+                importTasks(this.vault, this.settings, data.books || [], 'book'),
+                importTasks(this.vault, this.settings, data.courses || [], 'course'),
+                importTasks(this.vault, this.settings, data.podcasts || [], 'podcast'),
+                importTasks(this.vault, this.settings, data.userTypes || [], 'other'),
+                importTasks(this.vault, this.settings, data.videos || [], 'video')
             ]);
 
             new Notice(`${t('exampleImportedSuccessfully')}: ${example.name}`);
@@ -86,74 +85,5 @@ export default class ExamplesTab {
             console.error('Error importing example:', error);
             new Notice(`${t('errorImportingExample')}: ${error.message}`);
         }
-    }
-
-    private static async importTasks(tasks: TaskType[]) {
-        await Promise.all(tasks.map(async task => {
-            try {
-                const filePath = `${this.settings.folderPath}/${task.filePath}`;
-                const content = this.createTaskContent(task);
-
-                const existingFile = this.vault.getAbstractFileByPath(filePath);
-                if (existingFile && existingFile instanceof TFile) {
-                    new Notice(`${t('errorImportingExample')}: File ${filePath} already exists`);
-                } else {
-                    await this.vault.create(filePath, content);
-                }
-            } catch (error) {
-                console.error(`Error importing task ${task.filePath}:`, error);
-            }
-        }));
-    }
-
-    private static createTaskContent(task: TaskType): string {
-        let frontmatter = `---\n`;
-        frontmatter += `status: ${task.status || KNOWLEDGE_BASE}\n`;
-        frontmatter += `type: ${task.type || 'user'}\n`;
-        frontmatter += `section: ${task.section || 'general'}\n`;
-        frontmatter += `title: ${task.title || 'Untitled'}\n`;
-        frontmatter += `order: ${task.order || 100}\n`;
-
-        if (task.startDate) frontmatter += `startDate: ${task.startDate}\n`;
-        if (task.dueDate) frontmatter += `dueDate: ${task.dueDate}\n`;
-
-        if ('authors' in task && typeof task.authors === 'string') {
-            frontmatter += `authors: ${task.authors}\n`;
-        }
-        if ('author' in task && typeof task.author === 'string') {
-            frontmatter += `author: ${task.author}\n`;
-        }
-        if ('name' in task && typeof task.name === 'string') {
-            frontmatter += `name: ${task.name}\n`;
-        }
-        if ('pages' in task && typeof task.pages === 'number') {
-            frontmatter += `pages: ${task.pages}\n`;
-        }
-        if ('link' in task && typeof task.link === 'string') {
-            frontmatter += `link: ${task.link}\n`;
-        }
-        if ('durationInMinutes' in task && typeof task.durationInMinutes === 'number') {
-            frontmatter += `durationInMinutes: ${task.durationInMinutes}\n`;
-        }
-        if ('platform' in task && typeof task.platform === 'string') {
-            frontmatter += `platform: ${task.platform}\n`;
-        }
-        if ('episodes' in task && typeof task.episodes === 'number') {
-            frontmatter += `episodes: ${task.episodes}\n`;
-        }
-        if ('laborInputInHours' in task && typeof task.laborInputInHours === 'number') {
-            frontmatter += `laborInputInHours: ${task.laborInputInHours}\n`;
-        }
-
-        frontmatter += `---\n\n`;
-
-        const taskType = this.settings.materialTypes.find(t => t.name === task.type);
-        if (taskType) {
-            frontmatter += generateTaskContent(taskType);
-        } else {
-            frontmatter += generateEmptyTaskContent();
-        }
-
-        return frontmatter;
     }
 }

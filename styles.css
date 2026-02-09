@@ -655,6 +655,7 @@
 }
 
 .knowledge-export-btn,
+.knowledge-import-btn,
 .knowledge-create-btn {
   padding: 6px 12px;
   border: none;
@@ -664,7 +665,8 @@
   transition: background-color 0.2s ease;
 }
 
-.knowledge-export-btn {
+.knowledge-export-btn,
+.knowledge-import-btn {
   background: var(--interactive-accent);
   color: var(--text-on-accent);
 }
