@@ -1,9 +1,10 @@
-import { App, Modal } from 'obsidian';
+import { App, Modal, Setting } from 'obsidian';
 import { t } from '../../localization/localization';
 
 export class PostponeTaskModal extends Modal {
     private resolve: (confirmed: boolean) => void;
     private promise: Promise<boolean>;
+    private shiftOrderEnabled: boolean = false;
 
     constructor(app: App) {
         super(app);
@@ -18,6 +19,15 @@ export class PostponeTaskModal extends Modal {
         contentEl.empty();
 
         contentEl.createEl('p', { text: t('confirmPostponeTask') });
+
+        new Setting(contentEl)
+            .setName(t('shiftOrderForExistingTasks'))
+            .setDesc(t('shiftOrderTooltip'))
+            .addToggle(toggle => {
+                toggle
+                    .setValue(this.shiftOrderEnabled)
+                    .onChange(value => this.shiftOrderEnabled = value);
+            });
 
         const buttonContainer = contentEl.createDiv({ cls: 'modal-button-container' });
         const postponeBtn = buttonContainer.createEl('button', {
@@ -37,6 +47,10 @@ export class PostponeTaskModal extends Modal {
             this.resolve(false);
             this.close();
         };
+    }
+
+    getShiftOrderEnabled(): boolean {
+        return this.shiftOrderEnabled;
     }
 
     async waitForClose(): Promise<boolean> {

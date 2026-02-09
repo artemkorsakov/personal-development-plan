@@ -1,5 +1,5 @@
 import { App, MetadataCache, Vault, TFile, Notice } from 'obsidian';
-import { getActiveTasks, getTaskTypeIcon, isTaskOverdue } from '../../utils/taskUtils';
+import { getActiveTasks, getTaskTypeIcon, isTaskOverdue, reorderPlannedTasks } from '../../utils/taskUtils';
 import { formatDate, calculateDaysBetween, parseDateInput } from '../../utils/dateUtils';
 import { TaskInProgress, IN_PROGRESS } from '../tabs-types';
 import { openTaskFile } from '../../utils/fileUtils';
@@ -11,6 +11,7 @@ import { ConfirmDeleteModal } from '../modals/ConfirmDeleteModal';
 import { CompleteTaskModal, CompleteTaskModalData } from '../modals/CompleteTaskModal';
 import { PostponeTaskModal } from '../modals/PostponeTaskModal';
 import { PeriodicTasks } from './PeriodicTasks';
+import { MAX_ORDER } from '../../settings/task-types'; 
 
 export default class InProgressTab {
     private static app: App;
@@ -304,11 +305,11 @@ export default class InProgressTab {
         }
     }
 
-    private static async handlePostponeTask(task: TaskInProgress) {
+    private static async handlePostponeTask(task: TaskInProgress) {    
         const modal = new PostponeTaskModal(this.app);
         modal.open();
         const confirmed = await modal.waitForClose();
-
+    
         if (confirmed) {
             try {
                 const file = this.app.vault.getAbstractFileByPath(task.filePath);
@@ -316,27 +317,47 @@ export default class InProgressTab {
                     let content = await this.app.vault.read(file);
                     const frontmatterRegex = /^---\n([\s\S]*?)\n---/;
                     const match = content.match(frontmatterRegex);
-
+    
                     if (match) {
                         let frontmatter = match[1];
 
+                        let currentOrder = task.order || MAX_ORDER;
+
+                        // Если включен чекбокс сдвига порядка
+                        if (modal.getShiftOrderEnabled() && currentOrder > 0) {
+                            try {
+                                // Сдвигаем порядок у существующих запланированных задач
+                                await reorderPlannedTasks(
+                                    this.app.vault,
+                                    this.settings,
+                                    this.app.metadataCache,
+                                    currentOrder
+                                );
+                                new Notice(t('tasksReordered'));
+                            } catch (error) {
+                                console.error('Error reordering tasks:', error);
+                                new Notice(t('reorderError'));
+                                // Продолжаем выполнение даже если сдвиг не удался
+                            }
+                        }
+    
                         frontmatter = frontmatter
                             .replace(/status:.*(\n|$)/g, '')
                             .replace(/startDate:.*(\n|$)/g, '')
                             .replace(/dueDate:.*(\n|$)/g, '');
-
+    
                         frontmatter = frontmatter.replace(/\n+$/, '');
-
+    
                         if (frontmatter.length > 0 && !frontmatter.endsWith('\n')) {
                             frontmatter += '\n';
                         }
-
+    
                         frontmatter += `status: planned\n`;
-
+    
                         if (!frontmatter.endsWith('\n')) {
                             frontmatter += '\n';
                         }
-
+    
                         await this.app.vault.process(file, (currentContent: string) => currentContent.replace(frontmatterRegex, `---\n${frontmatter}---`));
                         new Notice(t('taskPostponedSuccessfully'));
                         await this.updateTasksList();
